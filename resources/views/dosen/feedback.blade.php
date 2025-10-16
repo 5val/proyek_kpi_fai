@@ -1,22 +1,22 @@
 @extends('layouts.app')
 
-@section('title', 'Feedback & Laporan')
+@section('title', 'Feedback')
 
-@section('page-title', 'Feedback & Laporan')
-@section('page-subtitle', 'Kirimkan masukan atau laporkan masalah kepada pihak kampus')
-@section('user-name', 'Andi Pratama')
-@section('user-role', 'Mahasiswa - Teknik Informatika')
-@section('user-initial', 'AP')
+@section('page-title', 'Kirim Feedback')
+@section('page-subtitle', 'Berikan masukan untuk peningkatan layanan kampus')
+@section('user-name', 'Dr. Budi Hartono, M.Kom.')
+@section('user-role', 'Dosen - Teknik Informatika')
+@section('user-initial', 'BH')
 
 @section('sidebar-menu')
     <a class="nav-link" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
     <a class="nav-link" href="#"><i class="bi bi-person-badge"></i> Profil Saya</a>
     <a class="nav-link" href="#"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
-    <a class="nav-link" href="#"><i class="bi bi-star"></i> Penilaian Dosen</a>
+    <a class="nav-link" href="#"><i class="bi bi-people"></i> Penilaian Mahasiswa</a>
     <a class="nav-link" href="#"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
     <a class="nav-link" href="#"><i class="bi bi-bank2"></i> Penilaian Unit</a>
+    <a class="nav-link" href="#"><i class="bi bi-file-earmark-bar-graph"></i> Laporan Kinerja</a>
     <a class="nav-link active" href="#"><i class="bi bi-chat-left-text"></i> Feedback</a>
-    <a class="nav-link" href="#"><i class="bi bi-bar-chart"></i> Laporan KPI</a>
 @endsection
 
 @section('content')
@@ -96,4 +96,3 @@
     </div>
 </div>
 @endsection
-

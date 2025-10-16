@@ -83,7 +83,6 @@
                         </div>
                         <div>
                             <span class="fw-bold me-2">Skor: 3.5/5.0</span>
-                            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i> Lihat Detail</button>
                         </div>
                     </div>
                 </div>

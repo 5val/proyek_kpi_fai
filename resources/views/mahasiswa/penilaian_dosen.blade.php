@@ -43,7 +43,6 @@
                             <div class="me-3"><i class="bi bi-person-circle fs-2 text-primary"></i></div>
                             <div>
                                 <h6 class="mb-0">Dr. Budi Hartono, M.Kom.</h6>
-                                <small class="text-muted">Mata Kuliah: Pemrograman Web Lanjut</small>
                             </div>
                         </div>
                         <button class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Beri Penilaian</button>
@@ -53,7 +52,6 @@
                              <div class="me-3"><i class="bi bi-person-circle fs-2 text-primary"></i></div>
                             <div>
                                 <h6 class="mb-0">Siti Aminah, S.T., M.T.</h6>
-                                <small class="text-muted">Mata Kuliah: Jaringan Komputer</small>
                             </div>
                         </div>
                         <button class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Beri Penilaian</button>
@@ -63,7 +61,6 @@
                              <div class="me-3"><i class="bi bi-person-circle fs-2 text-primary"></i></div>
                             <div>
                                 <h6 class="mb-0">Prof. Dr. Ir. Rina Wijaya</h6>
-                                <small class="text-muted">Mata Kuliah: Kecerdasan Buatan</small>
                             </div>
                         </div>
                         <button class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Beri Penilaian</button>
@@ -78,12 +75,10 @@
                             <div class="me-3"><i class="bi bi-person-check-fill fs-2 text-success"></i></div>
                             <div>
                                 <h6 class="mb-0">Dr. Agus Setiawan, M.Sc.</h6>
-                                <small class="text-muted">Mata Kuliah: Basis Data</small>
                             </div>
                         </div>
                         <div>
                             <span class="fw-bold me-2">Skor: 4.5/5.0</span>
-                            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i> Lihat Detail</button>
                         </div>
                     </div>
                     <div class="list-group-item d-flex justify-content-between align-items-center">
@@ -91,12 +86,10 @@
                             <div class="me-3"><i class="bi bi-person-check-fill fs-2 text-success"></i></div>
                             <div>
                                 <h6 class="mb-0">Lina Marlina, S.Kom., M.Kom.</h6>
-                                <small class="text-muted">Mata Kuliah: Sistem Operasi</small>
                             </div>
                         </div>
                          <div>
                             <span class="fw-bold me-2">Skor: 4.8/5.0</span>
-                            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-eye"></i> Lihat Detail</button>
                         </div>
                     </div>
                 </div>

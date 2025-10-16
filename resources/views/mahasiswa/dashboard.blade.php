@@ -52,7 +52,7 @@
     
     <!-- KPI Statistics -->
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="stat-card text-center">
                 <div class="icon text-success">
                     <i class="bi bi-trophy-fill"></i>
@@ -62,27 +62,17 @@
                 <small class="text-success"><i class="bi bi-arrow-up"></i> Excellent</small>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="stat-card text-center">
                 <div class="icon text-primary">
-                    <i class="bi bi-award-fill"></i>
+                    <i class="bi bi-journal-check"></i>
                 </div>
-                <h3 class="fw-bold">12</h3>
-                <p class="text-muted mb-0">Total Prestasi</p>
-                <small class="text-info">Semester ini: 3</small>
+                <h3 class="fw-bold">3.85</h3>
+                <p class="text-muted mb-0">IPK Semester</p>
+                <small class="text-info">Gasal 2024/2025</small>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card text-center">
-                <div class="icon text-warning">
-                    <i class="bi bi-calendar-check"></i>
-                </div>
-                <h3 class="fw-bold">94%</h3>
-                <p class="text-muted mb-0">Kehadiran</p>
-                <small class="text-success"><i class="bi bi-check-circle"></i> Sangat Baik</small>
-            </div>
-        </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="stat-card text-center">
                 <div class="icon text-info">
                     <i class="bi bi-star-fill"></i>
@@ -213,7 +203,7 @@
     
     <!-- Pending Assessments -->
     <div class="row mt-4">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="card-custom">
                 <div class="card-header bg-warning text-white">
                     <i class="bi bi-exclamation-triangle"></i> Penilaian yang Perlu Diisi
@@ -247,54 +237,6 @@
                                 <p class="mb-0 text-muted small">Layanan Kemahasiswaan</p>
                             </div>
                             <button class="btn btn-sm btn-primary">Isi</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6">
-            <div class="card-custom">
-                <div class="card-header">
-                    <i class="bi bi-star-fill"></i> Prestasi & Pencapaian
-                </div>
-                <div class="card-body">
-                    <div class="list-group list-group-flush">
-                        <div class="list-group-item border-0 px-0">
-                            <div class="d-flex align-items-start">
-                                <i class="bi bi-trophy-fill text-warning me-3" style="font-size: 1.5rem;"></i>
-                                <div>
-                                    <strong>Juara 1 Lomba Web Design</strong>
-                                    <p class="mb-0 text-muted small">Tingkat Nasional - September 2024</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list-group-item border-0 px-0">
-                            <div class="d-flex align-items-start">
-                                <i class="bi bi-award-fill text-primary me-3" style="font-size: 1.5rem;"></i>
-                                <div>
-                                    <strong>Best Paper Award</strong>
-                                    <p class="mb-0 text-muted small">Seminar Nasional IT - Agustus 2024</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list-group-item border-0 px-0">
-                            <div class="d-flex align-items-start">
-                                <i class="bi bi-star-fill text-info me-3" style="font-size: 1.5rem;"></i>
-                                <div>
-                                    <strong>Mahasiswa Berprestasi</strong>
-                                    <p class="mb-0 text-muted small">Fakultas Teknik - Juli 2024</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="list-group-item border-0 px-0">
-                            <div class="d-flex align-items-start">
-                                <i class="bi bi-gem text-success me-3" style="font-size: 1.5rem;"></i>
-                                <div>
-                                    <strong>Sertifikasi IT Professional</strong>
-                                    <p class="mb-0 text-muted small">CompTIA A+ - Juni 2024</p>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -342,7 +284,8 @@
     </div>
 @endsection
 
-@push('scripts')  
+@push('scripts') 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // My KPI Chart
     const myKpiCtx = document.getElementById('myKpiChart').getContext('2d');

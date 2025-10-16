@@ -1,184 +1,147 @@
 @extends('layouts.app')
 
 @section('title', 'Dashboard Admin')
+
 @section('page-title', 'Dashboard Admin')
+@section('page-subtitle', 'Selamat Datang di Panel Kontrol Sistem KPI')
+@section('user-name', 'Administrator')
+@section('user-role', 'Admin')
+@section('user-initial', 'AD')
+
+@section('sidebar-menu')
+    <a class="nav-link active" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a class="nav-link" href="#"><i class="bi bi-people-fill"></i> Manajemen User</a>
+    <a class="nav-link" href="#"><i class="bi bi-building"></i> Manajemen Fasilitas</a>
+    <a class="nav-link" href="#"><i class="bi bi-bank2"></i> Manajemen Unit</a>
+    <a class="nav-link" href="#"><i class="bi bi-tags-fill"></i> Kategori KPI</a>
+    <a class="nav-link" href="#"><i class="bi bi-star-fill"></i> Data Penilaian</a>
+    <a class="nav-link" href="#"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
+    <a class="nav-link" href="#"><i class="bi bi-chat-left-text-fill"></i> Feedback</a>
+@endsection
 
 @section('content')
-<div class="row g-3 mb-4">
-    <!-- Stat Cards -->
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-            <i class="fas fa-users fa-2x mb-2"></i>
-            <!-- <h3>{{ $totalUsers ?? 0 }}</h3> -->
-            <h3>10</h3>
-            <p>Total Pengguna</p>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-            <i class="fas fa-list fa-2x mb-2"></i>
-            <!-- <h3>{{ $totalCategories ?? 0 }}</h3> -->
-            <h3>10</h3>
-            <p>Kategori KPI</p>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-            <i class="fas fa-clipboard-list fa-2x mb-2"></i>
-            <!-- <h3>{{ $totalIndicators ?? 0 }}</h3> -->
-            <h3>10</h3>
-            <p>Indikator KPI</p>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-            <i class="fas fa-star fa-2x mb-2"></i>
-            <!-- <h3>{{ $totalAssessments ?? 0 }}</h3> -->
-            <h3>10</h3>
-            <p>Total Penilaian</p>
-        </div>
-    </div>
-</div>
+<!-- Admin Statistics Cards -->
 
-<div class="row">
-    <!-- Chart KPI per Kategori -->
-    <div class="col-lg-8 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title mb-4">
-                    <i class="fas fa-chart-bar me-2 text-primary"></i>
-                    Skor KPI per Kategori
-                </h5>
-                <canvas id="categoryChart" height="80"></canvas>
+    <div class="row">
+
+        <div class="col-md-3">
+
+            <div class="stat-card text-center">
+
+                <div class="icon text-primary"><i class="bi bi-people-fill"></i></div>
+
+                <h3 class="fw-bold">1,250</h3>
+
+                <p class="text-muted mb-0">Total Pengguna</p>
+
             </div>
+
         </div>
+
+        <div class="col-md-3">
+
+            <div class="stat-card text-center">
+
+                <div class="icon text-success"><i class="bi bi-person-video3"></i></div>
+
+                <h3 class="fw-bold">150</h3>
+
+                <p class="text-muted mb-0">Total Dosen</p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="stat-card text-center">
+
+                <div class="icon text-info"><i class="bi bi-person-check-fill"></i></div>
+
+                <h3 class="fw-bold">1,050</h3>
+
+                <p class="text-muted mb-0">Total Mahasiswa</p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="stat-card text-center">
+
+                <div class="icon text-warning"><i class="bi bi-clipboard2-data-fill"></i></div>
+
+                <h3 class="fw-bold">25,480</h3>
+
+                <p class="text-muted mb-0">Penilaian Masuk</p>
+
+            </div>
+
+        </div>
+
     </div>
-    
-    <!-- Top Performers -->
-    <div class="col-lg-4 mb-4">
-        <div class="card">
+
+<!-- Charts -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card-custom">
+            <div class="card-header">
+                <i class="bi bi-graph-up"></i> Tren Skor KPI Keseluruhan (6 Bulan Terakhir)
+            </div>
             <div class="card-body">
-                <h5 class="card-title mb-4">
-                    <i class="fas fa-trophy me-2 text-warning"></i>
-                    Top Performers
-                </h5>
-                <div class="list-group list-group-flush">
-                    <!-- @forelse($topPerformers ?? [] as $index => $performer) -->
-                        <!-- <div class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <div class="d-flex align-items-center">
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
-                                     style="width: 40px; height: 40px; font-size: 0.9rem;">
-                                    #{{ $index + 1 }}
-                                </div>
-                                <div>
-                                    <div class="fw-bold">{{ $performer->name }}</div>
-                                    <small class="text-muted">{{ $performer->category }}</small>
-                                </div>
-                            </div>
-                            <span class="badge bg-success">{{ number_format($performer->score, 2) }}</span>
-                        </div> -->
-                    <!-- @empty
-                        <p class="text-muted text-center my-3">Belum ada data</p>
-                    @endforelse -->
-                </div>
+                <canvas id="kpiTrendChart" height="90"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <!-- Tren Penilaian -->
-    <div class="col-lg-8 mb-4">
-        <div class="card">
+<!-- KPI Overview & Recent Feedback -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card-custom">
+            <div class="card-header"><i class="bi bi-bar-chart-line-fill"></i> Rata-rata Skor KPI per Kategori</div>
             <div class="card-body">
-                <h5 class="card-title mb-4">
-                    <i class="fas fa-chart-line me-2 text-success"></i>
-                    Tren Penilaian Bulanan
-                </h5>
-                <canvas id="trendChart" height="80"></canvas>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Feedback Terbaru -->
-    <div class="col-lg-4 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title mb-4">
-                    <i class="fas fa-comments me-2 text-info"></i>
-                    Feedback Terbaru
-                </h5>
-                <div class="list-group list-group-flush" style="max-height: 350px; overflow-y: auto;">
-                    @forelse($recentFeedback ?? [] as $feedback)
-                        <div class="list-group-item px-0">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div class="fw-bold">{{ $feedback->user->name }}</div>
-                                <small class="text-muted">{{ $feedback->created_at->diffForHumans() }}</small>
-                            </div>
-                            <p class="mb-1 small">{{ Str::limit($feedback->message, 80) }}</p>
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-secondary me-2">{{ $feedback->category }}</span>
-                                @for($i = 1; $i <= 5; $i++)
-                                    <i class="fas fa-star {{ $i <= $feedback->rating ? 'text-warning' : 'text-muted' }}" style="font-size: 0.75rem;"></i>
-                                @endfor
-                            </div>
-                        </div>
-                    @empty
-                        <p class="text-muted text-center my-3">Belum ada feedback</p>
-                    @endforelse
-                </div>
+                <canvas id="kpiOverviewChart" height="120"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <!-- Aktivitas Terkini -->
-    <div class="col-12">
-        <div class="card">
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card-custom">
+            <div class="card-header">
+                <i class="bi bi-chat-left-text-fill"></i> Feedback Terbaru
+            </div>
             <div class="card-body">
-                <h5 class="card-title mb-4">
-                    <i class="fas fa-history me-2 text-primary"></i>
-                    Aktivitas Terkini
-                </h5>
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Waktu</th>
-                                <th>User</th>
-                                <th>Aktivitas</th>
-                                <th>Kategori</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
                         <tbody>
-                            @forelse($recentActivities ?? [] as $activity)
-                                <tr>
-                                    <td>{{ $activity->created_at->format('d M Y H:i') }}</td>
-                                    <td>{{ $activity->user->name }}</td>
-                                    <td>{{ $activity->description }}</td>
-                                    <td>
-                                        <span class="badge bg-secondary">{{ $activity->category }}</span>
-                                    </td>
-                                    <td>
-                                        @if($activity->status == 'completed')
-                                            <span class="badge bg-success">Selesai</span>
-                                        @elseif($activity->status == 'pending')
-                                            <span class="badge bg-warning">Pending</span>
-                                        @else
-                                            <span class="badge bg-danger">Gagal</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted">Belum ada aktivitas</td>
-                                </tr>
-                            @endforelse
+                            <tr>
+                                <td>
+                                    <p class="mb-1">"Layanan di BAA sangat cepat dan membantu proses KRS saya."</p>
+                                    <small class="text-muted">Untuk: <strong>Unit BAA</strong> - oleh Mahasiswa (Anonim)</small>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p class="mb-1">"Perpustakaan butuh lebih banyak koleksi buku untuk jurusan Teknik Informatika."</p>
+                                    <small class="text-muted">Untuk: <strong>Perpustakaan</strong> - oleh Andi Pratama (Mahasiswa)</small>
+                                </td>
+                            </tr>
+                             <tr>
+                                <td>
+                                    <p class="mb-1">"Penjelasan Prof. Budi sangat mudah dipahami. Terima kasih, Pak."</p>
+                                    <small class="text-muted">Untuk: <strong>Prof. Budi Santoso</strong> - oleh Mahasiswa (Anonim)</small>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p class="mb-1">"Koneksi WiFi di Gedung C sering terputus, mohon diperbaiki."</p>
+                                    <small class="text-muted">Untuk: <strong>Fasilitas IT</strong> - oleh Rina Wijaya (Dosen)</small>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -189,80 +152,59 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-   const categoryLabels = ['Mahasiswa', 'Dosen', 'BAU', 'BAK', 'BAA', 'UKM', 'Fasilitas'];
-    const categoryScores = [4.2, 4.5, 3.8, 4.0, 4.3, 3.9, 4.1];
-    // Chart KPI per Kategori
-    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-    new Chart(categoryCtx, {
-        type: 'bar',
-        data: {
-            labels: categoryLabels,
-            datasets: [{
-                label: 'Skor Rata-rata',
-                data: categoryScores,
-                backgroundColor: [
-                    'rgba(102, 126, 234, 0.8)',
-                    'rgba(118, 75, 162, 0.8)',
-                    'rgba(240, 147, 251, 0.8)',
-                    'rgba(79, 172, 254, 0.8)',
-                    'rgba(67, 233, 123, 0.8)',
-                    'rgba(245, 158, 11, 0.8)',
-                    'rgba(239, 68, 68, 0.8)'
-                ],
-                borderRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 5,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    });
-    
-    const trendLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
-    const trendData = [45, 52, 61, 58, 70, 85];
-    // Chart Tren Bulanan
-    const trendCtx = document.getElementById('trendChart').getContext('2d');
-    new Chart(trendCtx, {
+    // KPI Trend Chart
+    const kpiTrendCtx = document.getElementById('kpiTrendChart').getContext('2d');
+    new Chart(kpiTrendCtx, {
         type: 'line',
         data: {
-            labels: trendLabels,
+            labels: ['Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober'],
             datasets: [{
-                label: 'Jumlah Penilaian',
-                data: trendData,
-                borderColor: 'rgb(37, 99, 235)',
-                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                label: 'Skor KPI Rata-rata',
+                data: [3.8, 3.9, 4.0, 4.2, 4.1, 4.15],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
                 tension: 0.4,
                 fill: true
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    min: 3.5,
+                    max: 4.5
+                }
+            },
             plugins: {
                 legend: {
                     display: false
                 }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
             }
+        }
+    });
+
+    // KPI Overview Chart
+    const kpiOverviewCtx = document.getElementById('kpiOverviewChart').getContext('2d');
+    new Chart(kpiOverviewCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Dosen', 'Mahasiswa', 'Fasilitas', 'Unit Layanan'],
+            datasets: [{
+                label: 'Skor Rata-rata (skala 5)',
+                data: [4.5, 4.2, 3.8, 4.1],
+                backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                borderColor: 'rgba(102, 126, 234, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true, max: 5 } }
         }
     });
 </script>
