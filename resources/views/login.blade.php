@@ -155,13 +155,6 @@
                         @enderror
                     </div>
                     
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                        <label class="form-check-label" for="remember">
-                            Ingat Saya
-                        </label>
-                    </div>
-                    
                     <button type="submit" class="btn btn-primary btn-login">
                         <i class="fas fa-sign-in-alt me-2"></i>Login
                     </button>

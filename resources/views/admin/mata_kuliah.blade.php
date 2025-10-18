@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen Unit')
+@section('title', 'Manajemen Mata Kuliah')
 
-@section('page-title', 'Manajemen Unit')
-@section('page-subtitle', 'Kelola data unit layanan dan akademik')
+@section('page-title', 'Manajemen Mata Kuliah')
+@section('page-subtitle', 'Kelola data master mata kuliah')
 @section('user-name', 'Administrator')
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
@@ -13,9 +13,9 @@
     <a class="nav-link" href="#"><i class="bi bi-people-fill"></i> Manajemen User</a>
     <a class="nav-link" href="#"><i class="bi bi-person-rolodex"></i> Manajemen Dosen</a>
     <a class="nav-link" href="#"><i class="bi bi-building"></i> Manajemen Fasilitas</a>
-    <a class="nav-link active" href="#"><i class="bi bi-bank2"></i> Manajemen Unit</a>
+    <a class="nav-link" href="#"><i class="bi bi-bank2"></i> Manajemen Unit</a>
     <a class="nav-link" href="#"><i class="bi bi-calendar-event-fill"></i> Manajemen Periode</a>
-    <a class="nav-link" href="#"><i class="bi bi-book-fill"></i> Manajemen Mata Kuliah</a>
+    <a class="nav-link active" href="#"><i class="bi bi-book-fill"></i> Manajemen Mata Kuliah</a>
     <a class="nav-link" href="#"><i class="bi bi-easel-fill"></i> Manajemen Kelas</a>
     <a class="nav-link" href="#"><i class="bi bi-tags-fill"></i> Kategori KPI</a>
     <a class="nav-link" href="#"><i class="bi bi-star-fill"></i> Data Penilaian</a>
@@ -26,46 +26,50 @@
 @section('content')
 <div class="card-custom">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <div><i class="bi bi-bank2"></i> Daftar Unit</div>
-        <button class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Tambah Unit</button>
+        <div><i class="bi bi-book-fill"></i> Daftar Mata Kuliah</div>
+        <a href="#" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Tambah Mata Kuliah</a>
     </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
-                        <th>Nama Unit</th>
-                        <th>Tipe</th>
-                        <th>Penanggung Jawab</th>
+                        <th>#</th>
+                        <th>Kode MK</th>
+                        <th>Nama Mata Kuliah</th>
+                        <th>SKS</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>BAA (Biro Administrasi Akademik)</td>
-                        <td>Layanan</td>
-                        <td>Dra. Rini Susanti</td>
+                        <td>1</td>
+                        <td>IF101</td>
+                        <td>Algoritma & Pemrograman</td>
+                        <td>3</td>
                         <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
+                            <a href="#" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                            <a href="#" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
                         </td>
                     </tr>
                     <tr>
-                        <td>BAK (Biro Administrasi Keuangan)</td>
-                        <td>Layanan</td>
-                        <td>Bambang Irawan, S.E.</td>
+                        <td>2</td>
+                        <td>IF102</td>
+                        <td>Struktur Data</td>
+                        <td>3</td>
                         <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
+                            <a href="#" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                            <a href="#" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
                         </td>
                     </tr>
-                    <tr>
-                        <td>UKM Fotografi</td>
-                        <td>UKM</td>
-                        <td>Prof. Dr. Ir. Rina Wijaya</td>
+                     <tr>
+                        <td>3</td>
+                        <td>KU201</td>
+                        <td>Pendidikan Kewarganegaraan</td>
+                        <td>2</td>
                         <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
+                            <a href="#" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                            <a href="#" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
                         </td>
                     </tr>
                 </tbody>
@@ -74,3 +78,4 @@
     </div>
 </div>
 @endsection
+

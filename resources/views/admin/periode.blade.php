@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Data Penilaian')
+@section('title', 'Manajemen Periode')
 
-@section('page-title', 'Data Penilaian Masuk')
-@section('page-subtitle', 'Monitoring semua data penilaian yang telah diinput')
+@section('page-title', 'Manajemen Periode')
+@section('page-subtitle', 'Kelola periode akademik untuk penilaian dan kelas')
 @section('user-name', 'Administrator')
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
@@ -14,47 +14,38 @@
     <a class="nav-link" href="#"><i class="bi bi-person-rolodex"></i> Manajemen Dosen</a>
     <a class="nav-link" href="#"><i class="bi bi-building"></i> Manajemen Fasilitas</a>
     <a class="nav-link" href="#"><i class="bi bi-bank2"></i> Manajemen Unit</a>
-    <a class="nav-link" href="#"><i class="bi bi-calendar-event-fill"></i> Manajemen Periode</a>
+    <a class="nav-link active" href="#"><i class="bi bi-calendar-event-fill"></i> Manajemen Periode</a>
     <a class="nav-link" href="#"><i class="bi bi-book-fill"></i> Manajemen Mata Kuliah</a>
     <a class="nav-link" href="#"><i class="bi bi-easel-fill"></i> Manajemen Kelas</a>
     <a class="nav-link" href="#"><i class="bi bi-tags-fill"></i> Kategori KPI</a>
-    <a class="nav-link active" href="#"><i class="bi bi-star-fill"></i> Data Penilaian</a>
+    <a class="nav-link" href="#"><i class="bi bi-star-fill"></i> Data Penilaian</a>
     <a class="nav-link" href="#"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
     <a class="nav-link" href="#"><i class="bi bi-chat-left-text-fill"></i> Feedback</a>
 @endsection
 
 @section('content')
 <div class="card-custom">
-    <div class="card-header"><i class="bi bi-star-fill"></i> Log Penilaian Terbaru</div>
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div><i class="bi bi-calendar-event-fill"></i> Daftar Periode Akademik</div>
+        <a href="#" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Tambah Periode</a>
+    </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
-                        <th>Penilai</th>
-                        <th>Objek yang Dinilai</th>
-                        <th>Kategori</th>
-                        <th>Skor Rata-rata</th>
-                        <th>Waktu</th>
-                        <th>Aksi</th>
+                        <th>#</th>
+                        <th>Nama Periode</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Andi Pratama</td>
-                        <td>Dr. Budi Hartono, M.Kom.</td>
-                        <td>Kinerja Dosen</td>
-                        <td>4.8 / 5.0</td>
-                        <td>2024-10-15 14:30</td>
-                        <td><button class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</button></td>
+                        <td>1</td>
+                        <td>Semester Gasal 2024/2025</td>
                     </tr>
                     <tr>
-                        <td>Siti Aminah</td>
-                        <td>Perpustakaan Pusat</td>
-                        <td>Fasilitas</td>
-                        <td>4.2 / 5.0</td>
-                        <td>2024-10-15 13:05</td>
-                        <td><button class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</button></td>
+                        <td>2</td>
+                        <td>Semester Genap 2023/2024</td>
                     </tr>
                 </tbody>
             </table>

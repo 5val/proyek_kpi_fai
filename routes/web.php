@@ -103,6 +103,34 @@ Route::prefix("admin")->name('admin.')->group(function() {
       return view('admin.form_unit');
    })->name('form_unit');
 
+   Route::get('/periode', function() {
+      return view('admin.periode');
+   })->name('periode');
+
+   Route::get('/mata_kuliah', function() {
+      return view('admin.mata_kuliah');
+   })->name('mata_kuliah');
+
+   Route::get('/mata_kuliah/create', function() {
+      return view('admin.form_mata_kuliah');
+   })->name('form_mata_kuliah');
+
+   Route::get('/kelas', function() {
+      return view('admin.kelas');
+   })->name('kelas');
+
+   Route::get('/kelas/create', function() {
+      return view('admin.form_kelas');
+   })->name('form_kelas');
+
+   Route::get('/kelas/enrollment', function() {
+      return view('admin.enrollment');
+   })->name('enrollment');
+
+   Route::get('/kelas/enrollment/create', function() {
+      return view('admin.form_enrollment');
+   })->name('form_enrollment');
+
    Route::get('/kategori_kpi', function() {
       return view('admin.kategori_kpi');
    })->name('kategori_kpi');
