@@ -52,7 +52,7 @@
                             <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="table-danger">
                         <td>Laboratorium Komputer C101</td>
                         <td>Laboratorium</td>
                         <td>Gedung C Lantai 1</td>

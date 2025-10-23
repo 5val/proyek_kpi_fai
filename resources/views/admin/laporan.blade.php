@@ -79,6 +79,11 @@
                         <td>4.6</td>
                         <td>115</td>
                     </tr>
+                    <tr class="table-danger">
+                        <td>Agung Pramana, S.T., M.T.</td>
+                        <td>1.9</td>
+                        <td>115</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
