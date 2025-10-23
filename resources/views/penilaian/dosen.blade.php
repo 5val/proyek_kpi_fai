@@ -32,7 +32,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>Indikator Penilaian</th>
-                            <th class="text-center">Rating (1-5 Bintang)</th>
+                            <th class="text-center">Rating (1-4 Bintang)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,7 +44,7 @@
                             <td>{{ $indicator }}</td>
                             <td class="text-center">
                                 <div class="rating">
-                                    @for($i = 5; $i >= 1; $i--)
+                                    @for($i = 4; $i >= 1; $i--)
                                     <input type="radio" name="rating-{{ $index }}" id="rating-{{ $index }}-{{ $i }}" value="{{ $i }}">
                                     <label for="rating-{{ $index }}-{{ $i }}"><i class="bi bi-star-fill"></i></label>
                                     @endfor
