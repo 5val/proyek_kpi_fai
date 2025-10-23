@@ -48,7 +48,7 @@
                     <tr>
                         <td>1</td>
                         <td>Penguasaan Materi</td>
-                        <td>1 - 5</td>
+                        <td>1 - 4</td>
                         <td>25</td>
                         <td>
                             <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</button>
@@ -58,7 +58,7 @@
                     <tr>
                         <td>2</td>
                         <td>Kejelasan dalam Menyampaikan Materi</td>
-                        <td>1 - 5</td>
+                        <td>1 - 4</td>
                         <td>20</td>
                         <td>
                             <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</button>
@@ -68,7 +68,7 @@
                      <tr>
                         <td>3</td>
                         <td>Kemampuan Memberi Motivasi</td>
-                        <td>1 - 5</td>
+                        <td>1 - 4</td>
                         <td>15</td>
                         <td>
                             <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</button>
@@ -78,7 +78,7 @@
                      <tr>
                         <td>4</td>
                         <td>Kedisiplinan Waktu</td>
-                        <td>1 - 5</td>
+                        <td>1 - 4</td>
                         <td>15</td>
                         <td>
                             <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</button>
@@ -88,7 +88,7 @@
                      <tr>
                         <td>5</td>
                         <td>Keadilan dalam Penilaian</td>
-                        <td>1 - 5</td>
+                        <td>1 - 4</td>
                         <td>25</td>
                         <td>
                             <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</button>

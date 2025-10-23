@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Formulir Penilaian Dosen')
+@section('title', 'Formulir Penilaian Praktikum')
 
-@section('page-title', 'Penilaian Kinerja Dosen')
-@section('page-subtitle', 'Beri penilaian untuk Dr. Budi Hartono, M.Kom. - Mata Kuliah Kecerdasan Buatan')
+@section('page-title', 'Penilaian Praktikum')
+@section('page-subtitle', 'Beri penilaian untuk Praktikum FAI')
 @section('user-name', 'Andi Pratama')
 @section('user-role', 'Mahasiswa - Teknik Informatika')
 @section('user-initial', 'AP')
@@ -15,6 +15,7 @@
     <a class="nav-link active" href="#"><i class="bi bi-star"></i> Penilaian Dosen</a>
     <a class="nav-link" href="#"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
     <a class="nav-link" href="#"><i class="bi bi-bank2"></i> Penilaian Unit</a>
+    <a class="nav-link" href="#"><i class="bi bi-bank2"></i> Penilaian Praktikum</a>
     <a class="nav-link" href="#"><i class="bi bi-chat-left-text"></i> Feedback</a>
     <a class="nav-link" href="#"><i class="bi bi-bar-chart"></i> Laporan KPI</a>
 @endsection
@@ -23,7 +24,7 @@
 <div class="card-custom">
     <div class="card-header">
         <a href="#" class="btn btn-outline-secondary btn-sm me-2"><i class="bi bi-arrow-left"></i> Kembali</a>
-        <i class="bi bi-star-fill"></i> Formulir Penilaian Dosen
+        <i class="bi bi-person-check-fill"></i> Formulir Penilaian Praktikum
     </div>
     <div class="card-body">
         <form>
@@ -32,12 +33,12 @@
                     <thead class="table-light">
                         <tr>
                             <th>Indikator Penilaian</th>
-                            <th class="text-center">Rating (1-4 Bintang)</th>
+                            <th class="text-center" style="width: 30%;">Rating (1-4 Bintang)</th>
                         </tr>
                     </thead>
                     <tbody>
                         @php
-                            $indicators = ['Penguasaan Materi', 'Kejelasan dalam Menyampaikan Materi', 'Kemampuan Memberi Motivasi', 'Kedisiplinan Waktu', 'Keadilan dalam Penilaian'];
+                            $indicators = ['Kejelasan Materi yang Disampaikan', 'Kualitas Sarana dan Prasarana Laboratorium', 'Etika Para Asisten'];
                         @endphp
                         @foreach($indicators as $index => $indicator)
                         <tr>
@@ -55,9 +56,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-3">
-                <label for="feedback" class="form-label">Komentar atau Masukan (Opsional)</label>
-                <textarea class="form-control" id="feedback" rows="4" placeholder="Berikan masukan yang membangun..."></textarea>
+             <div class="mt-3">
+                <label for="feedback" class="form-label">Catatan untuk Praktikum</label>
+                <textarea class="form-control" id="feedback" rows="4" placeholder="Berikan catatan atau saran untuk pengembangan praktikum..."></textarea>
             </div>
             <hr>
             <button type="submit" class="btn btn-primary"><i class="bi bi-send-check"></i> Kirim Penilaian</button>
@@ -68,23 +69,10 @@
 
 @push('styles')
 <style>
-    .rating {
-        display: inline-block;
-        direction: rtl;
-    }
-    .rating input {
-        display: none;
-    }
-    .rating label {
-        font-size: 1.5rem;
-        color: #ddd;
-        cursor: pointer;
-        transition: color 0.2s;
-    }
-    .rating input:checked ~ label,
-    .rating label:hover,
-    .rating label:hover ~ label {
-        color: #ffc107;
-    }
+    .rating { display: inline-block; direction: rtl; }
+    .rating input { display: none; }
+    .rating label { font-size: 1.5rem; color: #ddd; cursor: pointer; transition: color 0.2s; }
+    .rating input:checked ~ label, .rating label:hover, .rating label:hover ~ label { color: #ffc107; }
 </style>
 @endpush
+

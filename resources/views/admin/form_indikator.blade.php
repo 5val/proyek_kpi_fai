@@ -40,7 +40,7 @@
             </div>
              <div class="mb-3">
                 <label for="scale" class="form-label">Skala Penilaian</label>
-                <input type="text" class="form-control" id="scale" value="1 - 5" placeholder="Contoh: 1 - 5 atau Persentase">
+                <input type="text" class="form-control" id="scale" value="1 - 4" placeholder="Contoh: 1 - 4 atau Persentase">
             </div>
             <div class="mb-3">
                 <label for="weight" class="form-label">Bobot (%)</label>

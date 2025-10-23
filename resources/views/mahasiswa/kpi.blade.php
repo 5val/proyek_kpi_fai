@@ -35,7 +35,7 @@
                                 <th>Indikator Kinerja</th>
                                 <th>Target</th>
                                 <th>Capaian</th>
-                                <th>Skor (1-5)</th>
+                                <th>Skor (1-4)</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -44,35 +44,35 @@
                                 <td><i class="bi bi-book text-primary"></i> IPK Semester</td>
                                 <td>≥ 3.50</td>
                                 <td><strong>3.75</strong></td>
-                                <td><span class="badge bg-success">4.5</span></td>
+                                <td><span class="badge bg-success">3.65</span></td>
                                 <td><span class="badge bg-success">Melebihi Target</span></td>
                             </tr>
                             <tr>
                                 <td><i class="bi bi-calendar-check text-info"></i> Kehadiran Perkuliahan</td>
                                 <td>≥ 80%</td>
                                 <td><strong>94%</strong></td>
-                                <td><span class="badge bg-success">5.0</span></td>
+                                <td><span class="badge bg-success">4.0</span></td>
                                 <td><span class="badge bg-success">Melebihi Target</span></td>
                             </tr>
                             <tr>
                                 <td><i class="bi bi-trophy text-warning"></i> Prestasi Akademik & Non-Akademik</td>
                                 <td>≥ 2 Prestasi</td>
                                 <td><strong>3 Prestasi</strong></td>
-                                <td><span class="badge bg-success">4.8</span></td>
+                                <td><span class="badge bg-success">3.8</span></td>
                                 <td><span class="badge bg-success">Melebihi Target</span></td>
                             </tr>
                             <tr>
                                 <td><i class="bi bi-people text-success"></i> Keaktifan Organisasi Kemahasiswaan</td>
                                 <td>Mengikuti min. 1 UKM/Organisasi</td>
                                 <td><strong>2 Organisasi</strong></td>
-                                <td><span class="badge bg-primary">4.0</span></td>
+                                <td><span class="badge bg-primary">3.5</span></td>
                                 <td><span class="badge bg-primary">Target Tercapai</span></td>
                             </tr>
-                            <tr>
+                            <tr class="table-danger">
                                 <td><i class="bi bi-laptop text-danger"></i> Pengumpulan Tugas Tepat Waktu</td>
                                 <td>≥ 85% Tepat Waktu</td>
-                                <td><strong>78%</strong></td>
-                                <td><span class="badge bg-warning">3.2</span></td>
+                                <td><strong>72%</strong></td>
+                                <td><span class="badge bg-warning">2.9</span></td>
                                 <td><span class="badge bg-warning">Perlu Peningkatan</span></td>
                             </tr>
                         </tbody>

@@ -44,15 +44,15 @@
                         <td>Andi Pratama</td>
                         <td>Dr. Budi Hartono, M.Kom.</td>
                         <td>Kinerja Dosen</td>
-                        <td>4.8 / 5.0</td>
+                        <td>3.8 / 4.0</td>
                         <td>2024-10-15 14:30</td>
                         <td><button class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</button></td>
                     </tr>
-                    <tr>
+                    <tr class="table-danger">
                         <td>Siti Aminah</td>
                         <td>Perpustakaan Pusat</td>
                         <td>Fasilitas</td>
-                        <td>4.2 / 5.0</td>
+                        <td>1.8 / 4.0</td>
                         <td>2024-10-15 13:05</td>
                         <td><button class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</button></td>
                     </tr>

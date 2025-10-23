@@ -63,8 +63,8 @@
                         </div>
                         <div class="col-md-4 text-md-end">
                             <h5 class="mb-1">Skor Akhir KPI</h5>
-                            <h1 class="display-5 fw-bold text-success mb-0">4.55</h1>
-                            <p class="mb-0">Kategori: Sangat Baik</p>
+                            <h1 class="display-5 fw-bold text-success mb-0">3.55</h1>
+                            <p class="mb-0">Kategori: Baik</p>
                         </div>
                     </div>
                 </div>
@@ -76,35 +76,35 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Indikator Kinerja</th>
-                                <th>Skor (1-5)</th>
+                                <th>Skor (1-4)</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>Penguasaan Materi</td>
-                                <td class="text-center">4.65</td>
-                                <td class="text-center"><span class="badge bg-success">Sangat Baik</span></td>
+                                <td class="text-center">3.65</td>
+                                <td class="text-center"><span class="badge bg-success">Baik</span></td>
                             </tr>
                             <tr>
                                 <td>Kejelasan dalam Menyampaikan Materi</td>
-                                <td class="text-center">4.80</td>
+                                <td class="text-center">4.00</td>
                                 <td class="text-center"><span class="badge bg-success">Sangat Baik</span></td>
                             </tr>
                             <tr>
                                 <td>Kemampuan Memberi Motivasi</td>
-                                <td class="text-center">4.20</td>
+                                <td class="text-center">3.20</td>
                                 <td class="text-center"><span class="badge bg-primary">Baik</span></td>
                             </tr>
                             <tr>
                                 <td>Kedisiplinan Waktu</td>
                                 <td class="text-center">3.50</td>
-                                <td class="text-center"><span class="badge bg-warning text-dark">Cukup</span></td>
+                                <td class="text-center"><span class="badge bg-primary">Baik</span></td>
                             </tr>
-                            <tr>
+                            <tr class="table-danger">
                                 <td>Keadilan dalam Penilaian</td>
-                                <td class="text-center">3.50</td>
-                                <td class="text-center"><span class="badge bg-warning text-dark">Cukup</span></td>
+                                <td class="text-center">2.20</td>
+                                <td class="text-center"><span class="badge bg-warning text-dark">Buruk</span></td>
                             </tr>
                         </tbody>
                     </table>

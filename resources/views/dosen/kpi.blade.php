@@ -33,34 +33,34 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Indikator Kinerja</th>
-                                <th>Skor (1-5)</th>
+                                <th>Skor (1-4)</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>Penguasaan Materi</td>
-                                <td><span class="badge bg-success">4.6</span></td>
+                                <td><span class="badge bg-success">4.0</span></td>
                                 <td><span class="badge bg-success">Sangat Baik</span></td>
                             </tr>
                             <tr>
                                 <td>Kejelasan dalam Menyampaikan Materi</td>
-                                <td><span class="badge bg-success">5.0</span></td>
+                                <td><span class="badge bg-success">4.0</span></td>
                                 <td><span class="badge bg-success">Sangat Baik</span></td>
                             </tr>
                             <tr>
                                 <td>Kemampuan Memberi Motivasi</td>
-                                <td><span class="badge bg-success">4.5</span></td>
+                                <td><span class="badge bg-success">4.0</span></td>
                                 <td><span class="badge bg-success">Sangat Baik</span></td>
                             </tr>
                             <tr>
                                 <td>Kedisiplinan Waktu</td>
-                                <td><span class="badge bg-primary">4.0</span></td>
+                                <td><span class="badge bg-primary">3.0</span></td>
                                 <td><span class="badge bg-primary">Baik</span></td>
                             </tr>
                             <tr>
                                 <td>Keadilan dalam Penilaian</td>
-                                <td><span class="badge bg-primary">4.0</span></td>
+                                <td><span class="badge bg-primary">3.0</span></td>
                                 <td><span class="badge bg-primary">Baik</span></td>
                             </tr>
                         </tbody>

@@ -169,6 +169,10 @@ Route::prefix("penilaian")->name('penilaian.')->group(function() {
       return view('penilaian.fasilitas');
    })->name('fasilitas');
 
+   Route::get('/praktikum', function() {
+      return view('penilaian.praktikum');
+   })->name('praktikum');
+
    Route::get('/unit', function() {
       return view('penilaian.unit');
    })->name('unit');

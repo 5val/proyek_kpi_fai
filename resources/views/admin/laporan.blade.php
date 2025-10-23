@@ -71,12 +71,17 @@
                 <tbody>
                     <tr>
                         <td>Dr. Budi Hartono, M.Kom.</td>
-                        <td>4.8</td>
+                        <td>3.8</td>
                         <td>120</td>
                     </tr>
                     <tr>
                         <td>Siti Aminah, S.T., M.T.</td>
-                        <td>4.6</td>
+                        <td>3.6</td>
+                        <td>115</td>
+                    </tr>
+                    <tr class="table-danger">
+                        <td>Agung Pramana, S.T., M.T.</td>
+                        <td>1.9</td>
                         <td>115</td>
                     </tr>
                 </tbody>
