@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <div>
-                            <span class="fw-bold me-2">Skor: 4.5/5.0</span>
+                            <span class="fw-bold me-2">Skor: 3.5/4.0</span>
                         </div>
                     </div>
                     <div class="list-group-item d-flex justify-content-between align-items-center">
@@ -89,7 +89,7 @@
                             </div>
                         </div>
                          <div>
-                            <span class="fw-bold me-2">Skor: 4.8/5.0</span>
+                            <span class="fw-bold me-2">Skor: 3.8/4.0</span>
                         </div>
                     </div>
                 </div>

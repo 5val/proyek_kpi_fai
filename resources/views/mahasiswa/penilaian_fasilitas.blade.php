@@ -82,7 +82,7 @@
                             </div>
                         </div>
                         <div>
-                            <span class="fw-bold me-2">Skor: 3.5/5.0</span>
+                            <span class="fw-bold me-2">Skor: 3.0/4.0</span>
                         </div>
                     </div>
                 </div>

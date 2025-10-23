@@ -162,35 +162,35 @@
                                     <td><i class="bi bi-book text-primary"></i> IPK Semester</td>
                                     <td>≥ 3.50</td>
                                     <td><strong>3.75</strong></td>
-                                    <td><span class="badge bg-success">4.5/5</span></td>
+                                    <td><span class="badge bg-success">3.5/4</span></td>
                                     <td><span class="badge bg-success">Excellent</span></td>
                                 </tr>
                                 <tr>
                                     <td><i class="bi bi-calendar-check text-info"></i> Kehadiran Perkuliahan</td>
                                     <td>≥ 80%</td>
                                     <td><strong>94%</strong></td>
-                                    <td><span class="badge bg-success">5.0/5</span></td>
+                                    <td><span class="badge bg-success">4.0/4</span></td>
                                     <td><span class="badge bg-success">Excellent</span></td>
                                 </tr>
                                 <tr>
                                     <td><i class="bi bi-trophy text-warning"></i> Prestasi Akademik</td>
                                     <td>≥ 2 prestasi</td>
                                     <td><strong>3 prestasi</strong></td>
-                                    <td><span class="badge bg-success">4.8/5</span></td>
+                                    <td><span class="badge bg-success">3.8/4</span></td>
                                     <td><span class="badge bg-success">Excellent</span></td>
                                 </tr>
                                 <tr>
                                     <td><i class="bi bi-people text-success"></i> Keaktifan Organisasi</td>
                                     <td>Minimal 1 organisasi</td>
                                     <td><strong>2 organisasi</strong></td>
-                                    <td><span class="badge bg-primary">4.0/5</span></td>
+                                    <td><span class="badge bg-primary">3.0/4</span></td>
                                     <td><span class="badge bg-primary">Good</span></td>
                                 </tr>
-                                <tr>
+                                <tr class="table-danger">
                                     <td><i class="bi bi-laptop text-danger"></i> Tugas & Praktikum</td>
                                     <td>≥ 85% tepat waktu</td>
-                                    <td><strong>78%</strong></td>
-                                    <td><span class="badge bg-warning">3.2/5</span></td>
+                                    <td><strong>72%</strong></td>
+                                    <td><span class="badge bg-warning">2.9/4</span></td>
                                     <td><span class="badge bg-warning">Needs Improvement</span></td>
                                 </tr>
                             </tbody>
