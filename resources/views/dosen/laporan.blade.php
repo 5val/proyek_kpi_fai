@@ -84,7 +84,7 @@
                             <tr>
                                 <td>Penguasaan Materi</td>
                                 <td class="text-center">3.65</td>
-                                <td class="text-center"><span class="badge bg-success">Sangat Baik</span></td>
+                                <td class="text-center"><span class="badge bg-success">Baik</span></td>
                             </tr>
                             <tr>
                                 <td>Kejelasan dalam Menyampaikan Materi</td>
