@@ -12,7 +12,8 @@
     <a class="nav-link" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
     <a class="nav-link" href="#"><i class="bi bi-person-badge"></i> Profil Saya</a>
     <a class="nav-link" href="#"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
-    <a class="nav-link" href="#"><i class="bi bi-people"></i> Penilaian Mahasiswa</a>
+    <a class="nav-link" href="#"><i class="bi bi-pencil-square"></i> Mata Kuliah</a>
+    <a class="nav-link" href="#"><i class="bi bi-pencil-square"></i> Penilaian Mahasiswa</a>
     <a class="nav-link" href="#"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
     <a class="nav-link active" href="#"><i class="bi bi-bank2"></i> Penilaian Unit</a>
     <a class="nav-link" href="#"><i class="bi bi-file-earmark-bar-graph"></i> Laporan Kinerja</a>

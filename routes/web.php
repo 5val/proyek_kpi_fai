@@ -30,6 +30,10 @@ Route::prefix("mahasiswa")->name('mahasiswa.')->group(function() {
    Route::get('/penilaian_unit', function() {
       return view('mahasiswa.penilaian_unit');
    })->name('penilaian_unit');
+   
+   Route::get('/penilaian_praktikum', function() {
+      return view('mahasiswa.penilaian_praktikum');
+   })->name('penilaian_praktikum');
 
    Route::get('/feedback', function() {
       return view('mahasiswa.feedback');
@@ -52,6 +56,14 @@ Route::prefix("dosen")->name('dosen.')->group(function() {
    Route::get('/kpi', function() {
       return view('dosen.kpi');
    })->name('kpi');
+   
+   Route::get('/mata_kuliah', function() {
+      return view('dosen.mata_kuliah');
+   })->name('mata_kuliah');
+   
+   Route::get('/mata_kuliah/kehadiran/create', function() {
+      return view('dosen.form_kehadiran');
+   })->name('form_kehadiran');
 
    Route::get('/penilaian_mahasiswa', function() {
       return view('dosen.penilaian_mahasiswa');
@@ -110,7 +122,7 @@ Route::prefix("admin")->name('admin.')->group(function() {
    Route::get('/mata_kuliah', function() {
       return view('admin.mata_kuliah');
    })->name('mata_kuliah');
-
+   
    Route::get('/mata_kuliah/create', function() {
       return view('admin.form_mata_kuliah');
    })->name('form_mata_kuliah');
@@ -156,24 +168,6 @@ Route::prefix("admin")->name('admin.')->group(function() {
    })->name('feedback');
 });
 
-Route::prefix("penilaian")->name('penilaian.')->group(function() {
-   Route::get('/mahasiswa', function() {
-      return view('penilaian.mahasiswa');
-   })->name('mahasiswa');
-
-   Route::get('/dosen', function() {
-      return view('penilaian.dosen');
-   })->name('dosen');
-
-   Route::get('/fasilitas', function() {
-      return view('penilaian.fasilitas');
-   })->name('fasilitas');
-
-   Route::get('/praktikum', function() {
-      return view('penilaian.praktikum');
-   })->name('praktikum');
-
-   Route::get('/unit', function() {
-      return view('penilaian.unit');
-   })->name('unit');
+Route::get('/penilaian', function() {
+   return view('penilaian');
 });
