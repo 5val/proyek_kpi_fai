@@ -9,81 +9,49 @@
 @section('user-initial', 'AD')
 
 @section('sidebar-menu')
-    <a class="nav-link active" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a class="nav-link" href="#"><i class="bi bi-people-fill"></i> Manajemen User</a>
-    <a class="nav-link" href="#"><i class="bi bi-person-rolodex"></i> Manajemen Dosen</a>
-    <a class="nav-link" href="#"><i class="bi bi-building"></i> Manajemen Fasilitas</a>
-    <a class="nav-link" href="#"><i class="bi bi-bank2"></i> Manajemen Unit</a>
-    <a class="nav-link" href="#"><i class="bi bi-calendar-event-fill"></i> Manajemen Periode</a>
-    <a class="nav-link" href="#"><i class="bi bi-book-fill"></i> Manajemen Mata Kuliah</a>
-    <a class="nav-link" href="#"><i class="bi bi-easel-fill"></i> Manajemen Kelas</a>
-    <a class="nav-link" href="#"><i class="bi bi-tags-fill"></i> Kategori KPI</a>
-    <a class="nav-link" href="#"><i class="bi bi-star-fill"></i> Data Penilaian</a>
-    <a class="nav-link" href="#"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
-    <a class="nav-link" href="#"><i class="bi bi-chat-left-text-fill"></i> Feedback</a>
+    <a class="nav-link active" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a class="nav-link" href="{{ route('admin.user') }}"><i class="bi bi-people-fill"></i> Manajemen User</a>
+    <a class="nav-link" href="{{ route('admin.fasilitas') }}"><i class="bi bi-building"></i> Manajemen Fasilitas</a>
+    <a class="nav-link" href="{{ route('admin.unit') }}"><i class="bi bi-bank2"></i> Manajemen Unit</a>
+    <a class="nav-link" href="{{ route('admin.periode') }}"><i class="bi bi-calendar-event-fill"></i> Manajemen Periode</a>
+    <a class="nav-link" href="{{ route('admin.mata_kuliah') }}"><i class="bi bi-book-fill"></i> Manajemen Mata Kuliah</a>
+    <a class="nav-link" href="{{ route('admin.kelas') }}"><i class="bi bi-easel-fill"></i> Manajemen Kelas</a>
+    <a class="nav-link" href="{{ route('admin.kategori_kpi') }}"><i class="bi bi-tags-fill"></i> Kategori KPI</a>
+    <a class="nav-link" href="{{ route('admin.penilaian') }}"><i class="bi bi-star-fill"></i> Data Penilaian</a>
+    <a class="nav-link" href="{{ route('admin.laporan') }}"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
+    <a class="nav-link" href="{{ route('admin.feedback') }}"><i class="bi bi-chat-left-text-fill"></i> Feedback</a>
 @endsection
 
 @section('content')
-<!-- Admin Statistics Cards -->
-
     <div class="row">
-
         <div class="col-md-3">
-
             <div class="stat-card text-center">
-
                 <div class="icon text-primary"><i class="bi bi-people-fill"></i></div>
-
                 <h3 class="fw-bold">1,250</h3>
-
                 <p class="text-muted mb-0">Total Pengguna</p>
-
             </div>
-
         </div>
-
         <div class="col-md-3">
-
             <div class="stat-card text-center">
-
                 <div class="icon text-success"><i class="bi bi-person-video3"></i></div>
-
                 <h3 class="fw-bold">150</h3>
-
                 <p class="text-muted mb-0">Total Dosen</p>
-
             </div>
-
         </div>
-
         <div class="col-md-3">
-
             <div class="stat-card text-center">
-
                 <div class="icon text-info"><i class="bi bi-person-check-fill"></i></div>
-
                 <h3 class="fw-bold">1,050</h3>
-
                 <p class="text-muted mb-0">Total Mahasiswa</p>
-
             </div>
-
         </div>
-
         <div class="col-md-3">
-
             <div class="stat-card text-center">
-
                 <div class="icon text-warning"><i class="bi bi-clipboard2-data-fill"></i></div>
-
                 <h3 class="fw-bold">25,480</h3>
-
                 <p class="text-muted mb-0">Penilaian Masuk</p>
-
             </div>
-
         </div>
-
     </div>
 
 <!-- Charts -->
