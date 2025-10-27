@@ -9,15 +9,15 @@
 @section('user-initial', 'AP')
 
 @section('sidebar-menu')
-    <a class="nav-link active" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a class="nav-link" href="#"><i class="bi bi-person-badge"></i> Profil Saya</a>
-    <a class="nav-link" href="#"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
-    <a class="nav-link" href="#"><i class="bi bi-star"></i> Penilaian Dosen</a>
-    <a class="nav-link" href="#"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
-    <a class="nav-link" href="#"><i class="bi bi-bank2"></i> Penilaian Unit</a>
-    <a class="nav-link" href="#"><i class="bi bi-person-workspace"></i> Penilaian Praktikum</a>
-    <a class="nav-link" href="#"><i class="bi bi-chat-left-text"></i> Feedback</a>
-    <a class="nav-link" href="#"><i class="bi bi-bar-chart"></i> Laporan KPI</a>
+    <a class="nav-link active" href="{{ route('mahasiswa.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a class="nav-link" href="{{ route('mahasiswa.profile') }}"><i class="bi bi-person-badge"></i> Profil Saya</a>
+    <a class="nav-link" href="{{ route('mahasiswa.kpi') }}"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
+    <a class="nav-link" href="{{ route('mahasiswa.penilaian_dosen') }}"><i class="bi bi-star"></i> Penilaian Dosen</a>
+    <a class="nav-link" href="{{ route('mahasiswa.penilaian_fasilitas') }}"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
+    <a class="nav-link" href="{{ route('mahasiswa.penilaian_unit') }}"><i class="bi bi-bank2"></i> Penilaian Unit</a>
+    <a class="nav-link" href="{{ route('mahasiswa.penilaian_praktikum') }}"><i class="bi bi-person-workspace"></i> Penilaian Praktikum</a>
+    <a class="nav-link" href="{{ route('mahasiswa.feedback') }}"><i class="bi bi-chat-left-text"></i> Feedback</a>
+    <a class="nav-link" href="{{ route('mahasiswa.laporan') }}"><i class="bi bi-bar-chart"></i> Laporan KPI</a>
 @endsection
 
 @section('content')
@@ -216,28 +216,36 @@
                                 <strong>Penilaian Perpustakaan</strong>
                                 <p class="mb-0 text-muted small">Kategori: Fasilitas</p>
                             </div>
-                            <button class="btn btn-sm btn-primary">Isi</button>
+                                <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                                    Isi
+                                </a>
                         </div>
                         <div class="list-group-item border-0 px-0 d-flex justify-content-between align-items-center">
                             <div>
                                 <strong>Penilaian Lab Komputer</strong>
                                 <p class="mb-0 text-muted small">Kategori: Fasilitas</p>
                             </div>
-                            <button class="btn btn-sm btn-primary">Isi</button>
+                                <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                                    Isi
+                                </a>
                         </div>
                         <div class="list-group-item border-0 px-0 d-flex justify-content-between align-items-center">
                             <div>
                                 <strong>Penilaian BAA</strong>
                                 <p class="mb-0 text-muted small">Layanan Akademik</p>
                             </div>
-                            <button class="btn btn-sm btn-primary">Isi</button>
+                            <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                                Isi
+                            </a>
                         </div>
                         <div class="list-group-item border-0 px-0 d-flex justify-content-between align-items-center">
                             <div>
                                 <strong>Penilaian BAK</strong>
                                 <p class="mb-0 text-muted small">Layanan Kemahasiswaan</p>
                             </div>
-                            <button class="btn btn-sm btn-primary">Isi</button>
+                            <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                                Isi
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -255,28 +263,28 @@
                 <div class="card-body">
                     <div class="row text-center">
                         <div class="col-md-3 mb-3">
-                            <button class="btn btn-outline-primary btn-custom w-100">
+                            <a href="{{ route('mahasiswa.penilaian_dosen') }}"class="btn btn-outline-primary btn-custom w-100">
                                 <i class="bi bi-star" style="font-size: 2rem;"></i><br>
                                 Nilai Dosen
-                            </button>
+                            </a>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <button class="btn btn-outline-success btn-custom w-100">
+                            <a href="{{ route('mahasiswa.penilaian_fasilitas') }}" class="btn btn-outline-success btn-custom w-100">
                                 <i class="bi bi-building" style="font-size: 2rem;"></i><br>
                                 Nilai Fasilitas
-                            </button>
+                            </a>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <button class="btn btn-outline-warning btn-custom w-100">
+                            <a href="{{ route('mahasiswa.feedback') }}" class="btn btn-outline-warning btn-custom w-100">
                                 <i class="bi bi-chat-left-dots" style="font-size: 2rem;"></i><br>
                                 Kirim Feedback
-                            </button>
+                            </a>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <button class="btn btn-outline-info btn-custom w-100">
+                            <a href="{{ route('mahasiswa.laporan') }}" class="btn btn-outline-info btn-custom w-100">
                                 <i class="bi bi-file-earmark-text" style="font-size: 2rem;"></i><br>
                                 Lihat Laporan
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
