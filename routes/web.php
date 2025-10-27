@@ -132,5 +132,5 @@ Route::prefix("admin")->name('admin.')->group(function() {
 });
 
 Route::get('/penilaian', function() {
-   return view('penilaian');
-});
+    return view('penilaian');
+})->name('penilaian');
