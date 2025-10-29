@@ -9,16 +9,15 @@
 @section('user-initial', 'CL')
 
 @section('sidebar-menu')
-    <a class="nav-link" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a class="nav-link" href="#"><i class="bi bi-person-badge"></i> Profil Saya</a>
-    <a class="nav-link" href="#"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
-    <a class="nav-link" href="#"><i class="bi bi-star"></i> Penilaian Mahasiswa</a>
-    <a class="nav-link" href="#"><i class="bi bi-graph-up"></i> Rating dari Mahasiswa</a>
-    <a class="nav-link active" href="#"><i class="bi bi-book-fill"></i> Mata Kuliah</a>
-    <a class="nav-link" href="#"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
-    <a class="nav-link" href="#"><i class="bi bi-bank2"></i> Penilaian Unit</a>
-    <a class="nav-link" href="#"><i class="bi bi-file-earmark-bar-graph"></i> Laporan Kinerja</a>
-    <a class="nav-link" href="#"><i class="bi bi-chat-left-text"></i> Feedback</a>
+    <a class="nav-link" href="/dosen"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a class="nav-link" href="/dosen/profile"><i class="bi bi-person-badge"></i> Profil Saya</a>
+    <a class="nav-link" href="/dosen/kpi"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
+    <a class="nav-link active" href="/dosen/mata_kuliah"><i class="bi bi-pencil-square"></i> Mata Kuliah</a>
+    <a class="nav-link" href="/dosen/penilaian_mahasiswa"><i class="bi bi-people"></i> Penilaian Mahasiswa</a>
+    <a class="nav-link" href="/dosen/penilaian_fasilitas"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
+    <a class="nav-link" href="/dosen/penilaian_unit"><i class="bi bi-bank2"></i> Penilaian Unit</a>
+    <a class="nav-link" href="/dosen/laporan"><i class="bi bi-file-earmark-bar-graph"></i> Laporan Kinerja</a>
+    <a class="nav-link" href="/dosen/feedback"><i class="bi bi-chat-left-text"></i> Feedback</a>
 @endsection
 
 @section('content')

@@ -133,7 +133,7 @@
                     </div>
                 @endif
                 
-                <form method="POST" action="">
+                <form method="POST" action="{{ route('loginData') }}">
                     @csrf
                     
                     <div class="form-floating">
