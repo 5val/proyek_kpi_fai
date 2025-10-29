@@ -9,53 +9,57 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
+    /**
+     * Tampilkan halaman login
+     */
     public function showLoginForm()
     {
-        return view('login'); // pastikan view login.blade.php di resources/views/
+        return view('login');
     }
 
+    /**
+     * Proses login pengguna
+     */
     public function login(Request $request)
     {
-        $request->validate([
+        // Validasi input
+        $credentials = $request->validate([
             'email'    => 'required|email',
             'password' => 'required',
         ]);
 
         // Ambil user berdasarkan email
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $credentials['email'])->first();
 
-        // Cek apakah user ditemukan dan password cocok
-        if ($user && Hash::check($request->password, $user->password)) {
-            // Login manual (gunakan Auth::login)
+        if ($user && Hash::check($credentials['password'], $user->password)) {
             Auth::login($user);
-            $request->session()->regenerate();
+            $request->session()->regenerate(); // Hindari session fixation
 
-            // Arahkan berdasarkan role
-            switch ($user->role) {
-                case 'admin':
-                    return redirect()->route('admin.dashboard')->with('status', 'Selamat datang, Admin!');
-                case 'dosen':
-                    return redirect()->route('dosen.dashboard')->with('status', 'Selamat datang, Dosen!');
-                case 'mahasiswa':
-                    return redirect()->route('mahasiswa.dashboard')->with('status', 'Selamat datang, Mahasiswa!');
-                default:
-                    Auth::logout();
-                    return redirect('/login')->withErrors(['role' => 'Role pengguna tidak dikenal.']);
-            }
+            // Redirect sesuai role
+            return match ($user->role) {
+                'admin'     => redirect()->route('admin.dashboard')->with('status', 'Selamat datang, Admin!'),
+                'dosen'     => redirect()->route('dosen.dashboard')->with('status', 'Selamat datang, Dosen!'),
+                'mahasiswa' => redirect()->route('mahasiswa.dashboard')->with('status', 'Selamat datang, Mahasiswa!'),
+                default     => tap(Auth::logout(), fn() => session()->invalidate()) 
+                                ?? redirect()->route('login')->withErrors(['role' => 'Role tidak dikenali.']),
+            };
         }
 
-        // Jika gagal login
+        // Jika login gagal
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->onlyInput('email');
     }
 
+    /**
+     * Logout pengguna
+     */
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login')->with('status', 'Anda telah logout.');
+        return redirect()->route('login')->with('status', 'Anda telah logout.');
     }
 }
