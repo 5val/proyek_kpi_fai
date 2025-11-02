@@ -22,9 +22,7 @@ class Praktikum extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'kelas_id',
-        'nama_asisten', // Ditambahkan berdasarkan UI
-        'materi', // Ditambahkan berdasarkan UI
+        'kelas_id' // Ditambahkan berdasarkan UI
     ];
 
     /**

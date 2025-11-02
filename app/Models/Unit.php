@@ -24,7 +24,7 @@ class Unit extends Model
     protected $fillable = [
         'name',
         'type', // Misal: BAA, BAK, BAU, UKM
-        'penanggung_jawab',
+        'penanggung_jawab_id',
     ];
 
     /**

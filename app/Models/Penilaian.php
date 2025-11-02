@@ -22,13 +22,12 @@ class Penilaian extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'penilai_id', // User (Mahasiswa/Dosen) yang menilai
-        'dinilai_id', // ID dari model yang dinilai (Dosen, Mhs, Fasilitas, Unit)
-        'dinilai_type', // Nama model: App\Models\Dosen, App\Models\Fasilitas, dll.
-        'kategori_id', // Kategori KPI yang digunakan
-        'periode_id', // Periode penilaian
-        'komentar',
-        'avg_score',
+         'kategori_id', // Kategori KPI yang digunakan
+         'penilai_id', // User (Mahasiswa/Dosen) yang menilai
+         'dinilai_id', // ID dari model yang dinilai (Dosen, Mhs, Fasilitas, Unit)
+         'periode_id', // Periode penilaian
+         'komentar',
+         'avg_score',
     ];
 
     /**

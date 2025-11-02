@@ -23,9 +23,8 @@ class Feedback extends Model
      */
     protected $fillable = [
         'pengirim_id',
-        'subjek', // Ditambahkan berdasarkan UI
+        'kategori_id',
         'isi', // Ditambahkan berdasarkan UI (menggantikan 'komentar')
-        'kategori',
         'foto',
         'is_anonymous',
         'status', // Belum Ditanggapi, Sudah Ditanggapi
