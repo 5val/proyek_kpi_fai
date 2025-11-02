@@ -28,24 +28,45 @@
         <i class="bi bi-plus-circle-fill"></i> Tambah Unit Baru
     </div>
     <div class="card-body">
-        <form>
+         @if (isset($unit))
+            <form action="{{ route('admin.unit.update', $unit->id) }}" method="POST">
+         @else
+            <form action="{{ route('admin.unit.insert') }}" method="POST">
+         @endif
+         @csrf
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="unitName" class="form-label">Nama Unit</label>
-                    <input type="text" class="form-control" id="unitName" placeholder="Contoh: Biro Administrasi Akademik">
+                    <input type="text" class="form-control" id="unitName" placeholder="Contoh: Biro Administrasi Akademik" name="name" value="{{ isset($unit) ? $unit->name : old('name') }}" {{ isset($user) ? 'disabled' : '' }}>
+                    @error('name')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="unitType" class="form-label">Tipe Unit</label>
-                    <select id="unitType" class="form-select">
+                    <select id="unitType" class="form-select" name="type">
                         <option selected>Pilih tipe...</option>
-                        <option value="layanan">Layanan</option>
-                        <option value="akademik">Akademik (Prodi/Jurusan)</option>
-                        <option value="ukm">UKM/Organisasi</option>
+                        <option value="Layanan" {{ old('type', $unit->type ?? '') == 'Layanan' ? 'selected' : '' }}>Layanan</option>
+                        <option value="Akademik" {{ old('type', $unit->type ?? '') == 'Akademik' ? 'selected' : '' }}>Akademik</option>
+                        <option value="UKM" {{ old('type', $unit->type ?? '') == 'UKM' ? 'selected' : '' }}>UKM</option>
+                        <option value="UKK" {{ old('type', $unit->type ?? '') == 'UKK' ? 'selected' : '' }}>UKK</option>
+                        <option value="Organisasi" {{ old('type', $unit->type ?? '') == 'Organisasi' ? 'selected' : '' }}>Organisasi</option>
                     </select>
+                    @error('type')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div class="col-md-12 mb-3">
                     <label for="personInCharge" class="form-label">Penanggung Jawab</label>
-                    <input type="text" class="form-control" id="personInCharge" placeholder="Masukkan nama penanggung jawab">
+                    <select class="form-select" name="penanggung_jawab_id">
+                       <option selected>Pilih penanggung jawab...</option>
+                       @foreach ($users as $user)
+                           <option value="{{ $user->id }}"  {{ old('penanggung_jawab_id', $unit->penanggung_jawab_id ?? '') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
+                       @endforeach
+                    </select>
+                    @error('penanggung_jawab_id')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
             <div class="mt-3">

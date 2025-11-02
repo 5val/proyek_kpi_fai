@@ -23,6 +23,9 @@
 @endsection
 
 @section('content')
+@if(session('success'))
+   <div class="alert alert-success">{{ session('success') }}</div>
+@endif
 <div class="card-custom">
     <div class="card-header d-flex justify-content-between align-items-center">
         <div><i class="bi bi-bank2"></i> Daftar Unit</div>
@@ -40,33 +43,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>BAA (Biro Administrasi Akademik)</td>
-                        <td>Layanan</td>
-                        <td>Dra. Rini Susanti</td>
+                  @foreach ($units as $unit)
+                     <tr>
+                        <td>{{ $unit->name }}</td>
+                        <td>{{ $unit->type }}</td>
+                        <td>{{ $unit->penanggungJawab->name ?? 'Belum ditentukan' }}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
+                           <a href="{{ route('admin.form_unit_edit', $unit->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                           <a href="{{ route('admin.unit.delete', $unit->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
                         </td>
-                    </tr>
-                    <tr>
-                        <td>BAK (Biro Administrasi Keuangan)</td>
-                        <td>Layanan</td>
-                        <td>Bambang Irawan, S.E.</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>UKM Fotografi</td>
-                        <td>UKM</td>
-                        <td>Prof. Dr. Ir. Rina Wijaya</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
-                        </td>
-                    </tr>
+                     </tr>
+                  @endforeach
                 </tbody>
             </table>
         </div>

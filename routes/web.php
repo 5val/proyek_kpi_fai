@@ -68,15 +68,27 @@ Route::prefix('dosen')
 */
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['login', 'role:admin'])
+   //  ->middleware(['login', 'role:admin'])
     ->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/user', [AdminController::class, 'user'])->name('user');
         Route::get('/user/create', [AdminController::class, 'form_user'])->name('form_user');
+        Route::get('/user/delete/{id}', [AdminController::class, 'delete_user'])->name('user.delete');
+        Route::get('/user/edit/{id}', [AdminController::class, 'form_user_edit'])->name('form_user_edit');
+        Route::post('/user/insert', [AdminController::class, 'insert_user'])->name('user.insert');
+        Route::post('/user/update/{id}', [AdminController::class, 'update_user'])->name('user.update');
         Route::get('/fasilitas', [AdminController::class, 'fasilitas'])->name('fasilitas');
         Route::get('/fasilitas/create', [AdminController::class, 'form_fasilitas'])->name('form_fasilitas');
+        Route::get('/fasilitas/delete/{id}', [AdminController::class, 'delete_fasilitas'])->name('fasilitas.delete');
+        Route::get('/fasilitas/edit/{id}', [AdminController::class, 'form_fasilitas_edit'])->name('form_fasilitas_edit');
+        Route::post('/fasilitas/insert', [AdminController::class, 'insert_fasilitas'])->name('fasilitas.insert');
+        Route::post('/fasilitas/update/{id}', [AdminController::class, 'update_fasilitas'])->name('fasilitas.update');
         Route::get('/unit', [AdminController::class, 'unit'])->name('unit');
         Route::get('/unit/create', [AdminController::class, 'form_unit'])->name('form_unit');
+        Route::get('/unit/delete/{id}', [AdminController::class, 'delete_unit'])->name('unit.delete');
+        Route::get('/unit/edit/{id}', [AdminController::class, 'form_unit_edit'])->name('form_unit_edit');
+        Route::post('/unit/insert', [AdminController::class, 'insert_unit'])->name('unit.insert');
+        Route::post('/unit/update/{id}', [AdminController::class, 'update_unit'])->name('unit.update');
         Route::get('/periode', [AdminController::class, 'periode'])->name('periode');
         Route::get('/mata_kuliah', [AdminController::class, 'mata_kuliah'])->name('mata_kuliah');
         Route::get('/mata_kuliah/create', [AdminController::class, 'form_mata_kuliah'])->name('form_mata_kuliah');

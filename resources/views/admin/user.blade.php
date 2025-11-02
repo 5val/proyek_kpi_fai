@@ -23,6 +23,9 @@
 @endsection
 
 @section('content')
+@if(session('success'))
+   <div class="alert alert-success">{{ session('success') }}</div>
+@endif
 <div class="card-custom">
     <div class="card-header d-flex justify-content-between align-items-center">
         <div><i class="bi bi-people-fill"></i> Daftar Pengguna</div>
@@ -60,38 +63,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- Data akan difilter oleh controller berdasarkan request('role') --}}
-                    <tr>
-                        <td>Andi Pratama</td>
-                        <td>andi.pratama@example.com</td>
-                        <td><span class="badge bg-info">Mahasiswa</span></td>
-                        <td>2024-01-15</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Dr. Budi Hartono, M.Kom.</td>
-                        <td>budi.hartono@example.com</td>
-                        <td><span class="badge bg-success">Dosen</span></td>
-                        <td>2024-01-10</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
-                        </td>
-                    </tr>
+                  @foreach ($users as $user)
                      <tr>
-                        <td>Administrator</td>
-                        <td>admin@example.com</td>
-                        <td><span class="badge bg-danger">Admin</span></td>
-                        <td>2024-01-01</td>
+                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->email }}</td>
+                        @if ($user->role == "admin")
+                           <td><span class="badge bg-danger">Admin</span></td>
+                        @elseif ($user->role == "dosen")
+                           <td><span class="badge bg-success">Dosen</span></td>
+                        @else
+                           <td><span class="badge bg-info">Mahasiswa</span></td>
+                        @endif
+                        <td>{{ $user->created_at }}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
+                           <a href="{{ route('admin.form_user_edit', $user->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                           <a href="{{ route('admin.user.delete', $user->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
                         </td>
-                    </tr>
-                    {{-- Contoh data lain akan muncul di sini --}}
+                     </tr>
+                  @endforeach
                 </tbody>
             </table>
         </div>

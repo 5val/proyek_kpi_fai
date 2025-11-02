@@ -23,6 +23,9 @@
 @endsection
 
 @section('content')
+@if(session('success'))
+   <div class="alert alert-success">{{ session('success') }}</div>
+@endif
 <div class="card-custom">
     <div class="card-header d-flex justify-content-between align-items-center">
         <div><i class="bi bi-building"></i> Daftar Fasilitas</div>
@@ -41,26 +44,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Perpustakaan Pusat</td>
-                        <td>Umum</td>
-                        <td>Gedung A Lantai 1-3</td>
-                        <td><span class="badge bg-success">Baik</span></td>
+                  @foreach ($fasilitas as $f)
+                     <tr class="{{ $f->kondisi == 'baik' ? '' : 'table-danger' }}">
+                        <td>{{ $f->name }}</td>
+                        <td>{{$f->kategori}}</td>
+                        <td>{{$f->lokasi}}</td>
+                        @if ($f->kondisi == "baik")
+                           <td><span class="badge bg-success">Baik</span></td>
+                        @else
+                           <td><span class="badge bg-warning text-dark">Perlu Perbaikan</span></td>
+                        @endif
                         <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
+                           <a href="{{ route('admin.form_fasilitas_edit', $f->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                           <a href="{{ route('admin.fasilitas.delete', $f->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
                         </td>
-                    </tr>
-                    <tr class="table-danger">
-                        <td>Laboratorium Komputer C101</td>
-                        <td>Laboratorium</td>
-                        <td>Gedung C Lantai 1</td>
-                        <td><span class="badge bg-warning text-dark">Perlu Perbaikan</span></td>
-                        <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
-                        </td>
-                    </tr>
+                     </tr>
+                  @endforeach
                 </tbody>
             </table>
         </div>

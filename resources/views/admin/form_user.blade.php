@@ -28,29 +28,45 @@
         <i class="bi bi-plus-circle-fill"></i> Tambah Pengguna Baru
     </div>
     <div class="card-body">
-        <form>
+         @if (isset($user))
+            <form action="{{ route('admin.user.update', $user->id) }}" method="POST">
+         @else
+            <form action="{{ route('admin.user.insert') }}" method="POST">
+         @endif
+         @csrf
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="fullName" class="form-label">Nama Lengkap</label>
-                    <input type="text" class="form-control" id="fullName" placeholder="Masukkan nama lengkap">
+                    <input type="text" class="form-control" id="fullName" placeholder="Masukkan nama lengkap" name="name" value="{{ isset($user) ? $user->name : old('name') }}">
+                    @error('name')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="email" class="form-label">Alamat Email</label>
-                    <input type="email" class="form-control" id="email" placeholder="contoh@example.com">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="contoh@example.com" name="email" value="{{ isset($user) ? $user->email : old('email') }}">
+                    @error('email')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Masukkan password">
+                    <input type="password" class="form-control" id="password" placeholder="Masukkan password" name="password" value="{{ isset($user) ? $user->password : old('password') }}" {{ isset($user) ? 'disabled' : '' }}>
+                    @error('password')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="userRole" class="form-label">Role / Peran</label>
-                    <select id="userRole" class="form-select">
-                        <option selected>Pilih peran...</option>
-                        <option value="mahasiswa">Mahasiswa</option>
-                        <option value="dosen">Dosen</option>
-                        <option value="admin">Admin</option>
-                        <option value="unit">Unit Layanan</option>
+                    <select id="userRole" class="form-select" name="role">
+                        <option selected>Pilih role...</option>
+                        <option value="mahasiswa" {{ old('role', $user->role ?? '') == 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
+                        <option value="dosen" {{ old('role', $user->role ?? '') == 'dosen' ? 'selected' : '' }}>Dosen</option>
+                        <option value="admin" {{ old('role', $user->role ?? '') == 'admin' ? 'selected' : '' }}>Admin</option>
                     </select>
+                    @error('role')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
             <div class="mt-3">

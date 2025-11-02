@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Unit extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     /**
      * Nama tabel yang terkait dengan model.
@@ -33,6 +35,11 @@ class Unit extends Model
     public function penilaian()
     {
         return $this->morphMany(Penilaian::class, 'dinilai');
+    }
+
+    public function penanggungJawab()
+    {
+        return $this->belongsTo(User::class, 'penanggung_jawab_id');
     }
 }
 
