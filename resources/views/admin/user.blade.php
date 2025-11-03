@@ -46,7 +46,7 @@
             <!-- Tombol Tambah Dinamis -->
             <a href="{{ route('admin.form_user') }}" id="addUserButton" class="btn btn-primary btn-sm">
                 <i class="bi bi-plus-circle"></i> 
-                <span id="addButtonText"></span>
+                <span id="addButtonText">Tambah User</span>
             </a>
         </div>
     </div>
@@ -89,7 +89,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<!-- <script>
     document.addEventListener('DOMContentLoaded', function() {
         const roleFilter = document.getElementById('roleFilter');
         const addButton = document.getElementById('addUserButton');
@@ -122,6 +122,6 @@
             // Form akan di-submit secara otomatis oleh atribut onchange="this.form.submit()"
         });
     });
-</script>
+</script> -->
 @endpush
 

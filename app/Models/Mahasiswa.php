@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Mahasiswa extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     /**
      * Nama tabel yang terkait dengan model.
@@ -23,7 +25,7 @@ class Mahasiswa extends Model
      */
     protected $fillable = [
         'user_id',
-        'nim', // 'mahasiswa_nrp' di tabel lain
+        'nrp', // 'mahasiswa_nrp' di tabel lain
         'program_studi',
         'angkatan',
         'ipk',

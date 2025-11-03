@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dosen;
 use App\Models\Fasilitas;
+use App\Models\Mahasiswa;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -24,46 +28,150 @@ class AdminController extends Controller
    }
 
    public function delete_user($id) {
-      User::findOrFail($id)->delete();
+      $user = User::findOrFail($id);
+      if($user->role == 'mahasiswa') {
+         Mahasiswa::where('user_Id', $id)->delete();
+      } elseif($user->role == 'dosen') {
+         Dosen::where('user_Id', $id)->delete();
+      }
+      $user->delete();
+
       return redirect()->route('admin.user')->with('success', 'User deleted successfully!');
    }
 
-   public function insert_user(Request $request) {
-      $data = $request->validate([
+   public function insert_user(Request $request)
+{
+      // --- Validate basic user data ---
+      $validated = $request->validate([
          'name' => 'required|string|max:255',
-         'email' => 'required|email|max:255',
-         'password' => 'required',
+         'email' => 'required|email|max:255|unique:users,email',
+         'password' => 'required|string|min:6',
          'role' => 'required|in:mahasiswa,dosen,admin'
       ]);
 
-      $emailFound = User::where('email', $request->email)->first();
-      if($emailFound) {
-         return back()->withErrors(['email' => 'This email already exists!'])->withInput();
+      // --- Add role-specific validation ---
+      if ($request->role === 'mahasiswa') {
+         $roleData = $request->validate([
+               'nrp' => 'required|unique:mahasiswa,nrp',
+               'program_studi' => 'required|in:Informatika,SIB,DKV,Industri,Elektro,Desain Produk,MBD',
+               'angkatan' => 'required|integer|min:1970|max:' . date('Y'),
+               'ipk' => 'required|numeric|between:0,4',
+         ]);
+      } elseif ($request->role === 'dosen') {
+         $roleData = $request->validate([
+               'nidn' => 'required|unique:dosen,nidn',
+         ]);
+      } else {
+         $roleData = [];
       }
 
-      User::create($data);
-      return redirect()->route('admin.user')->with('success', 'User added successfully!');
+      // --- Create user ---
+      $user = User::create([
+         'name' => $validated['name'],
+         'email' => $validated['email'],
+         'password' => Hash::make($validated['password']),
+         'role' => $validated['role'],
+      ]);
+
+      // --- Create related record based on role ---
+      if ($validated['role'] === 'mahasiswa') {
+         Mahasiswa::create([
+               'user_id' => $user->id,
+               'nrp' => $roleData['nrp'],
+               'program_studi' => $roleData['program_studi'],
+               'angkatan' => $roleData['angkatan'],
+               'ipk' => $roleData['ipk'],
+         ]);
+      } elseif ($validated['role'] === 'dosen') {
+         Dosen::create([
+               'user_id' => $user->id,
+               'nidn' => $roleData['nidn'],
+         ]);
+      }
+
+      return redirect()->route('admin.user')
+         ->with('success', 'User added successfully!');
    }
 
    public function update_user(Request $request, $id) {
       $user = User::findOrFail($id);
-      $data = $request->validate([
+
+      $validated = $request->validate([
          'name' => 'required|string|max:255',
-         'email' => 'required|email|max:255',
-         'role' => 'required|in:mahasiswa,dosen,admin'
+         'email' => [
+               'required',
+               'email',
+               'max:255',
+               Rule::unique('users', 'email')->ignore($id),
+         ],
+         'role' => 'required|in:mahasiswa,dosen,admin',
       ]);
 
-      $emailFound = User::where('id', '!=', $id)->where('email', $request->email)->first();
-      if($emailFound) {
-         return back()->withErrors(['email' => 'This email already exists!'])->withInput();
+      $roleData = [];
+
+      if ($validated['role'] === 'mahasiswa') {
+         $roleData = $request->validate([
+               'nrp' => [
+                  'required',
+                  Rule::unique('mahasiswa', 'nrp')->ignore(optional($user->mahasiswa)->id),
+               ],
+               'program_studi' => 'required|in:Informatika,SIB,DKV,Industri,Elektro,Desain Produk,MBD',
+               'angkatan' => 'required|integer|min:1970|max:' . date('Y'),
+               'ipk' => 'required|numeric|between:0,4',
+         ]);
+      } elseif ($validated['role'] === 'dosen') {
+         $roleData = $request->validate([
+               'nidn' => [
+                  'required',
+                  Rule::unique('dosen', 'nidn')->ignore(optional($user->dosen)->id),
+               ],
+         ]);
       }
 
-      $user->update(['name' => $request->name, 'email' => $request->email, 'role' => $request->role]);
+      // --- If role changed, clean up old related data ---
+      if ($user->role !== $validated['role']) {
+         if ($user->role === 'mahasiswa' && $user->mahasiswa) {
+               $user->mahasiswa->delete();
+         } elseif ($user->role === 'dosen' && $user->dosen) {
+               $user->dosen->delete();
+         }
+      }
+
+      // --- Update user ---
+      $user->update([
+         'name' => $validated['name'],
+         'email' => $validated['email'],
+         'role' => $validated['role'],
+      ]);
+
+      // --- Maintain role-related data ---
+      if ($validated['role'] === 'mahasiswa') {
+         Mahasiswa::updateOrCreate(
+               ['user_id' => $user->id],
+               [
+                  'nrp' => $roleData['nrp'],
+                  'program_studi' => $roleData['program_studi'],
+                  'angkatan' => $roleData['angkatan'],
+                  'ipk' => $roleData['ipk'],
+               ]
+         );
+      } elseif ($validated['role'] === 'dosen') {
+         Dosen::updateOrCreate(
+               ['user_id' => $user->id],
+               ['nidn' => $roleData['nidn']]
+         );
+      }
+
       return redirect()->route('admin.user')->with('success', 'User updated successfully!');
    }
 
    public function form_user_edit($id) {
       $user = User::findOrFail($id);
+      if($user->role == 'mahasiswa') {
+         $user = User::with('mahasiswa')->findOrFail($id);
+      } elseif ($user->role == 'dosen') {
+         $user = User::with('dosen')->findOrFail($id);
+      }
 
       return view('admin.form_user', ['user' => $user]);
    }
