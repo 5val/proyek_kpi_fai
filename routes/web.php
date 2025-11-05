@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,19 +24,34 @@ Route::get('/', function () {
 | Mahasiswa Routes
 |--------------------------------------------------------------------------
 */
+// Route::prefix('mahasiswa')
+//     ->name('mahasiswa.')
+//     ->middleware(['login', 'role:mahasiswa'])
+//     ->group(function () {
+//         Route::get('/', fn() => view('mahasiswa.dashboard'))->name('dashboard');
+//         Route::get('/profile', fn() => view('mahasiswa.profile'))->name('profile');
+//         Route::get('/kpi', fn() => view('mahasiswa.kpi'))->name('kpi');
+//         Route::get('/penilaian_dosen', fn() => view('mahasiswa.penilaian_dosen'))->name('penilaian_dosen');
+//         Route::get('/penilaian_fasilitas', fn() => view('mahasiswa.penilaian_fasilitas'))->name('penilaian_fasilitas');
+//         Route::get('/penilaian_unit', fn() => view('mahasiswa.penilaian_unit'))->name('penilaian_unit');
+//         Route::get('/penilaian_praktikum', fn() => view('mahasiswa.penilaian_praktikum'))->name('penilaian_praktikum');
+//         Route::get('/feedback', fn() => view('mahasiswa.feedback'))->name('feedback');
+//         Route::get('/laporan', fn() => view('mahasiswa.laporan'))->name('laporan');
+//     });
+
 Route::prefix('mahasiswa')
     ->name('mahasiswa.')
-    ->middleware(['login', 'role:mahasiswa'])
+    // ->middleware(['login', 'role:mahasiswa'])
     ->group(function () {
-        Route::get('/', fn() => view('mahasiswa.dashboard'))->name('dashboard');
-        Route::get('/profile', fn() => view('mahasiswa.profile'))->name('profile');
-        Route::get('/kpi', fn() => view('mahasiswa.kpi'))->name('kpi');
-        Route::get('/penilaian_dosen', fn() => view('mahasiswa.penilaian_dosen'))->name('penilaian_dosen');
-        Route::get('/penilaian_fasilitas', fn() => view('mahasiswa.penilaian_fasilitas'))->name('penilaian_fasilitas');
-        Route::get('/penilaian_unit', fn() => view('mahasiswa.penilaian_unit'))->name('penilaian_unit');
-        Route::get('/penilaian_praktikum', fn() => view('mahasiswa.penilaian_praktikum'))->name('penilaian_praktikum');
-        Route::get('/feedback', fn() => view('mahasiswa.feedback'))->name('feedback');
-        Route::get('/laporan', fn() => view('mahasiswa.laporan'))->name('laporan');
+        Route::get('/', [MahasiswaController::class, 'dashboard'])->name('dashboard');
+        Route::get('/profile', [MahasiswaController::class, 'profile'])->name('profile');
+        Route::get('/kpi', [MahasiswaController::class, 'kpi'])->name('kpi');
+        Route::get('/penilaian_dosen', [MahasiswaController::class, 'penilaian_dosen'])->name('penilaian_dosen');
+        Route::get('/penilaian_fasilitas', [MahasiswaController::class, 'penilaian_fasilitas'])->name('penilaian_fasilitas');
+        Route::get('/penilaian_unit', [MahasiswaController::class, 'penilaian_unit'])->name('penilaian_unit');
+        Route::get('/penilaian_praktikum', [MahasiswaController::class, 'penilaian_praktikum'])->name('penilaian_praktikum');
+        Route::get('/feedback', [MahasiswaController::class, 'feedback'])->name('feedback');
+        Route::get('/laporan', [MahasiswaController::class, 'laporan'])->name('laporan');
     });
 
 
