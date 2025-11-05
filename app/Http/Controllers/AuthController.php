@@ -22,33 +22,33 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Validasi input
-        $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
+      $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
 
-        // Ambil user berdasarkan email
-        $user = User::where('email', $credentials['email'])->first();
-
-        if ($user && Hash::check($credentials['password'], $user->password)) {
-            Auth::login($user);
-            $request->session()->regenerate(); // Hindari session fixation
-
-            // Redirect sesuai role
-            return match ($user->role) {
-                'admin'     => redirect()->route('admin.dashboard')->with('status', 'Selamat datang, Admin!'),
-                'dosen'     => redirect()->route('dosen.dashboard')->with('status', 'Selamat datang, Dosen!'),
-                'mahasiswa' => redirect()->route('mahasiswa.dashboard')->with('status', 'Selamat datang, Mahasiswa!'),
-                default     => tap(Auth::logout(), fn() => session()->invalidate()) 
-                                ?? redirect()->route('login')->withErrors(['role' => 'Role tidak dikenali.']),
-            };
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect("/");
         }
 
-        // Jika login gagal
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->onlyInput('email');
+    }
+
+    public function redirectPathFor()
+    {
+        if(Auth::check()) {
+           if (Auth::user()->role == 'admin') {
+               return redirect()->route('admin.dashboard');
+           } elseif (Auth::user()->role == 'dosen') {
+               return redirect()->route('dosen.dashboard');
+           } elseif (Auth::user()->role == 'mahasiswa') {
+               return redirect()->route('mahasiswa.dashboard');
+           }
+        }
+        return redirect('/login'); 
     }
 
     /**

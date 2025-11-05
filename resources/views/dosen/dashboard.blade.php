@@ -18,6 +18,11 @@
     <a class="nav-link" href="/dosen/penilaian_unit"><i class="bi bi-bank2"></i> Penilaian Unit</a>
     <a class="nav-link" href="/dosen/laporan"><i class="bi bi-file-earmark-bar-graph"></i> Laporan Kinerja</a>
     <a class="nav-link" href="/dosen/feedback"><i class="bi bi-chat-left-text"></i> Feedback</a>
+    <form action="{{ route('logout') }}" method="POST" style="float: right;">
+      @csrf
+      <span style="color: white; margin-right: 10px;">Halo, {{ Auth::user()->name }}!</span>
+      <button type="submit">Logout</button>
+   </form>
 @endsection
 
 @section('content')

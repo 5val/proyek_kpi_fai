@@ -10,12 +10,10 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('loginData');
+Route::post('/login', [AuthController::class, 'login'])->name('loginData')->middleware('guest');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/', function () {
-    return redirect('/login');
-});
+Route::get('/', [AuthController::class, 'redirectPathFor']);
 
 
 /*
@@ -46,7 +44,7 @@ Route::prefix('mahasiswa')
 */
 Route::prefix('dosen')
     ->name('dosen.')
-    ->middleware(['login', 'role:dosen'])
+   //  ->middleware(['login', 'role:dosen'])
     ->group(function () {
         Route::get('/', fn() => view('dosen.dashboard'))->name('dashboard');
         Route::get('/profile', fn() => view('dosen.profile'))->name('profile');
