@@ -23,6 +23,9 @@
 @endsection
 
 @section('content')
+@if(session('success'))
+   <div class="alert alert-success">{{ session('success') }}</div>
+@endif
 <div class="card-custom">
     <div class="card-header d-flex justify-content-between align-items-center">
         <div><i class="bi bi-book-fill"></i> Daftar Mata Kuliah</div>
@@ -33,44 +36,25 @@
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
-                        <th>Kode MK</th>
-                        <th>Nama Mata Kuliah</th>
+                       <th>Nama Mata Kuliah</th>
+                       <th>Program Studi</th>
                         <th>SKS</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>IF101</td>
-                        <td>Algoritma & Pemrograman</td>
-                        <td>3</td>
-                        <td>
-                            <a href="#" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                            <a href="#" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>IF102</td>
-                        <td>Struktur Data</td>
-                        <td>3</td>
-                        <td>
-                            <a href="#" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                            <a href="#" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td>3</td>
-                        <td>KU201</td>
-                        <td>Pendidikan Kewarganegaraan</td>
-                        <td>2</td>
-                        <td>
-                            <a href="#" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                            <a href="#" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
-                        </td>
-                    </tr>
+                  @foreach ($matkul as $m)
+                  
+                  <tr>
+                      <td>{{ $m->name }}</td>
+                      <td>{{ $m->program_studi }}</td>
+                      <td>{{ $m->sks }}</td>
+                      <td>
+                          <a href="{{ route('admin.form_mata_kuliah_edit', $m->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                          <a href="{{ route('admin.mata_kuliah.delete', $m->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
+                      </td>
+                  </tr>
+                  @endforeach
                 </tbody>
             </table>
         </div>

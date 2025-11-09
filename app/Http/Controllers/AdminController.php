@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Dosen;
 use App\Models\Fasilitas;
 use App\Models\Mahasiswa;
+use App\Models\MataKuliah;
+use App\Models\Periode;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -290,15 +292,83 @@ class AdminController extends Controller
    }
 
    public function periode() {
-      return view('admin.periode');
+      $periode = Periode::all();
+      return view('admin.periode', ['periode' => $periode]);
+   }
+
+   public function new_periode() {
+      $last_periode = Periode::orderBy('id', 'desc')->first();
+      
+      if($last_periode->semester == "gasal") {
+         $next_semester = "genap";
+         $next_tahun = $last_periode->tahun + 1;
+         $next_periode = "Genap " . $last_periode->tahun . "/" . $next_tahun;
+      } else if($last_periode->semester == "genap") {
+         $next_semester = "pendek";
+         $next_tahun = $last_periode->tahun;
+         $next_periode = "Pendek " . $last_periode->tahun - 1 . "/" . $next_tahun;
+      } else {
+         $next_semester = "gasal";
+         $next_tahun = $last_periode->tahun;
+         $next_periode = "Gasal " . $last_periode->tahun . "/" . $next_tahun + 1;
+      }
+
+      Periode::create(['nama_periode' => $next_periode, 'tahun' => $next_tahun, 'semester' => $next_semester]);
+
+      return back()->with('success', 'New periode successfully opened!');
    }
 
    public function mata_kuliah() {
-      return view('admin.mata_kuliah');
+      $matkul = MataKuliah::all();
+      return view('admin.mata_kuliah', ["matkul" => $matkul]);
    }
 
    public function form_mata_kuliah() {
       return view('admin.form_mata_kuliah');
+   }
+
+   public function delete_mata_kuliah($id) {
+      MataKuliah::findOrFail($id)->delete();
+      return redirect()->route('admin.mata_kuliah')->with('success', 'Mata Kuliah deleted successfully!');
+   }
+
+   public function insert_mata_kuliah(Request $request) {
+      $data = $request->validate([
+         'name' => 'required|string|max:255',
+         'program_studi' => 'required|in:Informatika,SIB,DKV,Industri,Elektro,Desain Produk,MBD',
+         'sks' => 'required|integer|min:2|max:4'
+      ]);
+
+      $matkulFound = MataKuliah::where('name', $request->name)->where('program_studi', $request->program_studi)->first();
+      if($matkulFound) {
+         return back()->withErrors(['program_studi' => 'Mata Kuliah with this name already exists in this program studi!'])->withInput();
+      }
+
+      MataKuliah::create($data);
+      return redirect()->route('admin.mata_kuliah')->with('success', 'Mata Kuliah added successfully!');
+   }
+
+   public function update_mata_kuliah(Request $request, $id) {
+      $matkul = MataKuliah::findOrFail($id);
+      $data = $request->validate([
+         'name' => 'required|string|max:255',
+         'program_studi' => 'required|in:Informatika,SIB,DKV,Industri,Elektro,Desain Produk,MBD',
+         'sks' => 'required|integer|min:2|max:4'
+      ]);
+
+      $matkulFound = MataKuliah::where('id', '!=', $id)->where('name', $request->name)->where('program_studi', $request->program_studi)->first();
+      if($matkulFound) {
+         return back()->withErrors(['program_studi' => 'Mata Kuliah with this name already exists in this program studi!'])->withInput();
+      }
+
+      $matkul->update($data);
+      return redirect()->route('admin.mata_kuliah')->with('success', 'Mata Kuliah updated successfully!');
+   }
+
+   public function form_mata_kuliah_edit($id) {
+      $matkul = MataKuliah::findOrFail($id);
+
+      return view('admin.form_mata_kuliah', ['matkul' => $matkul]);
    }
 
    public function kelas() {

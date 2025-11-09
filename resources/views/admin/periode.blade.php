@@ -23,29 +23,32 @@
 @endsection
 
 @section('content')
+@if(session('success'))
+   <div class="alert alert-success">{{ session('success') }}</div>
+@endif
 <div class="card-custom">
     <div class="card-header d-flex justify-content-between align-items-center">
         <div><i class="bi bi-calendar-event-fill"></i> Daftar Periode Akademik</div>
-        <a href="#" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Tambah Periode</a>
+        <a href="{{ route('admin.periode.insert') }}" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Buka Periode</a>
     </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
-                        <th>#</th>
                         <th>Nama Periode</th>
+                        <th>Tahun</th>
+                        <th>Semester</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Semester Gasal 2024/2025</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Semester Genap 2023/2024</td>
-                    </tr>
+                  @foreach ($periode as $p)
+                  <tr>
+                     <td>{{ $p->nama_periode }}</td>
+                     <td>{{ $p->tahun }}</td>
+                     <td>{{ Str::ucfirst($p->semester) }}</td>
+                  </tr>
+                  @endforeach
                 </tbody>
             </table>
         </div>
