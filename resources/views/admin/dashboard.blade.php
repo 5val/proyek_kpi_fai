@@ -22,8 +22,9 @@
     <a class="nav-link" href="{{ route('admin.feedback') }}"><i class="bi bi-chat-left-text-fill"></i> Feedback</a>
     <form action="{{ route('logout') }}" method="POST" style="float: right;">
       @csrf
-      <span style="color: white; margin-right: 10px;">Halo, {{ Auth::user()->name }}!</span>
-      <button type="submit">Logout</button>
+      <div style="align-items: center; justify-content: center; display: flex;">
+        <button class="btn btn-danger" type="submit">Logout</button>
+      </div>
    </form>
 @endsection
 

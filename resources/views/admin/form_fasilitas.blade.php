@@ -20,6 +20,12 @@
     <a class="nav-link" href="{{ route('admin.penilaian') }}"><i class="bi bi-star-fill"></i> Data Penilaian</a>
     <a class="nav-link" href="{{ route('admin.laporan') }}"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
     <a class="nav-link" href="{{ route('admin.feedback') }}"><i class="bi bi-chat-left-text-fill"></i> Feedback</a>
+    <form action="{{ route('logout') }}" method="POST" style="float: right;">
+      @csrf
+      <div style="align-items: center; justify-content: center; display: flex;">
+        <button class="btn btn-danger" type="submit">Logout</button>
+      </div>
+   </form>
 @endsection
 
 @section('content')

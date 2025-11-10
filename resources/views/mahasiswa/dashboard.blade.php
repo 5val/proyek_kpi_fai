@@ -18,6 +18,12 @@
     <a class="nav-link" href="{{ route('mahasiswa.penilaian_praktikum') }}"><i class="bi bi-person-workspace"></i> Penilaian Praktikum</a>
     <a class="nav-link" href="{{ route('mahasiswa.feedback') }}"><i class="bi bi-chat-left-text"></i> Feedback</a>
     <a class="nav-link" href="{{ route('mahasiswa.laporan') }}"><i class="bi bi-bar-chart"></i> Laporan KPI</a>
+    <form action="{{ route('logout') }}" method="POST" style="float: right;">
+      @csrf
+      <div style="align-items: center; justify-content: center; display: flex;">
+        <button class="btn btn-danger" type="submit">Logout</button>
+      </div>
+   </form>
 @endsection
 
 @section('content')
