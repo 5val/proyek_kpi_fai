@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dosen;
+use App\Models\Enrollment;
 use App\Models\Fasilitas;
+use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Periode;
@@ -12,6 +14,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Entity\Cell;
 
 class AdminController extends Controller
 {
@@ -372,19 +377,98 @@ class AdminController extends Controller
    }
 
    public function kelas() {
-      return view('admin.kelas');
+      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->withCount('enrollment')->get();
+      return view('admin.kelas', ['kelas' => $kelas]);
    }
 
    public function form_kelas() {
-      return view('admin.form_kelas');
+      $matkul = MataKuliah::all();
+      $periode = Periode::all();
+      $dosen = Dosen::with('user')->get();
+
+      return view('admin.form_kelas', ['matkul' => $matkul, 'periode' => $periode, 'dosen' => $dosen]);
    }
 
-   public function enrollment() {
-      return view('admin.enrollment');
+   public function delete_kelas($id) {
+      Kelas::findOrFail($id)->delete();
+      return redirect()->route('admin.kelas')->with('success', 'Kelas deleted successfully!');
    }
 
-   public function form_enrollment() {
-      return view('admin.form_enrollment');
+   public function insert_kelas(Request $request) {
+      $data = $request->validate([
+         'mata_kuliah' => 'required',
+         'periode' => 'required',
+         'dosen' => 'required'
+      ]);
+
+      $kelasFound = Kelas::where('mata_kuliah_id', $request->mata_kuliah)->where('periode_id', $request->periode)->first();
+      if($kelasFound) {
+         return back()->withErrors(['mata_kuliah' => 'Kelas with this mata kuliah already exists in this periode!'])->withInput();
+      }
+
+      Kelas::create(['mata_kuliah_id' => $request->mata_kuliah, 'periode_id' => $request->periode, 'dosen_nidn' => $request->dosen]);
+      return redirect()->route('admin.kelas')->with('success', 'Kelas added successfully!');
+   }
+
+   public function update_kelas(Request $request, $id) {
+      $kelas = Kelas::findOrFail($id);
+      $data = $request->validate([
+         'mata_kuliah' => 'required',
+         'periode' => 'required',
+         'dosen' => 'required'
+      ]);
+
+      $kelasFound = Kelas::where('id', '!=', $id)->where('mata_kuliah_id', $request->mata_kuliah)->where('periode_id', $request->periode)->first();
+      if($kelasFound) {
+         return back()->withErrors(['mata_kuliah' => 'Kelas with this mata kuliah already exists in this periode!'])->withInput();
+      }
+
+      $kelas->mata_kuliah_id = $request->mata_kuliah;
+      $kelas->periode_id = $request->periode;
+      $kelas->dosen_nidn = $request->dosen;
+      $kelas->save();
+      return redirect()->route('admin.kelas')->with('success', 'Kelas updated successfully!');
+   }
+
+   public function form_kelas_edit($id) {
+      $kelas = Kelas::findOrFail($id);
+      $matkul = MataKuliah::all();
+      $periode = Periode::all();
+      $dosen = Dosen::with('user')->get();
+      return view('admin.form_kelas', ['kelas' => $kelas, 'matkul' => $matkul, 'periode' => $periode, 'dosen' => $dosen]);
+   }
+
+   public function enrollment($id) {
+      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->where('id', $id)->first();
+      $enrollments = Enrollment::with('mahasiswa.user')->where('kelas_id', $id)->get();
+
+      return view('admin.enrollment', ['kelas' => $kelas, 'enrollments' => $enrollments]);
+   }
+
+   public function delete_enrollment($kelas_id, $id) {
+      $kelas = Kelas::findOrFail($kelas_id);
+      Enrollment::findOrFail($id)->delete();
+      return redirect()->route('admin.enrollment', $kelas->id)->with('success', 'Enrollment deleted successfully!');
+   }
+
+   public function form_enrollment($id) {
+      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->where('id', $id)->first();
+      return view('admin.form_enrollment', ['kelas' => $kelas]);
+   }
+
+   public function download_enrollment($id) {
+      $fileName = 'enrollment_template.xlsx';
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->openToBrowser($fileName);
+
+        // Define header row
+        $cells = [
+            WriterEntityFactory::createCell('mahasiswa_nrp'),
+        ];
+        $row = WriterEntityFactory::createRow($cells);
+        $writer->addRow($row);
+
+        $writer->close();
    }
 
    public function kategori_kpi() {

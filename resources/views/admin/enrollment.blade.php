@@ -29,22 +29,24 @@
 @endsection
 
 @section('content')
+@if(session('success'))
+   <div class="alert alert-success">{{ session('success') }}</div>
+@endif
 <div class="card-custom">
     <div class="card-header d-flex justify-content-between align-items-center">
         <div><i class="bi bi-people-fill"></i> Daftar Mahasiswa Kelas</div>
         <div>
            <a href="{{ route('admin.kelas') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Kembali ke Daftar Kelas</a>
-           <a href="{{ route('admin.form_enrollment') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Tambah Enrollment</a>
+           <a href="{{ route('admin.form_enrollment', $kelas->id) }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Tambah Enrollment</a>
         </div>
     </div>
     <div class="card-body">
-        <!-- Class Info -->
         <div class="p-3 mb-4 rounded" style="background-color: #f8f9fa;">
             <div class="row">
                 <div class="col-md-12">
-                    <h5>Algoritma & Pemrograman</h5>
-                    <p class="mb-1"><strong>Dosen Pengampu:</strong> Prof. Budi Santoso</p>
-                    <p class="mb-0"><strong>Periode:</strong> Gasal 2024/2025</p>
+                    <h5>{{ $kelas->mataKuliah->name }}</h5>
+                    <p class="mb-1"><strong>Dosen Pengampu:</strong> {{ $kelas->dosen->user->name }}</p>
+                    <p class="mb-0"><strong>Periode:</strong> {{ $kelas->periode->nama_periode }}</p>
                 </div>
             </div>
         </div>
@@ -58,27 +60,21 @@
                         <th>NIM</th>
                         <th>Nama Mahasiswa</th>
                         <th>Program Studi</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>2021010001</td>
-                        <td>Andi Pratama</td>
-                        <td>Teknik Informatika</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>2021010002</td>
-                        <td>Bunga Citra</td>
-                        <td>Teknik Informatika</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>2021010003</td>
-                        <td>Charlie Setiawan</td>
-                        <td>Teknik Informatika</td>
-                    </tr>
+                  @foreach ($enrollments as $e)
+                     <tr>
+                        <td>{{ $e->id }}</td>
+                        <td>{{ $e->mahasiswa_nrp }}</td>
+                        <td>{{ $e->mahasiswa->user->name }}</td>
+                        <td>{{ $e->mahasiswa->program_studi }}</td>
+                        <td>
+                           <a href="{{ route('admin.enrollment.delete', [$e->kelas_id, $e->id]) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
+                        </td>
+                     </tr>
+                  @endforeach
                 </tbody>
             </table>
         </div>

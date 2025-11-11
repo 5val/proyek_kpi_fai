@@ -32,31 +32,47 @@
 <div class="card-custom">
     <div class="card-header"><i class="bi bi-pencil-square"></i> Form Kelas</div>
     <div class="card-body">
-        <form>
+        @if (isset($kelas))
+            <form action="{{ route('admin.kelas.update', $kelas->id) }}" method="POST">
+         @else
+            <form action="{{ route('admin.kelas.insert') }}" method="POST">
+         @endif
+         @csrf
             <div class="mb-3">
                 <label for="matkul" class="form-label">Mata Kuliah</label>
-                <select class="form-select" id="matkul">
+                <select class="form-select" id="matkul" name="mata_kuliah">
                     <option selected disabled>Pilih mata kuliah...</option>
-                    <option value="1">Algoritma & Pemrograman</option>
-                    <option value="2">Struktur Data</option>
-                    <option value="3">Pendidikan Kewarganegaraan</option>
+                    @foreach ($matkul as $m)
+                     <option value="{{ $m->id }}" {{ old('mata_kuliah', $kelas->mata_kuliah_id ?? '') == $m->id ? 'selected' : '' }}>{{ $m->name }} - {{ $m->program_studi }}</option>
+                    @endforeach
                 </select>
+                @error('mata_kuliah')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
             </div>
              <div class="mb-3">
                 <label for="periode" class="form-label">Periode Akademik</label>
-                <select class="form-select" id="periode">
+                <select class="form-select" id="periode" name="periode">
                     <option selected disabled>Pilih periode...</option>
-                    <option value="1">Gasal 2024/2025</option>
-                    <option value="2">Genap 2024/2025</option>
+                    @foreach ($periode as $p)
+                     <option value="{{ $p->id }}" {{ old('periode', $kelas->periode_id ?? '') == $p->id ? 'selected' : '' }}>{{ $p->nama_periode }}</option>
+                    @endforeach
                 </select>
+                @error('periode')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
             </div>
              <div class="mb-3">
                 <label for="dosen" class="form-label">Dosen Pengampu</label>
-                <select class="form-select" id="dosen">
+                <select class="form-select" id="dosen" name="dosen">
                     <option selected disabled>Pilih dosen...</option>
-                    <option value="1">Prof. Budi Santoso</option>
-                    <option value="2">Dr. Citra Lestari</option>
+                    @foreach ($dosen as $d)
+                     <option value="{{ $d->nidn }}" {{ old('dosen', $kelas->dosen_nidn ?? '') == $d->nidn ? 'selected' : '' }}>{{ $d->user->name ?? 'No User Linked' }}</option>
+                    @endforeach
                 </select>
+                @error('dosen')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
             </div>
             <div class="d-flex justify-content-end">
                 <a href="{{ route('admin.kelas') }}" class="btn btn-secondary me-2">Batal</a>

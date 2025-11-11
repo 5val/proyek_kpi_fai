@@ -119,13 +119,22 @@ Route::prefix('admin')
 
         Route::get('/kelas', [AdminController::class, 'kelas'])->name('kelas');
         Route::get('/kelas/create', [AdminController::class, 'form_kelas'])->name('form_kelas');
-        Route::get('/kelas/enrollment', [AdminController::class, 'enrollment'])->name('enrollment');
-        Route::get('/kelas/enrollment/create', [AdminController::class, 'form_enrollment'])->name('form_enrollment');
+        Route::get('/kelas/delete/{id}', [AdminController::class, 'delete_kelas'])->name('kelas.delete');
+        Route::get('/kelas/edit/{id}', [AdminController::class, 'form_kelas_edit'])->name('form_kelas_edit');
+        Route::post('/kelas/insert', [AdminController::class, 'insert_kelas'])->name('kelas.insert');
+        Route::post('/kelas/update/{id}', [AdminController::class, 'update_kelas'])->name('kelas.update');
+        Route::get('/kelas/enrollment/{id}', [AdminController::class, 'enrollment'])->name('enrollment');
+        Route::get('/kelas/enrollment/{kelas_id}/delete/{id}', [AdminController::class, 'delete_enrollment'])->name('enrollment.delete');
+        Route::get('/kelas/enrollment/{id}/create', [AdminController::class, 'form_enrollment'])->name('form_enrollment');
+        Route::get('/kelas/enrollment/{id}/download', [AdminController::class, 'download_enrollment'])->name('enrollment.download');
+
         Route::get('/kategori_kpi', [AdminController::class, 'kategori_kpi'])->name('kategori_kpi');
         Route::get('/kategori_kpi/indikator', [AdminController::class, 'list_indikator'])->name('list_indikator');
         Route::get('/indikator_kpi/create', [AdminController::class, 'form_indikator'])->name('form_indikator');
+
         Route::get('/penilaian', [AdminController::class, 'penilaian'])->name('penilaian');
         Route::get('/penilaian/detail', [AdminController::class, 'detail_penilaian'])->name('detail_penilaian');
+
         Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
         Route::get('/feedback', [AdminController::class, 'feedback'])->name('feedback');
     });

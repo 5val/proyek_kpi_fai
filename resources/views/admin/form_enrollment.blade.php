@@ -58,16 +58,17 @@
 <div class="card-custom">
     <div class="card-header"><i class="bi bi-upload"></i> Unggah Data Enrollment</div>
     <div class="card-body">
-        <form>
-            <div class="mb-3">
-                <label for="kelas" class="form-label">Pilih Kelas</label>
-                <select class="form-select" id="kelas">
-                    <option selected disabled>Pilih kelas yang akan diisi...</option>
-                    <option value="1">Algoritma & Pemrograman (Prof. Budi Santoso) - Gasal 2024/2025</option>
-                    <option value="2">Struktur Data (Dr. Citra Lestari) - Gasal 2024/2025</option>
-                </select>
+      <div class="p-3 mb-4 rounded" style="background-color: #f8f9fa;">
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>{{ $kelas->mataKuliah->name }}</h5>
+                    <p class="mb-1"><strong>Dosen Pengampu:</strong> {{ $kelas->dosen->user->name }}</p>
+                    <p class="mb-0"><strong>Periode:</strong> {{ $kelas->periode->nama_periode }}</p>
+                </div>
             </div>
-            
+        </div>
+
+        <form>
             <div class="mb-3">
                 <label class="form-label">File Excel Mahasiswa</label>
                 <div class="drop-zone" id="dropZone">
@@ -80,11 +81,11 @@
 
             <div class="mt-4">
                 <button type="submit" class="btn btn-primary w-100 mb-2"><i class="bi bi-send-fill"></i> Kirim</button>
-                <a href="#" class="btn btn-outline-secondary w-100">Unduh Template Excel</a>
+                <a href="{{ route('admin.enrollment.download', $kelas->id) }}" class="btn btn-outline-secondary w-100">Unduh Template Excel</a>
             </div>
 
              <div class="d-flex justify-content-end mt-4">
-                <a href="{{ route('admin.enrollment') }}" class="btn btn-secondary">Batal</a>
+                <a href="{{ route('admin.enrollment', $kelas->id) }}" class="btn btn-secondary">Batal</a>
             </div>
         </form>
     </div>

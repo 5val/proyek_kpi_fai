@@ -40,7 +40,7 @@ class Enrollment extends Model
     public function mahasiswa()
     {
         // Menggunakan 'mahasiswa_nrp' sebagai foreign key
-        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_nrp', 'nim');
+        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_nrp', 'nrp');
     }
 }
 

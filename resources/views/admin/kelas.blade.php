@@ -29,6 +29,9 @@
 @endsection
 
 @section('content')
+@if(session('success'))
+   <div class="alert alert-success">{{ session('success') }}</div>
+@endif
 <div class="card-custom">
     <div class="card-header d-flex justify-content-between align-items-center">
         <div><i class="bi bi-easel-fill"></i> Daftar Kelas</div>
@@ -59,6 +62,7 @@
                     <tr>
                         <th>#</th>
                         <th>Mata Kuliah</th>
+                        <th>Program Studi</th>
                         <th>Dosen Pengampu</th>
                         <th>Periode</th>
                         <th>Jumlah Mahasiswa</th>
@@ -66,31 +70,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- Data tabel di sini akan difilter oleh controller berdasarkan request('periode_id') --}}
-                    <tr>
-                        <td>1</td>
-                        <td>Algoritma & Pemrograman</td>
-                        <td>Prof. Budi Santoso</td>
-                        <td>Gasal 2024/2025</td>
-                        <td>45</td>
-                        <td>
-                            <a href="#" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                            <a href="#" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
-                            <a href="{{ route('admin.enrollment') }}" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</a>
-                        </td>
-                    </tr>
+                  @foreach ($kelas as $k)
                      <tr>
-                        <td>2</td>
-                        <td>Struktur Data</td>
-                        <td>Dr. Citra Lestari</td>
-                        <td>Gasal 2024/2025</td>
-                        <td>42</td>
+                        <td>{{ $k->id }}</td>
+                        <td>{{ $k->mataKuliah->name }}</td>
+                        <td>{{ $k->mataKuliah->program_studi }}</td>
+                        <td>{{ $k->dosen->user->name }}</td>
+                        <td>{{ $k->periode->nama_periode }}</td>
+                        <td>{{ $k->enrollment_count }}</td>
                         <td>
-                            <a href="#" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                            <a href="#" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
-                            <a href="#" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</a>
+                           <a href="{{ route('admin.form_kelas_edit', $k->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
+                           <a href="{{ route('admin.kelas.delete', $k->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
+                           <a href="{{ route('admin.enrollment', $k->id) }}" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</a>
                         </td>
-                    </tr>
+                     </tr>
+                  @endforeach
                 </tbody>
             </table>
         </div>
