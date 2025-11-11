@@ -457,18 +457,18 @@ class AdminController extends Controller
    }
 
    public function download_enrollment($id) {
-      $fileName = 'enrollment_template.xlsx';
-        $writer = WriterEntityFactory::createXLSXWriter();
-        $writer->openToBrowser($fileName);
+      // $fileName = 'enrollment_template.xlsx';
+      //   $writer = WriterEntityFactory::createXLSXWriter();
+      //   $writer->openToBrowser($fileName);
 
-        // Define header row
-        $cells = [
-            WriterEntityFactory::createCell('mahasiswa_nrp'),
-        ];
-        $row = WriterEntityFactory::createRow($cells);
-        $writer->addRow($row);
+      //   // Define header row
+      //   $cells = [
+      //       WriterEntityFactory::createCell('mahasiswa_nrp'),
+      //   ];
+      //   $row = WriterEntityFactory::createRow($cells);
+      //   $writer->addRow($row);
 
-        $writer->close();
+      //   $writer->close();
    }
 
    public function kategori_kpi() {
