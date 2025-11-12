@@ -1,12 +1,11 @@
 @extends('layouts.app')
 
 @section('title', 'Mata Kuliah Dosen')
-
 @section('page-title', 'Mata Kuliah')
 @section('page-subtitle', 'Daftar mata kuliah yang Anda ampu')
-@section('user-name', 'Dr. Citra Lestari')
-@section('user-role', 'Dosen - Teknik Informatika')
-@section('user-initial', 'CL')
+
+@section('user-name', $user->name)
+@section('user-role', $user->role)
 
 @section('sidebar-menu')
     <a class="nav-link" href="/dosen"><i class="bi bi-speedometer2"></i> Dashboard</a>
@@ -68,29 +67,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>IF201</td>
-                        <td>Struktur Data</td>
-                        <td>Teknik Informatika</td>
-                        <td class="text-center">4</td>
-                        <td class="text-center">42</td>
-                        <td>
-                            <a href="#" class="btn btn-primary btn-sm"><i class="bi bi-calendar-plus-fill"></i> Input Kehadiran</a>
-                            <a href="#" class="btn btn-info btn-sm" title="Laporan KPI Praktikum"><i class="bi bi-clipboard-data"></i> Laporan Praktikum</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>IF302</td>
-                        <td>Kecerdasan Buatan</td>
-                        <td>Teknik Informatika</td>
-                        <td class="text-center">3</td>
-                        <td class="text-center">38</td>
-                         <td>
-                            <a href="#" class="btn btn-primary btn-sm"><i class="bi bi-calendar-plus-fill"></i> Input Kehadiran</a>
-                            <a href="#" class="btn btn-secondary btn-sm disabled" title="Tidak ada praktikum"><i class="bi bi-clipboard-data"></i> Laporan Praktikum</a>
-                        </td>
-                    </tr>
-                </tbody>
+            @forelse($kelasList as $kelas)
+                <tr>
+                    <td>{{ $kelas->kode_mk }}</td>
+                    <td>{{ $kelas->nama_mk }}</td>
+                    <td>{{ $kelas->program_studi }}</td>
+                    <td class="text-center">{{ $kelas->sks }}</td>
+                    <td class="text-center">{{ $kelas->jumlah_mahasiswa }}</td>
+                    <td>
+                        <a href="#" class="btn btn-primary btn-sm">
+                            <i class="bi bi-calendar-plus-fill"></i> Input Kehadiran
+                        </a>
+                        @if($kelas->punya_praktikum ?? false)
+                            <a href="#" class="btn btn-info btn-sm">
+                                <i class="bi bi-clipboard-data"></i> Laporan Praktikum
+                            </a>
+                        @else
+                            <a href="#" class="btn btn-secondary btn-sm disabled">
+                                <i class="bi bi-clipboard-data"></i> Laporan Praktikum
+                            </a>
+                        @endif
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="6" class="text-center text-muted">Belum ada mata kuliah yang Anda ampu.</td>
+                </tr>
+            @endforelse
+            </tbody>
             </table>
         </div>
     </div>

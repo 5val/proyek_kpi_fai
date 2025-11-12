@@ -3,9 +3,9 @@
 @section('title', 'Profil Saya')
 @section('page-title', 'Profil Saya')
 @section('page-subtitle', 'Lihat dan perbarui informasi pribadi Anda')
+
 @section('user-name', $user->name)
 @section('user-role', $user->role)
-@section('user-initial', strtoupper(substr($user->name, 0, 2)))
 
 @section('sidebar-menu')
     <a class="nav-link" href="/dosen"><i class="bi bi-speedometer2"></i> Dashboard</a>

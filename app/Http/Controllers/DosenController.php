@@ -54,7 +54,6 @@ class DosenController extends Controller
             // 'phone' => 'nullable|string|max:20',
         ]);
 
-        // ✅ Update data user
         $user->update([
             'email' => $request->email,
             // 'phone' => $request->phone,
@@ -86,5 +85,44 @@ class DosenController extends Controller
     // KPI SAYA
 
     // KELAS 
-    
+
+    public function kelas()
+    {
+        $user = Auth::user();
+
+        $dosen = Dosen::where('user_id', $user->id)->first();
+
+        if (!$dosen) {
+            return redirect()->back()->with('error', 'Data Dosen tidak ditemukan.');
+        }
+
+        // Ambil semua kelas yang diajar oleh dosen ini (via relasi)
+        $kelasList = $dosen->kelas()->get();
+
+        return view('dosen.kelas', [
+            'user' => $user,
+            'kelasList' => $kelasList,
+        ]);
+    }
+
+    // PENILAIAN MAHASISWA 
+
+    public function penilaianMahasiswa()
+    {
+        $user = Auth::user();
+
+        $dosen = Dosen::where('user_id', $user->id)->first();
+        if (!$dosen) {
+            return redirect()->back()->with('error', 'Data dosen tidak ditemukan.');
+        }
+
+        // eager-load user dan penilaian
+        $mahasiswaList = Mahasiswa::with(['user', 'penilaian'])
+            ->get();
+
+        return view('dosen.penilaian_mahasiswa', [
+            'user' => $user,
+            'mahasiswaList' => $mahasiswaList,
+        ]);
+    }
 }

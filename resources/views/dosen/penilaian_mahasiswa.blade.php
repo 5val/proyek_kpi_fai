@@ -4,9 +4,9 @@
 
 @section('page-title', 'Penilaian Mahasiswa Bimbingan')
 @section('page-subtitle', 'Berikan penilaian kinerja untuk mahasiswa bimbingan Anda')
-@section('user-name', 'Dr. Budi Hartono, M.Kom.')
-@section('user-role', 'Dosen - Teknik Informatika')
-@section('user-initial', 'BH')
+
+@section('user-name', $user->name)
+@section('user-role', $user->role)
 
 @section('sidebar-menu')
     <a class="nav-link" href="/dosen"><i class="bi bi-speedometer2"></i> Dashboard</a>
@@ -42,27 +42,35 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Rina Wulandari</td>
-                        <td>2021010015</td>
-                        <td>7</td>
-                        <td><span class="badge bg-danger">Belum Dinilai</span></td>
-                        <td><button class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Nilai</button></td>
-                    </tr>
-                     <tr>
-                        <td>Agus Setiawan</td>
-                        <td>2022010008</td>
-                        <td>5</td>
-                        <td><span class="badge bg-danger">Belum Dinilai</span></td>
-                        <td><button class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Nilai</button></td>
-                    </tr>
-                     <tr>
-                        <td>Dewi Lestari</td>
-                        <td>2021010002</td>
-                        <td>7</td>
-                        <td><span class="badge bg-success">Sudah Dinilai</span></td>
-                        <td><button class="btn btn-secondary btn-sm" disabled><i class="bi bi-pencil-square"></i> Nilai</button></td>
-                    </tr>
+                    @forelse($mahasiswaList as $m)
+                        <tr>
+                            <td>{{ $m->nama }}</td>
+                            <td>{{ $m->nrp }}</td>
+                            <td>{{ $m->semester }}</td>
+                            <td>
+                                @if($m->penilaian)
+                                    <span class="badge bg-success">Sudah Dinilai</span>
+                                @else
+                                    <span class="badge bg-danger">Belum Dinilai</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($m->penilaian)
+                                    <button class="btn btn-secondary btn-sm" disabled>
+                                        <i class="bi bi-pencil-square"></i> Nilai
+                                    </button>
+                                @else
+                                    <a href="{{ route('dosen.nilai_mahasiswa', $m->id) }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-pencil-square"></i> Nilai
+                                    </a>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">Tidak ada mahasiswa bimbingan ditemukan.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

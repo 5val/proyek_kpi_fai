@@ -66,13 +66,22 @@ Route::prefix('dosen')
     ->middleware(['auth', 'role:dosen'])
     ->group(function () {
         Route::get('/', [DosenController::class, 'dashboard'])->name('dashboard');
+
         Route::get('/profile', [DosenController::class, 'profile'])->name('profile');
         Route::put('/profile/update', [DosenController::class, 'updateProfile'])->name('updateProfile');
         Route::post('/profile/password', [DosenController::class, 'changePassword'])->name('changePassword');
+
         Route::get('/kpi', fn() => view('dosen.kpi'))->name('kpi');
-        Route::get('/kelas', fn() => view('dosen.kelas'))->name('kelas');
+
+        Route::get('/kelas', [DosenController::class, 'kelas'])->name('kelas');
+
         Route::get('/kelas/kehadiran/create', fn() => view('dosen.form_kehadiran'))->name('form_kehadiran');
-        Route::get('/penilaian_mahasiswa', fn() => view('dosen.penilaian_mahasiswa'))->name('penilaian_mahasiswa');
+
+        Route::get('/penilaian_mahasiswa', [DosenController::class, 'penilaianMahasiswa'])->name('penilaian_mahasiswa');
+        Route::get('/penilaian_mahasiswa/{id}/nilai', [DosenController::class, 'formNilaiMahasiswa'])->name('nilai_mahasiswa');
+
+        // Route::get('/penilaian_mahasiswa', fn() => view('dosen.penilaian_mahasiswa'))->name('penilaian_mahasiswa');
+
         Route::get('/penilaian_fasilitas', fn() => view('dosen.penilaian_fasilitas'))->name('penilaian_fasilitas');
         Route::get('/penilaian_unit', fn() => view('dosen.penilaian_unit'))->name('penilaian_unit');
         Route::get('/laporan', fn() => view('dosen.laporan'))->name('laporan');
