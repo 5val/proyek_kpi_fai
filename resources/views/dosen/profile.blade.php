@@ -1,12 +1,11 @@
 @extends('layouts.app')
 
 @section('title', 'Profil Saya')
-
 @section('page-title', 'Profil Saya')
 @section('page-subtitle', 'Lihat dan perbarui informasi pribadi Anda')
-@section('user-name', 'Dr. Budi Hartono, M.Kom.')
-@section('user-role', 'Dosen - Teknik Informatika')
-@section('user-initial', 'BH')
+@section('user-name', $user->name)
+@section('user-role', $user->role)
+@section('user-initial', strtoupper(substr($user->name, 0, 2)))
 
 @section('sidebar-menu')
     <a class="nav-link" href="/dosen"><i class="bi bi-speedometer2"></i> Dashboard</a>
@@ -27,31 +26,45 @@
 @endsection
 
 @section('content')
+@if(session('success'))
+   <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+@if(session('error'))
+   <div class="alert alert-danger">{{ session('error') }}</div>
+@endif
 <div class="row">
     <div class="col-md-8">
         <div class="card-custom">
             <div class="card-header"><i class="bi bi-pencil-square"></i> Edit Informasi Profil</div>
             <div class="card-body">
-                <form>
+                <form action="{{ route('dosen.updateProfile') }}" method="POST">
+                    @csrf
+                    @method('PUT')
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Nama Lengkap</label>
-                            <input type="text" class="form-control" value="Dr. Budi Hartono, M.Kom.">
+                            <input type="text" name="name" class="form-control" 
+                                   value="{{ $user->name }}" readonly>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">NIDN</label>
-                            <input type="text" class="form-control" value="0712345601" readonly>
+                            <input type="text" name="nidn" class="form-control" 
+                                   value="{{ $dosen->nidn }}" readonly>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" value="budi.hartono@example.com">
+                            <input type="email" name="email" class="form-control" 
+                                   value="{{ $user->email }}">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Jabatan Fungsional</label>
-                            <input type="text" class="form-control" value="Lektor Kepala" readonly>
+                            <label class="form-label">Nomor HP</label>
+                            <input type="text" name="phone" class="form-control" 
+                                   value="">
                         </div>
                         <div class="col-12 mt-3">
-                             <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Simpan Perubahan</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Simpan Perubahan
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -60,21 +73,24 @@
         <div class="card-custom mt-4">
             <div class="card-header"><i class="bi bi-key-fill"></i> Ubah Password</div>
             <div class="card-body">
-                <form>
-                     <div class="mb-3">
-                        <label class="form-label">Password Lama</label>
-                        <input type="password" class="form-control">
-                    </div>
-                     <div class="mb-3">
-                        <label class="form-label">Password Baru</label>
-                        <input type="password" class="form-control">
-                    </div>
-                     <div class="mb-3">
-                        <label class="form-label">Konfirmasi Password Baru</label>
-                        <input type="password" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-danger"><i class="bi bi-shield-lock"></i> Ubah Password</button>
-                </form>
+            <form action="{{ route('dosen.changePassword') }}" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label">Password Lama</label>
+                    <input type="password" name="current_password" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password Baru</label>
+                    <input type="password" name="new_password" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Konfirmasi Password Baru</label>
+                    <input type="password" name="new_password_confirmation" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-shield-lock"></i> Ubah Password
+                </button>
+            </form>
             </div>
         </div>
     </div>
