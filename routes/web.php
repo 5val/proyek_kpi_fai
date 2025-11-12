@@ -70,8 +70,10 @@ Route::prefix('dosen')
         Route::get('/profile', [DosenController::class, 'profile'])->name('profile');
         Route::put('/profile/update', [DosenController::class, 'updateProfile'])->name('updateProfile');
         Route::post('/profile/password', [DosenController::class, 'changePassword'])->name('changePassword');
-
-        Route::get('/kpi', fn() => view('dosen.kpi'))->name('kpi');
+        Route::post('/profile/{id}/upload', [DosenController::class, 'uploadProfpic'])->name('uploadProfpicDosen');
+        
+        // Route::get('/kpi', fn() => view('dosen.kpi'))->name('kpi');
+        Route::get('/kpi',[DosenController::class, 'kpi'])->name('kpi');
 
         Route::get('/kelas', [DosenController::class, 'kelas'])->name('kelas');
 

@@ -41,6 +41,8 @@
                     @csrf
                     @method('PUT')
                     <div class="row">
+                                    <img src="{{ $dosen->user->photo_profile ? Storage::url($dosen->user->photo_profile) : asset('images/default-user.png') }}"
+                 class="rounded-circle mb-3" width="150" alt="Profile Picture" height="150">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Nama Lengkap</label>
                             <input type="text" name="name" class="form-control" 
@@ -55,12 +57,28 @@
                             <label class="form-label">Email</label>
                             <input type="email" name="email" class="form-control" 
                                    value="{{ $user->email }}">
+                                                       @error('email')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Nomor HP</label>
                             <input type="text" name="phone" class="form-control" 
-                                   value="">
+                                   value="{{ $user->phone_number }}">
+                                                       @error('phone')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                         </div>
+                        <form action="{{ route('mahasiswa.uploadProfpic', Auth::id()) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="mb-3">
+                    <label for="file" class="form-label fw-medium">Pilih Foto (JPG/PNG - Max 5MB)</label>
+                    <input type="file" name="file" id="file" required class="form-control">
+                </div>
+                <button class="btn btn-sm btn-outline-primary" type="submit" style="width: 700px;margin:0 auto">
+                    <i class="bi bi-upload"></i> Ubah Foto Profil
+                </button>
+            </form>
                         <div class="col-12 mt-3">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-save"></i> Simpan Perubahan

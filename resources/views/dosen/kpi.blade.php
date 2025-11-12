@@ -4,9 +4,10 @@
 
 @section('page-title', 'Key Performance Indicator (KPI) Saya')
 @section('page-subtitle', 'Detail capaian kinerja Anda sebagai Dosen')
-@section('user-name', 'Dr. Budi Hartono, M.Kom.')
-@section('user-role', 'Dosen - Teknik Informatika')
-@section('user-initial', 'BH')
+
+@section('user-name', $user->name)
+@section('user-role', $user->role)
+
 
 @section('sidebar-menu')
     <a class="nav-link" href="/dosen"><i class="bi bi-speedometer2"></i> Dashboard</a>

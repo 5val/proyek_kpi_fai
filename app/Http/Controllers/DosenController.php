@@ -33,15 +33,11 @@ class DosenController extends Controller
     {
         $user = Auth::user();
 
-        $dosenData = Dosen::where('user_id', $user->id)->first();
-
-        if (!$dosenData) {
-             return redirect()->back()->with('error', 'Data Dosen tidak ditemukan.');
-        }
+        $dosen = Dosen::where('user_id', $user->id)->first();
 
         return view('dosen.profile', [
             'user' => $user,
-            'dosen' => $dosenData,
+            'dosen' => $dosen,
         ]);
     }
     
@@ -50,17 +46,17 @@ class DosenController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            // 'phone' => 'nullable|string|max:20',
+            'email' => 'required|email|unique:users,email,'. $user->id,
+            'phone' => 'required|string|max:13|unique:users,phone_number,'. $user->id,
         ]);
 
         $user->update([
             'email' => $request->email,
-            // 'phone' => $request->phone,
+            'phone_number' => $request->phone,
         ]);
 
         return redirect()->route('dosen.profile')->with('success', 'Profil berhasil diperbarui.');
-    }
+    }   
     
     public function changePassword(Request $request)
     {
@@ -83,18 +79,46 @@ class DosenController extends Controller
     }
 
     // KPI SAYA
+    
+    public function kpi()
+    {
+
+        $user = Auth::user();
+
+        $dosen = Dosen::where('user_id', $user->id)->first();
+        
+        return view('dosen.kpi', [
+            'user' => $user,
+            'dosen' => $dosen,
+        ]);
+    }
 
     // KELAS 
+    public function uploadProfpic(Request $request, $id)
+    {
+      $request->validate([
+         'file' => 'required|file|mimes:jpg,jpeg,png|max:5120',
+      ]);
+      $dosen = Dosen::where('user_id', $id)->firstOrFail();
+      $user = $mahasiswa->user;
+      if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
+         Storage::disk('public')->delete($user->photo_profile);
+      }
+      $file = $request->file('file');
+      $path = $file->store('profiles', 'public');
+      $user->update([
+         'photo_profile' => $path,
+      ]);
+      return redirect()
+         ->route('dosen.profile')
+         ->with('success', 'Foto profil berhasil diperbarui!');
+    }
 
     public function kelas()
     {
         $user = Auth::user();
 
         $dosen = Dosen::where('user_id', $user->id)->first();
-
-        if (!$dosen) {
-            return redirect()->back()->with('error', 'Data Dosen tidak ditemukan.');
-        }
 
         // Ambil semua kelas yang diajar oleh dosen ini (via relasi)
         $kelasList = $dosen->kelas()->get();
@@ -122,6 +146,7 @@ class DosenController extends Controller
 
         return view('dosen.penilaian_mahasiswa', [
             'user' => $user,
+            'dosen' => $dosen,
             'mahasiswaList' => $mahasiswaList,
         ]);
     }
