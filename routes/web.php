@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DosenController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -62,10 +63,12 @@ Route::prefix('mahasiswa')
 */
 Route::prefix('dosen')
     ->name('dosen.')
-   //  ->middleware(['login', 'role:dosen'])
+    ->middleware(['auth', 'role:dosen'])
     ->group(function () {
-        Route::get('/', fn() => view('dosen.dashboard'))->name('dashboard');
-        Route::get('/profile', fn() => view('dosen.profile'))->name('profile');
+        Route::get('/', [DosenController::class, 'dashboard'])->name('dashboard');
+        Route::get('/profile', [DosenController::class, 'profile'])->name('profile');
+        Route::put('/profile/update', [DosenController::class, 'updateProfile'])->name('updateProfile');
+        Route::post('/profile/password', [DosenController::class, 'changePassword'])->name('changePassword');
         Route::get('/kpi', fn() => view('dosen.kpi'))->name('kpi');
         Route::get('/kelas', fn() => view('dosen.kelas'))->name('kelas');
         Route::get('/kelas/kehadiran/create', fn() => view('dosen.form_kehadiran'))->name('form_kehadiran');
@@ -84,7 +87,7 @@ Route::prefix('dosen')
 */
 Route::prefix('admin')
     ->name('admin.')
-   //  ->middleware(['login', 'role:admin'])
+    ->middleware(['auth', 'role:admin'])
     ->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
         
