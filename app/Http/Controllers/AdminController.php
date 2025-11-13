@@ -14,9 +14,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Cell;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class AdminController extends Controller
 {
@@ -323,6 +325,11 @@ class AdminController extends Controller
       return back()->with('success', 'New periode successfully opened!');
    }
 
+   public function delete_periode($id) {
+      Periode::findOrFail($id)->delete();
+      return redirect()->route('admin.periode')->with('success', 'Periode deleted successfully!');
+   }
+
    public function mata_kuliah() {
       $matkul = MataKuliah::all();
       return view('admin.mata_kuliah', ["matkul" => $matkul]);
@@ -457,18 +464,41 @@ class AdminController extends Controller
    }
 
    public function download_enrollment($id) {
-      // $fileName = 'enrollment_template.xlsx';
-      //   $writer = WriterEntityFactory::createXLSXWriter();
-      //   $writer->openToBrowser($fileName);
+      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->where('id', $id)->first();
+      $filePath = storage_path('app/template_excel/template_enrollment.xlsx'); //  path to your file
+      if (file_exists($filePath)) {
+         return response()->download($filePath, 'template_enrollment.xlsx', ['kelas' => $kelas]); //  filename for the user
+      } else {
+         abort(404, 'Template file not found.'); //  handle file not found error
+      }
+   }
 
-      //   // Define header row
-      //   $cells = [
-      //       WriterEntityFactory::createCell('mahasiswa_nrp'),
-      //   ];
-      //   $row = WriterEntityFactory::createRow($cells);
-      //   $writer->addRow($row);
+   public function upload_enrollment(Request $request, $id) {
+      $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
 
-      //   $writer->close();
+        $file = $request->file('file');
+        $spreadsheet = IOFactory::load($file->getPathname());
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $sheet->toArray();
+
+        // Skip header row (row 0)
+        for ($i = 1; $i < count($rows); $i++) {
+            $row = $rows[$i];
+
+            // Skip completely empty rows
+            if (empty(array_filter($row))) {
+               continue;
+            }
+
+            Enrollment::create([
+               'kelas_id'       => $id,
+               'mahasiswa_nrp'  => $row[0] ?? null,
+            ]);
+         }
+
+        return redirect()->route('admin.enrollment', $id)->with('success', 'Enrollments uploaded successfully.');
    }
 
    public function kategori_kpi() {

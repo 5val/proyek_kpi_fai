@@ -14,8 +14,8 @@
     <a class="nav-link" href="{{ route('admin.fasilitas') }}"><i class="bi bi-building"></i> Manajemen Fasilitas</a>
     <a class="nav-link" href="{{ route('admin.unit') }}"><i class="bi bi-bank2"></i> Manajemen Unit</a>
     <a class="nav-link" href="{{ route('admin.periode') }}"><i class="bi bi-calendar-event-fill"></i> Manajemen Periode</a>
-    <a class="nav-link active" href="{{ route('admin.mata_kuliah') }}"><i class="bi bi-book-fill"></i> Manajemen Mata Kuliah</a>
-    <a class="nav-link" href="{{ route('admin.kelas') }}"><i class="bi bi-easel-fill"></i> Manajemen Kelas</a>
+    <a class="nav-link" href="{{ route('admin.mata_kuliah') }}"><i class="bi bi-book-fill"></i> Manajemen Mata Kuliah</a>
+    <a class="nav-link active" href="{{ route('admin.kelas') }}"><i class="bi bi-easel-fill"></i> Manajemen Kelas</a>
     <a class="nav-link" href="{{ route('admin.kategori_kpi') }}"><i class="bi bi-tags-fill"></i> Kategori KPI</a>
     <a class="nav-link" href="{{ route('admin.penilaian') }}"><i class="bi bi-star-fill"></i> Data Penilaian</a>
     <a class="nav-link" href="{{ route('admin.laporan') }}"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
@@ -68,15 +68,19 @@
             </div>
         </div>
 
-        <form>
+        <form action="{{ route('admin.enrollment.upload', $kelas->id) }}" method="POST" enctype="multipart/form-data">
+         @csrf
             <div class="mb-3">
                 <label class="form-label">File Excel Mahasiswa</label>
                 <div class="drop-zone" id="dropZone">
-                    <input class="drop-zone__input" type="file" id="file_excel" accept=".xlsx, .xls" multiple="false">
+                    <input class="drop-zone__input" type="file" id="file_excel" accept=".xlsx, .xls" multiple="false" name="file">
                     <i class="bi bi-cloud-arrow-up-fill drop-zone__icon"></i>
                     <span class="drop-zone__prompt">Klik di sini atau seret file ke sini</span>
                 </div>
                 <div class="form-text mt-1">Format File: .xlsx, .xls</div>
+                @error('file')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
             </div>
 
             <div class="mt-4">

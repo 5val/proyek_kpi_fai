@@ -45,6 +45,7 @@
                         <th>Nama Periode</th>
                         <th>Tahun</th>
                         <th>Semester</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,6 +54,11 @@
                      <td>{{ $p->nama_periode }}</td>
                      <td>{{ $p->tahun }}</td>
                      <td>{{ Str::ucfirst($p->semester) }}</td>
+                     <td>
+                        @if ($loop->last)
+                           <a href="{{ route('admin.periode.delete', $p->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
+                        @endif
+                     </td>
                   </tr>
                   @endforeach
                 </tbody>

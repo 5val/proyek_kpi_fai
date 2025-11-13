@@ -123,6 +123,4 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    'Excel' => Maatwebsite\Excel\Facades\Excel::class,
-
 ];

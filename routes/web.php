@@ -125,6 +125,7 @@ Route::prefix('admin')
         
         Route::get('/periode', [AdminController::class, 'periode'])->name('periode');
         Route::get('/periode/create', [AdminController::class, 'new_periode'])->name('periode.insert');
+        Route::get('/periode/delete/{id}', [AdminController::class, 'delete_periode'])->name('periode.delete');
         
         Route::get('/mata_kuliah', [AdminController::class, 'mata_kuliah'])->name('mata_kuliah');
         Route::get('/mata_kuliah/create', [AdminController::class, 'form_mata_kuliah'])->name('form_mata_kuliah');
@@ -143,6 +144,7 @@ Route::prefix('admin')
         Route::get('/kelas/enrollment/{kelas_id}/delete/{id}', [AdminController::class, 'delete_enrollment'])->name('enrollment.delete');
         Route::get('/kelas/enrollment/{id}/create', [AdminController::class, 'form_enrollment'])->name('form_enrollment');
         Route::get('/kelas/enrollment/{id}/download', [AdminController::class, 'download_enrollment'])->name('enrollment.download');
+        Route::post('/kelas/enrollment/{id}/upload', [AdminController::class, 'upload_enrollment'])->name('enrollment.upload');
 
         Route::get('/kategori_kpi', [AdminController::class, 'kategori_kpi'])->name('kategori_kpi');
         Route::get('/kategori_kpi/indikator', [AdminController::class, 'list_indikator'])->name('list_indikator');
