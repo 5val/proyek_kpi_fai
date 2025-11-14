@@ -28,19 +28,27 @@
                         @php
                             $indicators = ['Kebersihan dan Kerapian', 'Kelengkapan Peralatan', 'Kondisi Peralatan (Fungsionalitas)', 'Kenyamanan Ruangan', 'Ketersediaan Akses (Internet/Listrik)'];
                         @endphp
-                        @foreach($indicators as $index => $indicator)
+                       @foreach($indikator as $i)
                         <tr>
-                            <td>{{ $indicator }}</td>
+                            <td>{{ $i->name }}</td>
                             <td class="text-center">
                                 <div class="rating">
-                                    @for($i = 4; $i >= 1; $i--)
-                                    <input type="radio" name="rating-{{ $index }}" id="rating-{{ $index }}-{{ $i }}" value="{{ $i }}">
-                                    <label for="rating-{{ $index }}-{{ $i }}"><i class="bi bi-star-fill"></i></label>
-                                    @endfor
+                                    <input type="radio" name="rating[{{ $i->id }}]" id="star4-{{ $i->id }}" value="4">
+                                    <label for="star4-{{ $i->id }}"><i class="bi bi-star-fill"></i></label>
+
+                                    <input type="radio" name="rating[{{ $i->id }}]" id="star3-{{ $i->id }}" value="3">
+                                    <label for="star3-{{ $i->id }}"><i class="bi bi-star-fill"></i></label>
+
+                                    <input type="radio" name="rating[{{ $i->id }}]" id="star2-{{ $i->id }}" value="2">
+                                    <label for="star2-{{ $i->id }}"><i class="bi bi-star-fill"></i></label>
+
+                                    <input type="radio" name="rating[{{ $i->id }}]" id="star1-{{ $i->id }}" value="1">
+                                    <label for="star1-{{ $i->id }}"><i class="bi bi-star-fill"></i></label>
                                 </div>
                             </td>
                         </tr>
                         @endforeach
+
                     </tbody>
                 </table>
             </div>

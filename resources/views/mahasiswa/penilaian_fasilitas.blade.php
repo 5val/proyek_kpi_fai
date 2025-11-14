@@ -53,7 +53,7 @@
                                 <small class="text-muted">Kategori: Laboratorium</small>
                             </div>
                         </div>
-                        <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('penilaian.form', 'unit') }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil-square"></i> Beri Penilaian
                         </a>
                     </div>
@@ -65,7 +65,7 @@
                                 <small class="text-muted">Kategori: Umum</small>
                             </div>
                         </div>
-                        <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('penilaian.form', 'fasilitas') }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil-square"></i> Beri Penilaian
                         </a>
                     </div>
@@ -77,7 +77,7 @@
                                 <small class="text-muted">Kategori: Area Mahasiswa</small>
                             </div>
                         </div>
-                        <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('penilaian.form', 'fasilitas') }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil-square"></i> Beri Penilaian
                         </a>
                     </div>
