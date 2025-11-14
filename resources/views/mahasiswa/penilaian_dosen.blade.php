@@ -52,7 +52,7 @@
                                 <h6 class="mb-0">Dr. Budi Hartono, M.Kom.</h6>
                             </div>
                         </div>
-                        <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('penilaian.form', 'dosen') }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil-square"></i> Beri Penilaian
                         </a>
                     </div>
@@ -63,7 +63,7 @@
                                 <h6 class="mb-0">Siti Aminah, S.T., M.T.</h6>
                             </div>
                         </div>
-                        <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('penilaian.form', 'dosen') }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil-square"></i> Beri Penilaian
                         </a>
                     </div>
@@ -74,7 +74,7 @@
                                 <h6 class="mb-0">Prof. Dr. Ir. Rina Wijaya</h6>
                             </div>
                         </div>
-                       <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                       <a href="{{ route('penilaian.form', 'dosen') }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil-square"></i> Beri Penilaian
                         </a>
                     </div>

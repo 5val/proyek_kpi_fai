@@ -53,7 +53,7 @@
                                 <small class="text-muted">Layanan terkait KRS, transkrip, dan jadwal.</small>
                             </div>
                         </div>
-                        <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('penilaian.form', 'unit') }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil-square"></i> Beri Penilaian
                         </a>
                     </div>
@@ -65,7 +65,7 @@
                                 <small class="text-muted">Layanan terkait pembayaran dan keuangan.</small>
                             </div>
                         </div>
-                        <a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('penilaian.form', 'unit') }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil-square"></i> Beri Penilaian
                         </a>
                     </div>

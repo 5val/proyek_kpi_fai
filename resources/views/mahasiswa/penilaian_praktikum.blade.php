@@ -49,7 +49,7 @@
                         <td>Dasar-dasar Python</td>
                         <td>Budi Setiawan</td>
                         <td><span class="badge bg-warning text-dark">Belum Dinilai</span></td>
-                        <td><a href="{{ route('penilaian') }}" class="btn btn-primary btn-sm">
+                        <td><a href="{{ route('penilaian.form', 'praktikum') }}" class="btn btn-primary btn-sm">
                             Nilai
                         </a></td>
                     </tr>

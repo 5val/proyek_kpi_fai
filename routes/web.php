@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DosenController;
 use Illuminate\Support\Facades\Route;
@@ -163,4 +164,10 @@ Route::prefix('admin')
 | Halaman umum (tanpa login)
 |--------------------------------------------------------------------------
 */
-Route::get('/penilaian', fn() => view('penilaian'))->name('penilaian');
+
+Route::get('/penilaian/{tipe}', [PenilaianController::class, 'index'])
+    ->name('penilaian.form');
+
+Route::post('/penilaian/{tipe}', [PenilaianController::class, 'store'])
+    ->name('penilaian.store');
+
