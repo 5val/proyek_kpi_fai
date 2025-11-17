@@ -27,6 +27,7 @@ class Unit extends Model
         'name',
         'type', // Misal: BAA, BAK, BAU, UKM
         'penanggung_jawab_id',
+        'is_active'
     ];
 
     /**

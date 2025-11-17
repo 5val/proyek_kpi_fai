@@ -22,9 +22,14 @@ class Kelas extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'code',
         'mata_kuliah_id',
+        'program_studi_id',
         'periode_id',
         'dosen_nidn',
+        'sks',
+        'has_praktikum',
+        'minimum_grade',
     ];
 
     /**
@@ -33,6 +38,11 @@ class Kelas extends Model
     public function mataKuliah()
     {
         return $this->belongsTo(MataKuliah::class, 'mata_kuliah_id');
+    }
+    
+    public function program_studi()
+    {
+        return $this->belongsTo(ProgramStudi::class, 'program_studi_id');
     }
 
     /**

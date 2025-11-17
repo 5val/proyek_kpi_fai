@@ -58,7 +58,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover data-table">
                 <thead class="table-light">
                     <tr>
                         <th>Nama</th>
@@ -71,7 +71,7 @@
                 <tbody>
                   @foreach ($users as $user)
                      <tr>
-                        <td>{{ $user->name }}</td>
+                        <td>{{ $user->name }} <span style="color:red;">{{ $user->is_active == 0 ? '(Tidak Aktif)' : ''}}</span></td>
                         <td>{{ $user->email }}</td>
                         @if ($user->role == "admin")
                            <td><span class="badge bg-danger">Admin</span></td>
@@ -83,15 +83,16 @@
                         <td>{{ $user->created_at }}</td>
                         <td>
                            <a href="{{ route('admin.form_user_edit', $user->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                           <a href="{{ route('admin.user.delete', $user->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
+                           @if ($user->is_active == 0)
+                           <a href="{{ route('admin.user.delete', $user->id) }}" class="btn btn-success btn-sm"><i class="bi bi-check-circle"></i></a>
+                           @else
+                           <a href="{{ route('admin.user.delete', $user->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-x-circle"></i></a>
+                           @endif
                         </td>
                      </tr>
                   @endforeach
                 </tbody>
             </table>
-            <div class="mt-3">
-                {{ $users->links() }}
-            </div>
         </div>
     </div>
 </div>

@@ -23,9 +23,10 @@ class Kehadiran extends Model
      */
     protected $fillable = [
         'kelas_id',
-        'mahasiswa_nrp', // NIM mahasiswa
         'pertemuan_ke', // Ditambahkan berdasarkan UI
-        'status', // Ditambahkan berdasarkan UI (Hadir, Izin, Sakit, Absen)
+        'mahasiswa_nrp', // NIM mahasiswa
+        'is_present', // Ditambahkan berdasarkan UI (Hadir, Izin, Sakit, Absen)
+        'remarks',
     ];
 
     /**

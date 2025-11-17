@@ -6,6 +6,9 @@
     <title>@yield('title') - Sistem KPI Kampus</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -159,6 +162,10 @@
             color: white;
             font-weight: 600;
         }
+
+        .inactive-data {
+            background-color: #f4988eff !important;
+         }
     </style>
     @stack('styles')
 </head>
@@ -219,6 +226,12 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+      $(document).ready(function () {
+         $('.data-table').DataTable();
+      });
+   </script>
+
     @stack('scripts')
 </body>
 </html>

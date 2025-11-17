@@ -25,9 +25,11 @@ class Fasilitas extends Model
      */
     protected $fillable = [
         'name',
+        'code',
         'kategori', // Misal: Ruang Kelas, Lab, Perpustakaan
-        'lokasi',
-        'kondisi', // Misal: Baik, Perlu Perbaikan
+        'kondisi',
+        'penanggung_jawab',
+        'is_active',
     ];
 
     /**

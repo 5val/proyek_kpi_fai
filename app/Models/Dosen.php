@@ -25,7 +25,11 @@ class Dosen extends Model
      */
     protected $fillable = [
         'user_id',
+        'code',
         'nidn', // 'dosen_nidn' di tabel kelas
+        'start_date',
+        'end_date',
+        'is_certified',
     ];
 
     /**

@@ -26,8 +26,9 @@ class Mahasiswa extends Model
     protected $fillable = [
         'user_id',
         'nrp', // 'mahasiswa_nrp' di tabel lain
-        'program_studi',
-        'angkatan',
+        'program_studi_id',
+        'points_balance',
+        'class_group',
         'ipk',
     ];
 
@@ -58,6 +59,11 @@ class Mahasiswa extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    
+    public function program_studi()
+    {
+        return $this->belongsTo(ProgramStudi::class, 'program_studi_id');
     }
 
     /**

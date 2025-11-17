@@ -27,7 +27,7 @@ class AdminController extends Controller
    }
 
    public function user() {
-      $users = User::paginate(10);
+      $users = User::orderBy("is_active", "desc")->get();
 
       return view('admin.user', ['users' => $users]);
    }
@@ -39,14 +39,23 @@ class AdminController extends Controller
 
    public function delete_user($id) {
       $user = User::findOrFail($id);
-      if($user->role == 'mahasiswa') {
-         Mahasiswa::where('user_Id', $id)->delete();
-      } elseif($user->role == 'dosen') {
-         Dosen::where('user_Id', $id)->delete();
+      // if($user->role == 'mahasiswa') {
+      //    Mahasiswa::where('user_Id', $id)->delete();
+      // } elseif($user->role == 'dosen') {
+      //    Dosen::where('user_Id', $id)->delete();
+      // }
+      // $user->delete();
+      $success_msg = "";
+      if($user->is_active == 0) {
+         $user->is_active = 1;
+         $success_msg = "User activated successfully!";
+      } else {
+         $user->is_active = 0;
+         $success_msg = "User inactivated successfully!";
       }
-      $user->delete();
+      $user->save();
 
-      return redirect()->route('admin.user')->with('success', 'User deleted successfully!');
+      return redirect()->route('admin.user')->with('success', $success_msg);
    }
 
    public function insert_user(Request $request)
