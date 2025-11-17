@@ -63,6 +63,9 @@
                   @endforeach
                 </tbody>
             </table>
+            <div class="mt-3">
+                {{ $periode->links() }}
+            </div>
         </div>
     </div>
 </div>
