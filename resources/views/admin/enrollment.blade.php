@@ -77,6 +77,9 @@
                   @endforeach
                 </tbody>
             </table>
+            <div class="mt-3">
+                {{ $enrollments->links() }}
+            </div>
         </div>
     </div>
 </div>

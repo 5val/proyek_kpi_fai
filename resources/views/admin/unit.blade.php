@@ -62,6 +62,9 @@
                   @endforeach
                 </tbody>
             </table>
+            <div class="mt-3">
+                {{ $units->links() }}
+            </div>
         </div>
     </div>
 </div>

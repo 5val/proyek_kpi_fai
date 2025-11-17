@@ -75,7 +75,7 @@
                         <td>{{ $k->id }}</td>
                         <td>{{ $k->mataKuliah->name }}</td>
                         <td>{{ $k->mataKuliah->program_studi }}</td>
-                        <td>{{ $k->dosen->user->name }}</td>
+                        <td>{{ $k->dosen->user->name ?? 'Dosen belum ditentukan' }}</td>
                         <td>{{ $k->periode->nama_periode }}</td>
                         <td>{{ $k->enrollment_count }}</td>
                         <td>
@@ -87,6 +87,9 @@
                   @endforeach
                 </tbody>
             </table>
+            <div class="mt-3">
+                {{ $kelas->links() }}
+            </div>
         </div>
     </div>
 </div>

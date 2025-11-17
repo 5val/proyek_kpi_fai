@@ -68,6 +68,9 @@
                   @endforeach
                 </tbody>
             </table>
+            <div class="mt-3">
+                {{ $fasilitas->links() }}
+            </div>
         </div>
     </div>
 </div>

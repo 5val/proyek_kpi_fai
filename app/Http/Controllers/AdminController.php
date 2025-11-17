@@ -27,11 +27,12 @@ class AdminController extends Controller
    }
 
    public function user() {
-      $users = User::all();
+      $users = User::paginate(10);
 
       return view('admin.user', ['users' => $users]);
    }
 
+   
    public function form_user() {
       return view('admin.form_user');
    }
@@ -186,8 +187,7 @@ class AdminController extends Controller
    }
 
    public function fasilitas() {
-      $fasilitas = Fasilitas::all();
-
+      $fasilitas = Fasilitas::paginate(10);
       return view('admin.fasilitas', ['fasilitas' => $fasilitas]);
    }
 
@@ -242,7 +242,7 @@ class AdminController extends Controller
    }
 
    public function unit() {
-      $units = Unit::with('penanggungJawab')->get();
+      $units = Unit::with('penanggungJawab')->paginate(10);
 
       return view('admin.unit', ['units' => $units]);
    }
@@ -299,7 +299,7 @@ class AdminController extends Controller
    }
 
    public function periode() {
-      $periode = Periode::all();
+      $periode = Periode::paginate(10);
       return view('admin.periode', ['periode' => $periode]);
    }
 
@@ -331,7 +331,7 @@ class AdminController extends Controller
    }
 
    public function mata_kuliah() {
-      $matkul = MataKuliah::all();
+      $matkul = MataKuliah::paginate(10);
       return view('admin.mata_kuliah', ["matkul" => $matkul]);
    }
 
@@ -384,7 +384,7 @@ class AdminController extends Controller
    }
 
    public function kelas() {
-      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->withCount('enrollment')->get();
+      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->withCount('enrollment')->paginate(10);
       return view('admin.kelas', ['kelas' => $kelas]);
    }
 
@@ -447,7 +447,7 @@ class AdminController extends Controller
 
    public function enrollment($id) {
       $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->where('id', $id)->first();
-      $enrollments = Enrollment::with('mahasiswa.user')->where('kelas_id', $id)->get();
+      $enrollments = Enrollment::with('mahasiswa.user')->where('kelas_id', $id)->paginate(10);
 
       return view('admin.enrollment', ['kelas' => $kelas, 'enrollments' => $enrollments]);
    }
