@@ -148,8 +148,12 @@ Route::prefix('admin')
         Route::post('/kelas/enrollment/{id}/upload', [AdminController::class, 'upload_enrollment'])->name('enrollment.upload');
 
         Route::get('/kategori_kpi', [AdminController::class, 'kategori_kpi'])->name('kategori_kpi');
-        Route::get('/kategori_kpi/indikator', [AdminController::class, 'list_indikator'])->name('list_indikator');
-        Route::get('/indikator_kpi/create', [AdminController::class, 'form_indikator'])->name('form_indikator');
+        Route::get('/kategori_kpi/{id}/indikator', [AdminController::class, 'list_indikator'])->name('list_indikator');
+        Route::get('/kategori_kpi/{id}/indikator/create', [AdminController::class, 'form_indikator'])->name('form_indikator');
+        Route::get('/kategori_kpi/{kategori_id}/indikator/delete/{id}', [AdminController::class, 'delete_indikator'])->name('indikator.delete');
+        Route::get('/kategori_kpi/{kategori_id}/indikator/edit/{id}', [AdminController::class, 'form_indikator_edit'])->name('form_indikator_edit');
+        Route::post('/kategori_kpi/{kategori_id}/indikator/insert', [AdminController::class, 'insert_indikator'])->name('indikator.insert');
+        Route::post('/kategori_kpi/{kategori_id}/indikator/update/{id}', [AdminController::class, 'update_indikator'])->name('indikator.update');
 
         Route::get('/penilaian', [AdminController::class, 'penilaian'])->name('penilaian');
         Route::get('/penilaian/detail', [AdminController::class, 'detail_penilaian'])->name('detail_penilaian');

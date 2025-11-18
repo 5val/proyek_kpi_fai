@@ -45,46 +45,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Kinerja Dosen</td>
-                        <td>Penilaian performa mengajar dosen oleh mahasiswa.</td>
-                        <td>8</td>
+                  @foreach ($kategori as $k)
+                     <tr>
+                        <td>{{ $k->name }}</td>
+                        <td>{{ $k->description }}</td>
+                        <td>{{ $k->indikator_count }}</td>
                         <td>
-                            <a href="{{ route('admin.list_indikator') }}" class="btn btn-info btn-sm"><i class="bi bi-list-task"></i> Indikator</a>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
+                           <a href="{{ route('admin.list_indikator', $k->id) }}" class="btn btn-info btn-sm"><i class="bi bi-list-task"></i> Indikator</a>
                         </td>
-                    </tr>
-                    <tr>
-                        <td>Kinerja Mahasiswa</td>
-                        <td>Penilaian performa akademik dan non-akademik mahasiswa.</td>
-                        <td>5</td>
-                        <td>
-                            <a href="#" class="btn btn-info btn-sm"><i class="bi bi-list-task"></i> Indikator</a>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Kinerja Fasilitas</td>
-                        <td>Penilaian performa fasilitas.</td>
-                        <td>5</td>
-                        <td>
-                            <a href="#" class="btn btn-info btn-sm"><i class="bi bi-list-task"></i> Indikator</a>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Kinerja Unit</td>
-                        <td>Penilaian performa unit layanan, seperti BAU, BAK, BAA, UKM, UKK.</td>
-                        <td>5</td>
-                        <td>
-                            <a href="#" class="btn btn-info btn-sm"><i class="bi bi-list-task"></i> Indikator</a>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></button>
-                        </td>
-                    </tr>
+                     </tr>
+                  @endforeach
                 </tbody>
             </table>
         </div>

@@ -34,26 +34,29 @@
         <i class="bi bi-plus-circle-fill"></i> Tambah Indikator untuk Kategori: <strong>Kinerja Dosen</strong>
     </div>
     <div class="card-body">
-        <form>
-            <div class="mb-3">
-                <label for="category" class="form-label">Kategori</label>
-                <input type="text" class="form-control" id="category" value="Kinerja Dosen" readonly>
-            </div>
+         @if (isset($indikator))
+            <form action="{{ route('admin.indikator.update', [$kategori_id, $indikator->id]) }}" method="POST">
+         @else
+            <form action="{{ route('admin.indikator.insert', $kategori_id) }}" method="POST">
+         @endif
+         @csrf
             <div class="mb-3">
                 <label for="indicatorName" class="form-label">Nama Indikator</label>
-                <input type="text" class="form-control" id="indicatorName" placeholder="Contoh: Penguasaan Materi">
+                <input type="text" class="form-control" id="indicatorName" placeholder="Contoh: Penguasaan Materi" name="name" value="{{ isset($indikator) ? $indikator->name : old('name') }}">
+                @error('name')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
             </div>
-             <!-- <div class="mb-3">
-                <label for="scale" class="form-label">Skala Penilaian</label>
-                <input type="text" class="form-control" id="scale" value="1 - 4" placeholder="Contoh: 1 - 4 atau Persentase">
-            </div> -->
             <div class="mb-3">
                 <label for="weight" class="form-label">Bobot (%)</label>
-                <input type="number" class="form-control" id="weight" placeholder="Masukkan bobot dalam persen (contoh: 20)">
+                <input type="number" class="form-control" id="weight" placeholder="Masukkan bobot dalam persen (contoh: 20)" name="bobot" value="{{ isset($indikator) ? $indikator->bobot : old('bobot') }}">
+                @error('bobot')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
             </div>
             <div class="mt-3">
                 <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Simpan</button>
-                <a href="{{ route('admin.list_indikator') }}" class="btn btn-secondary">Batal</a>
+                <a href="{{ route('admin.list_indikator', $kategori_id) }}" class="btn btn-secondary">Batal</a>
             </div>
         </form>
     </div>

@@ -30,7 +30,7 @@ class Kategori extends Model
     /**
      * Mendapatkan indikator-indikator KPI dalam kategori ini.
      */
-    public function indikatorKPI()
+    public function indikator()
     {
         return $this->hasMany(Indikator::class, 'kategori_id');
     }

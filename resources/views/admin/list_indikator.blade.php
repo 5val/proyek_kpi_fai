@@ -29,13 +29,16 @@
 @endsection
 
 @section('content')
+@if(session('success'))
+   <div class="alert alert-success">{{ session('success') }}</div>
+@endif
 <div class="card-custom">
     <div class="card-header d-flex justify-content-between align-items-center">
         <div>
             <a href="{{ route('admin.kategori_kpi') }}" class="btn btn-secondary btn-sm me-2"><i class="bi bi-arrow-left"></i> Kembali</a>
             <i class="bi bi-list-task"></i> Daftar Indikator untuk <strong>Kinerja Dosen</strong>
         </div>
-        <a href="{{ route('admin.form_indikator') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Tambah Indikator</a>
+        <a href="{{ route('admin.form_indikator', $kategori_id) }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Tambah Indikator</a>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -44,62 +47,23 @@
                     <tr>
                         <th>#</th>
                         <th>Nama Indikator</th>
-                        <th>Skala Penilaian</th>
                         <th>Bobot (%)</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Penguasaan Materi</td>
-                        <td>1 - 4</td>
-                        <td>25</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i> Hapus</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Kejelasan dalam Menyampaikan Materi</td>
-                        <td>1 - 4</td>
-                        <td>20</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i> Hapus</button>
-                        </td>
-                    </tr>
+                  @foreach ($indikator as $i)
+                  
                      <tr>
-                        <td>3</td>
-                        <td>Kemampuan Memberi Motivasi</td>
-                        <td>1 - 4</td>
-                        <td>15</td>
+                        <td>{{ $i->id }}</td>
+                        <td>{{ $i->name }}</td>
+                        <td>{{ $i->bobot }}</td>
                         <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i> Hapus</button>
+                           <a href="{{ route('admin.form_indikator_edit', [$kategori_id, $i->id] ) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</a>
+                           <a href="{{ route('admin.indikator.delete', [$kategori_id, $i->id]) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i> Hapus</a>
                         </td>
-                    </tr>
-                     <tr>
-                        <td>4</td>
-                        <td>Kedisiplinan Waktu</td>
-                        <td>1 - 4</td>
-                        <td>15</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i> Hapus</button>
-                        </td>
-                    </tr>
-                     <tr>
-                        <td>5</td>
-                        <td>Keadilan dalam Penilaian</td>
-                        <td>1 - 4</td>
-                        <td>25</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i> Edit</button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i> Hapus</button>
-                        </td>
-                    </tr>
+                     </tr>
+                  @endforeach
                 </tbody>
             </table>
         </div>

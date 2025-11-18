@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Dosen;
 use App\Models\Enrollment;
 use App\Models\Fasilitas;
+use App\Models\Indikator;
+use App\Models\Kategori;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
@@ -511,15 +513,59 @@ class AdminController extends Controller
    }
 
    public function kategori_kpi() {
-      return view('admin.kategori_kpi');
+      $kategori = Kategori::withCount('indikator')->get();
+      return view('admin.kategori_kpi', ['kategori' => $kategori]);
    }
 
-   public function list_indikator() {
-      return view('admin.list_indikator');
+   public function list_indikator($id) {
+      $indikator = Indikator::where('kategori_id', $id)->get();
+      return view('admin.list_indikator', ['indikator' => $indikator, 'kategori_id' => $id]);
    }
 
-   public function form_indikator() {
-      return view('admin.form_indikator');
+   public function form_indikator($id) {
+      return view('admin.form_indikator', ['kategori_id' => $id]);
+   }
+
+   public function delete_indikator($kategori_id, $id) {
+      Indikator::findOrFail($id)->delete();
+      return redirect()->route('admin.list_indikator', $kategori_id)->with('success', 'Indikator deleted successfully!');
+   }
+
+   public function insert_indikator(Request $request, $kategori_id) {
+      $data = $request->validate([
+         'name' => 'required|string|max:255',
+         'bobot' => 'required|integer|min:1|max:100'
+      ]);
+
+      $nameFound = Indikator::where('kategori_id', $kategori_id)->whereRaw('LOWER(name) = ?', [strtolower($request->name)])->first();
+      if($nameFound) {
+         return back()->withErrors(['name' => 'Indikator with this name already exists in this kategori!'])->withInput();
+      }
+
+      Indikator::create(['kategori_id' => $kategori_id, 'name' => $request->name, 'bobot' => $request->bobot]);
+      return redirect()->route('admin.list_indikator', $kategori_id)->with('success', 'Indikator added successfully!');
+   }
+
+   public function update_indikator(Request $request, $kategori_id, $id) {
+      $indikator = Indikator::findOrFail($id);
+      $data = $request->validate([
+         'name' => 'required|string|max:255',
+         'bobot' => 'required|integer|min:1|max:100'
+      ]);
+
+      $nameFound = Indikator::where('id', '!=', $id)->where('kategori_id', $kategori_id)->whereRaw('LOWER(name) = ?', [strtolower($request->name)])->first();
+      if($nameFound) {
+         return back()->withErrors(['name' => 'Indikator with this name already exists in this kategori!'])->withInput();
+      }
+
+      $indikator->update($data);
+      return redirect()->route('admin.list_indikator', $kategori_id)->with('success', 'Indikator updated successfully!');
+   }
+
+   public function form_indikator_edit($kategori_id, $id) {
+      $indikator = Indikator::findOrFail($id);
+
+      return view('admin.form_indikator', ['indikator' => $indikator, 'kategori_id' => $kategori_id]);
    }
 
    public function penilaian() {
