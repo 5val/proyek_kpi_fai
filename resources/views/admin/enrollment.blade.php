@@ -14,8 +14,8 @@
     <a class="nav-link" href="{{ route('admin.fasilitas') }}"><i class="bi bi-building"></i> Manajemen Fasilitas</a>
     <a class="nav-link" href="{{ route('admin.unit') }}"><i class="bi bi-bank2"></i> Manajemen Unit</a>
     <a class="nav-link" href="{{ route('admin.periode') }}"><i class="bi bi-calendar-event-fill"></i> Manajemen Periode</a>
-    <a class="nav-link active" href="{{ route('admin.mata_kuliah') }}"><i class="bi bi-book-fill"></i> Manajemen Mata Kuliah</a>
-    <a class="nav-link" href="{{ route('admin.kelas') }}"><i class="bi bi-easel-fill"></i> Manajemen Kelas</a>
+    <a class="nav-link" href="{{ route('admin.mata_kuliah') }}"><i class="bi bi-book-fill"></i> Manajemen Mata Kuliah</a>
+    <a class="nav-link active" href="{{ route('admin.kelas') }}"><i class="bi bi-easel-fill"></i> Manajemen Kelas</a>
     <a class="nav-link" href="{{ route('admin.kategori_kpi') }}"><i class="bi bi-tags-fill"></i> Kategori KPI</a>
     <a class="nav-link" href="{{ route('admin.penilaian') }}"><i class="bi bi-star-fill"></i> Data Penilaian</a>
     <a class="nav-link" href="{{ route('admin.laporan') }}"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
@@ -69,7 +69,7 @@
                         <td>{{ $e->id }}</td>
                         <td>{{ $e->mahasiswa_nrp }}</td>
                         <td>{{ $e->mahasiswa->user->name }}</td>
-                        <td>{{ $e->mahasiswa->program_studi }}</td>
+                        <td>{{ $e->mahasiswa->program_studi->name }}</td>
                         <td>
                            <a href="{{ route('admin.enrollment.delete', [$e->kelas_id, $e->id]) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
                         </td>
@@ -77,9 +77,6 @@
                   @endforeach
                 </tbody>
             </table>
-            <div class="mt-3">
-                {{ $enrollments->links() }}
-            </div>
         </div>
     </div>
 </div>

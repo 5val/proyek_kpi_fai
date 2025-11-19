@@ -11,6 +11,7 @@ use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Periode;
+use App\Models\ProgramStudi;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -36,7 +37,8 @@ class AdminController extends Controller
 
    
    public function form_user() {
-      return view('admin.form_user');
+      $program_studi = ProgramStudi::all();
+      return view('admin.form_user', ['program_studi' => $program_studi]);
    }
 
    public function delete_user($id) {
@@ -62,11 +64,13 @@ class AdminController extends Controller
 
    public function insert_user(Request $request)
 {
+      // is_certified: null / "on"
       // --- Validate basic user data ---
       $validated = $request->validate([
          'name' => 'required|string|max:255',
          'email' => 'required|email|max:255|unique:users,email',
          'password' => 'required|string|min:6',
+         'phone_number' => 'required|numeric|min_digits:12|max_digits:13',
          'role' => 'required|in:mahasiswa,dosen,admin'
       ]);
 
@@ -74,13 +78,15 @@ class AdminController extends Controller
       if ($request->role === 'mahasiswa') {
          $roleData = $request->validate([
                'nrp' => 'required|unique:mahasiswa,nrp',
-               'program_studi' => 'required|in:Informatika,SIB,DKV,Industri,Elektro,Desain Produk,MBD',
-               'angkatan' => 'required|integer|min:1970|max:' . date('Y'),
+               'program_studi' => 'required',
+               'points' => 'required|integer|min:0',
                'ipk' => 'required|numeric|between:0,4',
          ]);
       } elseif ($request->role === 'dosen') {
          $roleData = $request->validate([
                'nidn' => 'required|unique:dosen,nidn',
+               'start_date' => 'required|date|after_or_equal:today',
+               'end_date' => 'required|date|after_or_equal:today',
          ]);
       } else {
          $roleData = [];
@@ -91,6 +97,7 @@ class AdminController extends Controller
          'name' => $validated['name'],
          'email' => $validated['email'],
          'password' => Hash::make($validated['password']),
+         'phone_number' => $validated['phone_number'],
          'role' => $validated['role'],
       ]);
 
@@ -100,13 +107,20 @@ class AdminController extends Controller
                'user_id' => $user->id,
                'nrp' => $roleData['nrp'],
                'program_studi' => $roleData['program_studi'],
-               'angkatan' => $roleData['angkatan'],
+               'points_balance' => $roleData['points'],
                'ipk' => $roleData['ipk'],
          ]);
       } elseif ($validated['role'] === 'dosen') {
+         $is_certified = 0;
+         if($request->is_certified) {
+            $is_certified = 1;
+         }
          Dosen::create([
                'user_id' => $user->id,
                'nidn' => $roleData['nidn'],
+               'start_date' => $roleData['start_date'],
+               'end_date' => $roleData['end_date'],
+               'is_certified' => $is_certified,
          ]);
       }
 
@@ -125,6 +139,7 @@ class AdminController extends Controller
                'max:255',
                Rule::unique('users', 'email')->ignore($id),
          ],
+         'phone_number' => 'required|numeric|min_digits:12|max_digits:13',
          'role' => 'required|in:mahasiswa,dosen,admin',
       ]);
 
@@ -136,8 +151,8 @@ class AdminController extends Controller
                   'required',
                   Rule::unique('mahasiswa', 'nrp')->ignore(optional($user->mahasiswa)->id),
                ],
-               'program_studi' => 'required|in:Informatika,SIB,DKV,Industri,Elektro,Desain Produk,MBD',
-               'angkatan' => 'required|integer|min:1970|max:' . date('Y'),
+               'program_studi' => 'required',
+               'points' => 'required|integer|min:0',
                'ipk' => 'required|numeric|between:0,4',
          ]);
       } elseif ($validated['role'] === 'dosen') {
@@ -146,6 +161,8 @@ class AdminController extends Controller
                   'required',
                   Rule::unique('dosen', 'nidn')->ignore(optional($user->dosen)->id),
                ],
+               'start_date' => 'required|date|after_or_equal:today',
+               'end_date' => 'required|date|after_or_equal:today',
          ]);
       }
 
@@ -162,6 +179,7 @@ class AdminController extends Controller
       $user->update([
          'name' => $validated['name'],
          'email' => $validated['email'],
+         'phone_number' => $validated['phone_number'],
          'role' => $validated['role'],
       ]);
 
@@ -172,14 +190,23 @@ class AdminController extends Controller
                [
                   'nrp' => $roleData['nrp'],
                   'program_studi' => $roleData['program_studi'],
-                  'angkatan' => $roleData['angkatan'],
+                  'points' => $roleData['points'],
                   'ipk' => $roleData['ipk'],
                ]
          );
       } elseif ($validated['role'] === 'dosen') {
+         $is_certified = 0;
+         if($request->is_certified) {
+            $is_certified = 1;
+         }
          Dosen::updateOrCreate(
                ['user_id' => $user->id],
-               ['nidn' => $roleData['nidn']]
+               [
+                  'nidn' => $roleData['nidn'],
+                  'start_date' => $roleData['start_date'],
+                  'end_date' => $roleData['end_date'],
+                  'is_certified' => $is_certified,
+               ],
          );
       }
 
@@ -189,12 +216,13 @@ class AdminController extends Controller
    public function form_user_edit($id) {
       $user = User::findOrFail($id);
       if($user->role == 'mahasiswa') {
-         $user = User::with('mahasiswa')->findOrFail($id);
+         $user = User::with(['mahasiswa', 'program_studi'])->findOrFail($id);
       } elseif ($user->role == 'dosen') {
          $user = User::with('dosen')->findOrFail($id);
       }
+      $program_studi = ProgramStudi::all();
 
-      return view('admin.form_user', ['user' => $user]);
+      return view('admin.form_user', ['user' => $user, 'program_studi' => $program_studi]);
    }
 
    public function fasilitas() {
@@ -458,7 +486,7 @@ class AdminController extends Controller
 
    public function enrollment($id) {
       $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->where('id', $id)->first();
-      $enrollments = Enrollment::with('mahasiswa.user')->where('kelas_id', $id)->paginate(10);
+      $enrollments = Enrollment::with(['mahasiswa.user', 'mahasiswa.program_studi'])->where('kelas_id', $id)->get();
 
       return view('admin.enrollment', ['kelas' => $kelas, 'enrollments' => $enrollments]);
    }

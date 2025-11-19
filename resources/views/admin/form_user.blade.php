@@ -63,6 +63,13 @@
                     @enderror
                 </div>
                 <div class="col-md-6 mb-3">
+                    <label for="phone_number" class="form-label">Phone Number</label>
+                    <input type="number" class="form-control" id="phone_number" placeholder="Masukkan phone_number" name="phone_number" value="{{ isset($user) ? $user->phone_number : old('phone_number') }}">
+                    @error('phone_number')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="col-md-6 mb-3">
                     <label for="userRole" class="form-label">Role / Peran</label>
                     <select id="userRole" class="form-select" name="role">
                         <option selected disabled>Pilih role...</option>
@@ -98,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             extraFieldsContainer.innerHTML = `
                 <div class="col-md-6 mb-3">
                     <label for="nrp" class="form-label">NRP</label>
-                    <input type="text" class="form-control" id="nrp" name="nrp" placeholder="Masukkan NRP" value="{{ isset($user) ? $user->mahasiswa->nrp ?? '' : old('nrp') }}">
+                    <input type="text" class="form-control" id="nrp" name="nrp" placeholder="Masukkan NRP" value="{{ isset($user) ? $user->mahasiswa->nrp ?? '' : old('nrp') }}" {{ isset($user) ? 'disabled' : '' }}>
                     @error('nrp')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
@@ -107,22 +114,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     <label for="program_studi" class="form-label">Program Studi</label>
                     <select id="program_studi" class="form-select" name="program_studi">
                         <option selected disabled>Pilih program studi...</option>
-                        <option value="Informatika" {{ old('program_studi', $user->mahasiswa->program_studi ?? '') == 'Informatika' ? 'selected' : '' }}>Informatika</option>
-                        <option value="SIB" {{ old('program_studi', $user->mahasiswa->program_studi ?? '') == 'SIB' ? 'selected' : '' }}>SIB</option>
-                        <option value="DKV" {{ old('program_studi', $user->mahasiswa->program_studi ?? '') == 'DKV' ? 'selected' : '' }}>DKV</option>
-                        <option value="Industri" {{ old('program_studi', $user->mahasiswa->program_studi ?? '') == 'Industri' ? 'selected' : '' }}>Industri</option>
-                        <option value="Elektro" {{ old('program_studi', $user->mahasiswa->program_studi ?? '') == 'Elektro' ? 'selected' : '' }}>Elektro</option>
-                        <option value="Desain Produk" {{ old('program_studi', $user->mahasiswa->program_studi ?? '') == 'Desain Produk' ? 'selected' : '' }}>Desain Produk</option>
-                        <option value="MBD" {{ old('program_studi', $user->mahasiswa->program_studi ?? '') == 'MBD' ? 'selected' : '' }}>MBD</option>
+                        @foreach ($program_studi as $p)
+                           <option value="{{ $p->id }}" {{ old('program_studi', $user->mahasiswa->program_studi->name ?? '') == 'Informatika' ? 'selected' : '' }}>{{ $p->name }}</option>
+                        @endforeach
                     </select>
                     @error('program_studi')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="angkatan" class="form-label">Angkatan</label>
-                    <input type="number" class="form-control" id="angkatan" name="angkatan" placeholder="Masukkan Tahun Angkatan" value="{{ isset($user) ? $user->mahasiswa->angkatan ?? '' : old('angkatan') }}">
-                    @error('angkatan')
+                    <label for="points" class="form-label">Poin Kemahasiswaan</label>
+                    <input type="number" class="form-control" id="points" name="points" placeholder="Masukkan Poin Kemahasiswaan" value="{{ isset($user) ? $user->mahasiswa->points_balance ?? '' : old('points') }}">
+                    @error('points')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                 </div>
@@ -144,6 +147,33 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                 </div>
+                <div class="col-md-6 mb-3">
+                    <label for="start_date" class="form-label">Start Date</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date" placeholder="Masukkan Start Date" value="{{ isset($user) ? $user->dosen->start_date ?? '' : old('start_date') }}">
+                    @error('start_date')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="end_date" class="form-label">End Date</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date" placeholder="Masukkan End Date" value="{{ isset($user) ? $user->dosen->end_date ?? '' : old('end_date') }}">
+                    @error('end_date')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div></div>
+                <div class="col-md-6 mb-3">
+                  <label for="is_certified" class="form-label">Sertifikasi</label>
+                  <div class="form-check">
+                     <input type="checkbox" class="form-check-input" id="is_certified" name="is_certified" {{ isset($user) ? (($user->dosen->is_certified ?? false) ? 'checked' : '') : (old('is_certified') ? 'checked' : '') }}>
+                     <label class="form-check-label" for="is_certified">
+                           Dosen tersertifikasi
+                     </label>
+                  </div>
+                  @error('is_certified')
+                     <p class="text-danger">{{ $message }}</p>
+                  @enderror
+               </div>
             `;
         }
         // jika admin -> tidak menambahkan apapun

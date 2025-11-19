@@ -57,7 +57,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover data-table">
                 <thead class="table-light">
                     <tr>
                         <th>#</th>

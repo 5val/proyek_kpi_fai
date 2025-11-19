@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            background-image: url('https://storage.ibisnis.com/storage/images/656171f6b0799.webp');
+            background-image: url('https://s1infpro.istts.ac.id/wp-content/uploads/2021/03/gedung1.jpeg');
             min-height: 100vh;
             display: flex;
             align-items: center;
