@@ -12,16 +12,19 @@ class PenilaianController extends Controller
     public function index($tipe)
     {
         if ($tipe === 'dosen') {
-            $kategoriIds = [1, 2, 3];
+            $kategoriIds = [1];
 
         } elseif ($tipe === 'mahasiswa') {
-            $kategoriIds = [4, 5];
+            $kategoriIds = [2];
 
         } elseif ($tipe === 'unit') {
-            $kategoriIds = [6, 7, 10];
+            $kategoriIds = [4];
 
         } elseif ($tipe === 'fasilitas') {
-            $kategoriIds = [8, 9];
+            $kategoriIds = [3];
+
+        } elseif ($tipe === 'praktikum') {
+            $kategoriIds = [5];
 
         } else {
             abort(404, 'Halaman penilaian tidak ditemukan.');
@@ -39,13 +42,15 @@ class PenilaianController extends Controller
             'rating' => 'required|array',
         ]);
         if ($tipe === 'dosen') {
-            $kategoriIds = [1, 2, 3];
+            $kategoriIds = [1];
         } elseif ($tipe === 'mahasiswa') {
-            $kategoriIds = [4, 5];
+            $kategoriIds = [2];
         } elseif ($tipe === 'unit') {
-            $kategoriIds = [6, 7, 10];
+            $kategoriIds = [4];
         } elseif ($tipe === 'fasilitas') {
-            $kategoriIds = [8, 9];
+            $kategoriIds = [3];
+        } elseif ($tipe === 'praktikum') {
+            $kategoriIds = [5];
         } else {
             abort(404, 'Tipe penilaian tidak valid.');
         }
