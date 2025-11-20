@@ -45,42 +45,20 @@
             <!-- Pending Assessment Tab -->
             <div class="tab-pane fade show active" id="pending" role="tabpanel">
                 <div class="list-group list-group-flush">
+                    @foreach($fasilitas as $f)
                     <div class="list-group-item d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
                             <div class="me-3"><i class="bi bi-pc-display-horizontal fs-2 text-info"></i></div>
                             <div>
-                                <h6 class="mb-0">Laboratorium Komputer C101</h6>
-                                <small class="text-muted">Kategori: Laboratorium</small>
+                                <h6 class="mb-0">{{ $f->name }}</h6>
+                                <small class="text-muted">{{ $f->lokasi }}</small>
                             </div>
                         </div>
                         <a href="{{ route('penilaian.form', 'unit') }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil-square"></i> Beri Penilaian
                         </a>
                     </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3"><i class="bi bi-book-fill fs-2 text-warning"></i></div>
-                            <div>
-                                <h6 class="mb-0">Perpustakaan Pusat</h6>
-                                <small class="text-muted">Kategori: Umum</small>
-                            </div>
-                        </div>
-                        <a href="{{ route('penilaian.form', 'fasilitas') }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil-square"></i> Beri Penilaian
-                        </a>
-                    </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3"><i class="bi bi-cup-straw fs-2 text-danger"></i></div>
-                            <div>
-                                <h6 class="mb-0">Kantin Fakultas Teknik</h6>
-                                <small class="text-muted">Kategori: Area Mahasiswa</small>
-                            </div>
-                        </div>
-                        <a href="{{ route('penilaian.form', 'fasilitas') }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil-square"></i> Beri Penilaian
-                        </a>
-                    </div>
+                    @endforeach
                 </div>
             </div>
             <!-- Completed Assessment Tab -->

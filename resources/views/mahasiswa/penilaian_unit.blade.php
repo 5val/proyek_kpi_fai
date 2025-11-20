@@ -45,30 +45,20 @@
             <!-- Pending Assessment Tab -->
             <div class="tab-pane fade show active" id="pending" role="tabpanel">
                 <div class="list-group list-group-flush">
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3"><i class="bi bi-journal-album fs-2 text-primary"></i></div>
-                            <div>
-                                <h6 class="mb-0">BAA (Biro Administrasi Akademik)</h6>
-                                <small class="text-muted">Layanan terkait KRS, transkrip, dan jadwal.</small>
+                    @foreach($units as $unit)
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3"><i class="bi bi-journal-album fs-2 text-primary"></i></div>
+                                <div>
+                                    <h6 class="mb-0">{{$unit->name}}</h6>
+                                    <small class="text-muted">{{ $unit->penanggungJawab->name ?? 'Belum ditentukan' }}</small>
+                                </div>
                             </div>
+                            <a href="{{ route('penilaian.form', 'unit') }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-pencil-square"></i> Beri Penilaian
+                            </a>
                         </div>
-                        <a href="{{ route('penilaian.form', 'unit') }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil-square"></i> Beri Penilaian
-                        </a>
-                    </div>
-                     <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3"><i class="bi bi-wallet2 fs-2 text-success"></i></div>
-                            <div>
-                                <h6 class="mb-0">BAK (Biro Administrasi Keuangan)</h6>
-                                <small class="text-muted">Layanan terkait pembayaran dan keuangan.</small>
-                            </div>
-                        </div>
-                        <a href="{{ route('penilaian.form', 'unit') }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil-square"></i> Beri Penilaian
-                        </a>
-                    </div>
+                    @endforeach
                 </div>
             </div>
             <!-- Completed Assessment Tab -->

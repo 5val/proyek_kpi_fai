@@ -27,43 +27,56 @@
 @endsection
 
 @section('content')
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 <div class="row">
     <div class="col-md-8">
         <div class="card-custom">
             <div class="card-header"><i class="bi bi-chat-left-text-fill"></i> Kirim Feedback atau Laporan</div>
             <div class="card-body">
-                <form>
+                <form action="{{ route('mahasiswa.insertFeedback') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
                     <div class="mb-3">
                         <label for="subjek" class="form-label">Subjek</label>
-                        <input type="text" class="form-control" id="subjek" placeholder="Contoh: AC di Ruang R.301 tidak dingin">
+                        <input type="text" class="form-control" id="subjek" name="subjek" placeholder="Contoh: AC di Ruang R.301 tidak dingin">
                     </div>
                     
                     <div class="mb-3">
                         <label for="kategori" class="form-label">Kategori</label>
-                        <select class="form-select" id="kategori">
+                        <select class="form-select" id="kategori" name="kategori">
                             <option selected>Pilih kategori feedback...</option>
-                            <option value="fasilitas">Fasilitas</option>
-                            <option value="layanan">Layanan Unit (BAA, BAK, BAU)</option>
-                            <option value="akademik">Akademik</option>
-                            <option value="lainnya">Lainnya</option>
+                            @foreach($kategori as $c)
+                                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                            @endforeach
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label for="deskripsi" class="form-label">Deskripsi / Isi Feedback</label>
-                        <textarea class="form-control" id="deskripsi" rows="6" placeholder="Tuliskan rincian feedback, laporan, atau keluhan Anda di sini..."></textarea>
+                        <textarea class="form-control" id="deskripsi" name="deskripsi" rows="6" placeholder="Tuliskan rincian feedback, laporan, atau keluhan Anda di sini..."></textarea>
                     </div>
 
                     <!-- Input Foto Bukti -->
                     <div class="mb-3">
                         <label for="bukti" class="form-label">Lampiran Bukti (Foto)</label>
-                        <input class="form-control" type="file" id="bukti" accept="image/*">
+                        <input class="form-control" type="file" id="bukti" name="file" accept="image/*">
                         <small class="text-muted">Opsional. Unggah foto sebagai bukti jika diperlukan.</small>
                     </div>
                     <!-- Selesai Input Foto Bukti -->
 
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" value="" id="anonim">
+                        <input class="form-check-input" type="checkbox" id="anonim" name="anonim" value="1">
                         <label class="form-check-label" for="anonim">
                             Kirim sebagai anonim
                         </label>
