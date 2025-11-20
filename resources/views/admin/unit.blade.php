@@ -51,20 +51,21 @@
                 <tbody>
                   @foreach ($units as $unit)
                      <tr>
-                        <td>{{ $unit->name }}</td>
+                        <td>{{ $unit->name }} <span style="color:red;">{{ $unit->is_active == 0 ? '(Tidak Aktif)' : ''}}</span></td>
                         <td>{{ $unit->type }}</td>
                         <td>{{ $unit->penanggungJawab->name ?? 'Belum ditentukan' }}</td>
                         <td>
                            <a href="{{ route('admin.form_unit_edit', $unit->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                           <a href="{{ route('admin.unit.delete', $unit->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
+                           @if ($unit->is_active == 0)
+                           <a href="{{ route('admin.unit.delete', $unit->id) }}" class="btn btn-success btn-sm"><i class="bi bi-check-circle"></i></a>
+                           @else
+                           <a href="{{ route('admin.unit.delete', $unit->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-x-circle"></i></a>
+                           @endif
                         </td>
                      </tr>
                   @endforeach
                 </tbody>
             </table>
-            <div class="mt-3">
-                {{ $units->links() }}
-            </div>
         </div>
     </div>
 </div>

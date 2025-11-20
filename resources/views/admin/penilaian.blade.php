@@ -55,7 +55,7 @@
                 <thead class="table-light">
                     <tr>
                         <th>Penilai</th>
-                        <th>Objek yang Dinilai</th>
+                        <th>Subjek yang Dinilai</th>
                         <th>Kategori</th>
                         <th>Skor Rata-rata</th>
                         <th>Waktu</th>
@@ -63,30 +63,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Andi Pratama</td>
-                        <td>Dr. Budi Hartono, M.Kom.</td>
-                        <td>Kinerja Dosen</td>
-                        <td><span class="badge bg-primary">4.8 / 5.0</span></td>
-                        <td>2024-10-15 14:30</td>
-                        <td><a href="{{ route('admin.detail_penilaian') }}" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</a></td>
-                    </tr>
-                    <tr class="table-danger">
-                        <td>Siti Aminah</td>
-                        <td>Perpustakaan Pusat</td>
-                        <td>Fasilitas</td>
-                        <td><span class="badge bg-danger">1.8 / 5.0</span></td>
-                        <td>2024-10-15 13:05</td>
-                        <td><a href="{{-- route('admin.penilaian.detail', 2) --}}" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td>Dr. Budi Hartono, M.Kom.</td>
-                        <td>Andi Pratama</td>
-                        <td>Kinerja Mahasiswa</td>
-                        <td><span class="badge bg-primary">4.5 / 5.0</span></td>
-                        <td>2024-10-15 12:00</td>
-                        <td><a href="{{-- route('admin.penilaian.detail', 3) --}}" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</a></td>
-                    </tr>
+                  @foreach ($penilaian as $p)
+                     <tr>
+                        <td>{{ $p->penilai->name }}</td>
+                        <td>{{ $p->dinilai_user->name ?? $p->dinilai->name }}</td>
+                        <td>{{ $p->kategori->name }}</td>
+                        <td><span class="badge bg-primary">{{ $p->avg_score }} / 5.0</span></td>
+                        <td>{{ $p->created_at }}</td>
+                        <td><a href="{{ route('admin.detail_penilaian', $p->id) }}" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</a></td>
+                     </tr>
+                  @endforeach
                 </tbody>
             </table>
         </div>

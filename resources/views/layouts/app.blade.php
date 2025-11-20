@@ -228,7 +228,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
       $(document).ready(function () {
-         $('.data-table').DataTable();
+         $('.data-table').DataTable({
+            "order": [] // disables initial sorting
+         });
       });
    </script>
 

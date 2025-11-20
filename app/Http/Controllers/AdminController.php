@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailPenilaian;
 use App\Models\Dosen;
 use App\Models\Enrollment;
 use App\Models\Fasilitas;
@@ -10,6 +11,7 @@ use App\Models\Kategori;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
+use App\Models\Penilaian;
 use App\Models\Periode;
 use App\Models\ProgramStudi;
 use App\Models\Unit;
@@ -226,7 +228,7 @@ class AdminController extends Controller
    }
 
    public function fasilitas() {
-      $fasilitas = Fasilitas::paginate(10);
+      $fasilitas = Fasilitas::orderBy('is_active', 'desc')->get();
       return view('admin.fasilitas', ['fasilitas' => $fasilitas]);
    }
 
@@ -235,8 +237,17 @@ class AdminController extends Controller
    }
 
    public function delete_fasilitas($id) {
-      Fasilitas::findOrFail($id)->delete();
-      return redirect()->route('admin.fasilitas')->with('success', 'Fasilitas deleted successfully!');
+      $fasilitas = Fasilitas::findOrFail($id);
+      $success_msg = "";
+      if($fasilitas->is_active == 0) {
+         $fasilitas->is_active = 1;
+         $success_msg = "Fasilitas activated successfully!";
+      } else {
+         $fasilitas->is_active = 0;
+         $success_msg = "Fasilitas inactivated successfully!";
+      }
+      $fasilitas->save();
+      return redirect()->route('admin.fasilitas')->with('success', $success_msg);
    }
 
    public function insert_fasilitas(Request $request) {
@@ -281,7 +292,7 @@ class AdminController extends Controller
    }
 
    public function unit() {
-      $units = Unit::with('penanggungJawab')->paginate(10);
+      $units = Unit::with('penanggungJawab')->orderBy('is_active', 'desc')->get();
 
       return view('admin.unit', ['units' => $units]);
    }
@@ -293,8 +304,17 @@ class AdminController extends Controller
    }
 
    public function delete_unit($id) {
-      Unit::findOrFail($id)->delete();
-      return redirect()->route('admin.unit')->with('success', 'Unit deleted successfully!');
+      $unit = Unit::findOrFail($id);
+      $success_msg = "";
+      if($unit->is_active == 0) {
+         $unit->is_active = 1;
+         $success_msg = "Unit activated successfully!";
+      } else {
+         $unit->is_active = 0;
+         $success_msg = "Unit inactivated successfully!";
+      }
+      $unit->save();
+      return redirect()->route('admin.unit')->with('success', $success_msg);
    }
 
    public function insert_unit(Request $request) {
@@ -338,7 +358,7 @@ class AdminController extends Controller
    }
 
    public function periode() {
-      $periode = Periode::paginate(10);
+      $periode = Periode::all();
       return view('admin.periode', ['periode' => $periode]);
    }
 
@@ -370,7 +390,7 @@ class AdminController extends Controller
    }
 
    public function mata_kuliah() {
-      $matkul = MataKuliah::paginate(10);
+      $matkul = MataKuliah::orderBy('is_active', 'desc')->get();
       return view('admin.mata_kuliah', ["matkul" => $matkul]);
    }
 
@@ -379,8 +399,17 @@ class AdminController extends Controller
    }
 
    public function delete_mata_kuliah($id) {
-      MataKuliah::findOrFail($id)->delete();
-      return redirect()->route('admin.mata_kuliah')->with('success', 'Mata Kuliah deleted successfully!');
+      $matkul = MataKuliah::findOrFail($id);
+      $success_msg = "";
+      if($matkul->is_active == 0) {
+         $matkul->is_active = 1;
+         $success_msg = "Mata Kuliah activated successfully!";
+      } else {
+         $matkul->is_active = 0;
+         $success_msg = "Mata Kuliah inactivated successfully!";
+      }
+      $matkul->save();
+      return redirect()->route('admin.mata_kuliah')->with('success', $success_msg);
    }
 
    public function insert_mata_kuliah(Request $request) {
@@ -423,7 +452,7 @@ class AdminController extends Controller
    }
 
    public function kelas() {
-      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->withCount('enrollment')->paginate(10);
+      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode', 'program_studi')->withCount('enrollment')->orderBy('is_active', 'desc')->get();
       return view('admin.kelas', ['kelas' => $kelas]);
    }
 
@@ -436,8 +465,17 @@ class AdminController extends Controller
    }
 
    public function delete_kelas($id) {
-      Kelas::findOrFail($id)->delete();
-      return redirect()->route('admin.kelas')->with('success', 'Kelas deleted successfully!');
+      $kelas = Kelas::findOrFail($id);
+      $success_msg = "";
+      if($kelas->is_active == 0) {
+         $kelas->is_active = 1;
+         $success_msg = "Kelas activated successfully!";
+      } else {
+         $kelas->is_active = 0;
+         $success_msg = "Kelas inactivated successfully!";
+      }
+      $kelas->save();
+      return redirect()->route('admin.kelas')->with('success', $success_msg);
    }
 
    public function insert_kelas(Request $request) {
@@ -597,11 +635,14 @@ class AdminController extends Controller
    }
 
    public function penilaian() {
-      return view('admin.penilaian');
+      $penilaian = Penilaian::with('penilai', 'kategori', 'periode', 'dinilai')->get();
+      return view('admin.penilaian', ['penilaian' => $penilaian]);
    }
 
-   public function detail_penilaian() {
-      return view('admin.detail_penilaian');
+   public function detail_penilaian($id) {
+      $penilaian = Penilaian::with('penilai', 'kategori', 'periode', 'dinilai')->where('id', $id)->first();
+      $details = DetailPenilaian::with('indikator')->where('penilaian_id', $id)->get();
+      return view('admin.detail_penilaian', ['penilaian' => $penilaian, 'details' => $details]);
    }
 
    public function laporan() {

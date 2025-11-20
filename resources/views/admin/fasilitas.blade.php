@@ -44,7 +44,6 @@
                     <tr>
                         <th>Nama Fasilitas</th>
                         <th>Kategori</th>
-                        <th>Lokasi</th>
                         <th>Kondisi</th>
                         <th>Aksi</th>
                     </tr>
@@ -52,9 +51,8 @@
                 <tbody>
                   @foreach ($fasilitas as $f)
                      <tr class="{{ $f->kondisi == 'baik' ? '' : 'table-danger' }}">
-                        <td>{{ $f->name }}</td>
+                        <td>{{ $f->name }} <span style="color:red;">{{ $f->is_active == 0 ? '(Tidak Aktif)' : ''}}</span></td>
                         <td>{{$f->kategori}}</td>
-                        <td>{{$f->lokasi}}</td>
                         @if ($f->kondisi == "baik")
                            <td><span class="badge bg-success">Baik</span></td>
                         @else
@@ -62,15 +60,16 @@
                         @endif
                         <td>
                            <a href="{{ route('admin.form_fasilitas_edit', $f->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                           <a href="{{ route('admin.fasilitas.delete', $f->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
+                           @if ($f->is_active == 0)
+                           <a href="{{ route('admin.fasilitas.delete', $f->id) }}" class="btn btn-success btn-sm"><i class="bi bi-check-circle"></i></a>
+                           @else
+                           <a href="{{ route('admin.fasilitas.delete', $f->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-x-circle"></i></a>
+                           @endif
                         </td>
                      </tr>
                   @endforeach
                 </tbody>
             </table>
-            <div class="mt-3">
-                {{ $fasilitas->links() }}
-            </div>
         </div>
     </div>
 </div>

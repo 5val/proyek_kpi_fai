@@ -156,7 +156,7 @@ Route::prefix('admin')
         Route::post('/kategori_kpi/{kategori_id}/indikator/update/{id}', [AdminController::class, 'update_indikator'])->name('indikator.update');
 
         Route::get('/penilaian', [AdminController::class, 'penilaian'])->name('penilaian');
-        Route::get('/penilaian/detail', [AdminController::class, 'detail_penilaian'])->name('detail_penilaian');
+        Route::get('/penilaian/detail/{id}', [AdminController::class, 'detail_penilaian'])->name('detail_penilaian');
 
         Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
         Route::get('/feedback', [AdminController::class, 'feedback'])->name('feedback');

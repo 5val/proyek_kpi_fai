@@ -73,23 +73,24 @@
                   @foreach ($kelas as $k)
                      <tr>
                         <td>{{ $k->id }}</td>
-                        <td>{{ $k->mataKuliah->name }}</td>
-                        <td>{{ $k->mataKuliah->program_studi }}</td>
+                        <td>{{ $k->mataKuliah->name }} <span style="color:red;">{{ $k->is_active == 0 ? '(Tidak Aktif)' : ''}}</span></td>
+                        <td>{{ $k->program_studi->name }}</td>
                         <td>{{ $k->dosen->user->name ?? 'Dosen belum ditentukan' }}</td>
                         <td>{{ $k->periode->nama_periode }}</td>
                         <td>{{ $k->enrollment_count }}</td>
                         <td>
                            <a href="{{ route('admin.form_kelas_edit', $k->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                           <a href="{{ route('admin.kelas.delete', $k->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
+                           @if ($k->is_active == 0)
+                           <a href="{{ route('admin.kelas.delete', $k->id) }}" class="btn btn-success btn-sm"><i class="bi bi-check-circle"></i></a>
+                           @else
+                           <a href="{{ route('admin.kelas.delete', $k->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-x-circle"></i></a>
+                           @endif
                            <a href="{{ route('admin.enrollment', $k->id) }}" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</a>
                         </td>
                      </tr>
                   @endforeach
                 </tbody>
             </table>
-            <div class="mt-3">
-                {{ $kelas->links() }}
-            </div>
         </div>
     </div>
 </div>

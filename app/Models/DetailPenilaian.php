@@ -38,7 +38,7 @@ class DetailPenilaian extends Model
     /**
      * Mendapatkan data indikator KPI yang dinilai.
      */
-    public function indikatorKPI()
+    public function indikator()
     {
         return $this->belongsTo(Indikator::class, 'indikator_id');
     }

@@ -39,7 +39,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover data-table">
                 <thead class="table-light">
                     <tr>
                         <th>Nama Periode</th>
@@ -63,9 +63,6 @@
                   @endforeach
                 </tbody>
             </table>
-            <div class="mt-3">
-                {{ $periode->links() }}
-            </div>
         </div>
     </div>
 </div>

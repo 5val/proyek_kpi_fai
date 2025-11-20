@@ -44,27 +44,27 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between">
                         <strong>Penilai:</strong>
-                        <span>Andi Pratama (Mahasiswa)</span>
+                        <span>{{ $penilaian->penilai->name }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between">
-                        <strong>Objek Dinilai:</strong>
-                        <span>Dr. Budi Hartono, M.Kom.</span>
+                        <strong>Subjek Dinilai:</strong>
+                        <span>{{ $penilaian->dinilai_user->name ?? $penilaian->dinilai->name }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between">
                         <strong>Kategori:</strong>
-                        <span>Kinerja Dosen</span>
+                        <span>{{ $penilaian->kategori->name }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between">
                         <strong>Periode:</strong>
-                        <span>Gasal 2024/2025</span>
+                        <span>{{ $penilaian->periode->nama_periode }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between">
                         <strong>Waktu Penilaian:</strong>
-                        <span>2024-10-15 14:30</span>
+                        <span>{{ $penilaian->created_at }}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <strong>Skor Rata-rata:</strong>
-                        <span class="badge bg-primary fs-6">4.8 / 5.0</span>
+                        <span class="badge bg-primary fs-6">{{ $penilaian->avg_score }} / 5.0</span>
                     </li>
                 </ul>
             </div>
@@ -73,7 +73,7 @@
         <div class="card-custom">
             <div class="card-header"><i class="bi bi-chat-quote-fill"></i> Komentar Penilai</div>
             <div class="card-body">
-                <p class="fst-italic">"Secara keseluruhan sudah sangat baik. Penguasaan materi dan cara penyampaian sangat jelas. Mungkin slide materi bisa dibuat lebih menarik secara visual."</p>
+                <p class="fst-italic">"{{ $penilaian->komentar ?? '-' }}"</p>
             </div>
         </div>
     </div>
@@ -88,31 +88,16 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Indikator Penilaian</th>
-                                <th class="text-center">Skor (1-5)</th>
+                                <th class="text-center">Skor</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Penguasaan Materi</td>
-                                <td class="text-center"><span class="badge bg-success">5.0</span></td>
-                            </tr>
-                            <tr>
-                                <td>Kejelasan Penyampaian Materi</td>
-                                <td class="text-center"><span class="badge bg-success">5.0</span></td>
-                            </tr>
-                            <tr>
-                                <td>Kesesuaian Materi dengan RPS</td>
-                                <td class="text-center"><span class="badge bg-primary">4.0</span></td>
-                            </tr>
-                            <tr>
-                                <td>Penggunaan Media Pembelajaran</td>
-                                <td class="text-center"><span class="badge bg-warning">3.0</span></td>
-                            </tr>
-                            <tr>
-                            <tr>
-                                <td>Ketepatan Waktu & Disiplin</td>
-                                <td class="text-center"><span class="badge bg-success">5.0</span></td>
-                            </tr>
+                           @foreach ($details as $detail)
+                              <tr>
+                                 <td>{{ $detail->indikator->name }}</td>
+                                 <td class="text-center"><span class="badge bg-success">{{ $detail->score }}.0</span></td>
+                              </tr>
+                           @endforeach
                         </tbody>
                     </table>
                 </div>

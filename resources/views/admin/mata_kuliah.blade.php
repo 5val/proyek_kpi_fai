@@ -42,9 +42,8 @@
             <table class="table table-hover data-table">
                 <thead class="table-light">
                     <tr>
+                       <th>ID</th>
                        <th>Nama Mata Kuliah</th>
-                       <th>Program Studi</th>
-                        <th>SKS</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -52,20 +51,20 @@
                   @foreach ($matkul as $m)
                   
                   <tr>
-                      <td>{{ $m->name }}</td>
-                      <td>{{ $m->program_studi }}</td>
-                      <td>{{ $m->sks }}</td>
+                     <td>{{ $m->id }}</td>
+                      <td>{{ $m->name }} <span style="color:red;">{{ $m->is_active == 0 ? '(Tidak Aktif)' : ''}}</span></td>
                       <td>
                           <a href="{{ route('admin.form_mata_kuliah_edit', $m->id) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil-fill"></i></a>
-                          <a href="{{ route('admin.mata_kuliah.delete', $m->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
+                          @if ($m->is_active == 0)
+                           <a href="{{ route('admin.mata_kuliah.delete', $m->id) }}" class="btn btn-success btn-sm"><i class="bi bi-check-circle"></i></a>
+                           @else
+                           <a href="{{ route('admin.mata_kuliah.delete', $m->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-x-circle"></i></a>
+                           @endif
                       </td>
                   </tr>
                   @endforeach
                 </tbody>
             </table>
-            <div class="mt-3">
-                {{ $matkul->links() }}
-            </div>
         </div>
     </div>
 </div>
