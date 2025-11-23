@@ -32,20 +32,21 @@
 <div class="card-custom mb-4">
     <div class="card-header"><i class="bi bi-filter"></i> Filter Laporan</div>
     <div class="card-body">
-        <form class="row g-3">
+        <form action="{{ route('admin.laporan') }}" method="GET" class="row g-3">
             <div class="col-md-4">
                 <label for="kategori" class="form-label">Kategori KPI</label>
-                <select id="kategori" class="form-select">
-                    <option selected>Semua Kategori</option>
-                    <option>Kinerja Dosen</option>
-                    <option>Fasilitas</option>
+                <select id="kategori" class="form-select" name="kategori_id">
+                    @foreach ($all_kategori as $k)
+                     <option value={{ $k->id }} {{ request('kategori_id') == $k->id ? 'selected' : '' }}>{{ $k->name }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="col-md-4">
                 <label for="periode" class="form-label">Periode</label>
-                <select id="periode" class="form-select">
-                    <option selected>Semester Gasal 2024/2025</option>
-                    <option>Semester Genap 2023/2024</option>
+                <select id="periode" class="form-select" name="periode_id">
+                    @foreach ($all_periode as $p)
+                     <option value={{ $p->id }} {{ request('periode_id') == $p->id ? 'selected' : '' }}>{{ $p->nama_periode }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="col-md-4 d-flex align-items-end">
@@ -57,7 +58,7 @@
 
 <div class="card-custom">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <div><i class="bi bi-file-earmark-text-fill"></i> Hasil Laporan: Kinerja Dosen</div>
+        <div><i class="bi bi-file-earmark-text-fill"></i> Hasil Laporan: {{ $curKategori->name }}</div>
         <div>
             <button class="btn btn-success btn-sm"><i class="bi bi-file-earmark-excel-fill"></i> Export Excel</button>
             <button class="btn btn-danger btn-sm"><i class="bi bi-file-earmark-pdf-fill"></i> Export PDF</button>
@@ -68,27 +69,27 @@
             <table class="table table-bordered">
                  <thead class="table-light">
                     <tr>
-                        <th>Nama Dosen</th>
+                        <th>Nama {{ ucfirst($curKategori->target_role) }}</th>
                         <th>Skor Rata-rata</th>
                         <th>Jumlah Penilai</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Dr. Budi Hartono, M.Kom.</td>
-                        <td>3.8</td>
-                        <td>120</td>
-                    </tr>
-                    <tr>
-                        <td>Siti Aminah, S.T., M.T.</td>
-                        <td>3.6</td>
-                        <td>115</td>
-                    </tr>
-                    <tr class="table-danger">
-                        <td>Agung Pramana, S.T., M.T.</td>
-                        <td>1.9</td>
-                        <td>115</td>
-                    </tr>
+                     @foreach ($penilaian as $p)
+                        <tr>
+                           <td>
+                              @if ($curKategori->id == 1 || $curKategori->id == 2)
+                                 {{ $p->user->name ?? '' }}
+                              @elseif ($curKategori->id == 3 || $curKategori-> id == 4)
+                                 {{ $p->name ?? '' }}
+                              @else
+                                 {{ $p->kelas->mataKuliah->name ?? '' }}
+                              @endif
+                           </td>
+                           <td>{{ $p->penilaian_avg_avg_score ? number_format($p->penilaian_avg_avg_score, 1) : 'Belum Ada Penilaian' }}</td>
+                           <td>{{ $p->penilaian_count ?? 'Belum Ada Penilaian' }}</td>
+                        </tr>
+                     @endforeach
                 </tbody>
             </table>
         </div>

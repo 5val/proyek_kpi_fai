@@ -41,12 +41,11 @@
             <form action="{{ route('admin.user') }}" method="GET" class="d-flex align-items-center">
                 <select class="form-select form-select-sm me-2" name="role" id="roleFilter" onchange="this.form.submit()" style="width: auto;">
                     {{-- Default ke 'mahasiswa' jika tidak ada filter --}}
-                    <option value="mahasiswa" @if(request('role') == 'mahasiswa' || !request('role')) selected @endif>Tampilkan: Mahasiswa</option>
+                    <option value={{ null }} @if (!request('role')) selected @endif>Tampilkan: Semua</option>
+                    <option value="mahasiswa" @if(request('role') == 'mahasiswa') @endif>Tampilkan: Mahasiswa</option>
                     <option value="dosen" @if(request('role') == 'dosen') selected @endif>Tampilkan: Dosen</option>
                     <option value="admin" @if(request('role') == 'admin') selected @endif>Tampilkan: Admin</option>
-                    <option value="semua" @if(request('role') == 'semua') selected @endif>Tampilkan: Semua</option>
                 </select>
-                <button type="submit" class="d-none">Filter</button>
             </form>
             
             <!-- Tombol Tambah Dinamis -->

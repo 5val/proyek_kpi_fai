@@ -47,5 +47,10 @@ class Feedback extends Model
     {
         return $this->belongsTo(User::class, 'pengirim_id');
     }
+    
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class, 'kategori_id');
+    }
 }
 

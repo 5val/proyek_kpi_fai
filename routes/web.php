@@ -161,8 +161,9 @@ Route::prefix('admin')
 
         Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
         Route::get('/feedback', [AdminController::class, 'feedback'])->name('feedback');
+        Route::get('/feedback/{id}', [AdminController::class, 'detail_feedback'])->name('feedback.detail');
+        Route::get('/feedback/{id}/update', [AdminController::class, 'update_feedback'])->name('feedback.update');
     });
-
 
 /*
 |--------------------------------------------------------------------------

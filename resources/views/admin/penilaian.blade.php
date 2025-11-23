@@ -35,28 +35,31 @@
         
         <div class="d-flex align-items-center">
             <!-- Form untuk Filter Kategori -->
-            <form action="{{-- route('admin.penilaian') --}}" method="GET" class="d-flex align-items-center">
+            <form action="{{ route('admin.penilaian') }}" method="GET" class="d-flex align-items-center">
                 <select class="form-select form-select-sm me-2" name="kategori_id" id="kategoriFilter" onchange="this.form.submit()" style="width: auto;">
-                    <option value="">Semua Kategori</option>
-                    {{-- Ganti dengan loop Blade dari $kategori --}}
-                    <option value="1" {{ request('kategori_id') == 1 ? 'selected' : '' }}>Kinerja Dosen</option>
-                    <option value="2" {{ request('kategori_id') == 2 ? 'selected' : '' }}>Kinerja Mahasiswa</option>
-                    <option value="3" {{ request('kategori_id') == 3 ? 'selected' : '' }}>Fasilitas</option>
-                    <option value="4" {{ request('kategori_id') == 4 ? 'selected' : '' }}>Unit Layanan</option>
-                    <option value="5" {{ request('kategori_id') == 5 ? 'selected' : '' }}>Praktikum</option>
+                    <option value='' @if (request('kategori_id') == null) selected @endif>Semua Kategori</option>
+                    @foreach ($all_kategori as $k)
+                     <option value="{{ $k->id }}" {{ request('kategori_id') == $k->id ? 'selected' : '' }}>{{ $k->name }}</option>
+                    @endforeach
                 </select>
-                <button type="submit" class="d-none">Filter</button>
+                <select class="form-select form-select-sm me-2" name="periode_id" id="periodeFilter" onchange="this.form.submit()" style="width: auto;">
+                    <option value='' @if (request('periode_id') == null) selected @endif>Semua Periode</option>
+                    @foreach ($all_periode as $p)
+                     <option value={{ $p->id }} {{ request('periode_id') == $p->id ? 'selected' : '' }}>{{ $p->nama_periode }}</option>
+                    @endforeach
+                </select>
             </form>
         </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover">
+            <table class="table table-hover data-table">
                 <thead class="table-light">
                     <tr>
                         <th>Penilai</th>
                         <th>Subjek yang Dinilai</th>
                         <th>Kategori</th>
+                        <th>Periode</th>
                         <th>Skor Rata-rata</th>
                         <th>Waktu</th>
                         <th>Aksi</th>
@@ -68,6 +71,7 @@
                         <td>{{ $p->penilai->name }}</td>
                         <td>{{ $p->dinilai_user->name ?? $p->dinilai->name }}</td>
                         <td>{{ $p->kategori->name }}</td>
+                        <td>{{ $p->periode->nama_periode }}</td>
                         <td><span class="badge bg-primary">{{ $p->avg_score }} / 5.0</span></td>
                         <td>{{ $p->created_at }}</td>
                         <td><a href="{{ route('admin.detail_penilaian', $p->id) }}" class="btn btn-info btn-sm"><i class="bi bi-eye-fill"></i> Detail</a></td>

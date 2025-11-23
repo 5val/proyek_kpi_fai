@@ -40,16 +40,11 @@
             <!-- Form untuk Filter Periode -->
             <form action="{{ route('admin.kelas') }}" method="GET" class="d-flex align-items-center">
                 <select class="form-select form-select-sm me-2" name="periode_id" id="periodeFilter" onchange="this.form.submit()" style="width: auto;">
-                    {{-- Asumsi $periodes (dari controller) berisi ID dan nama_periode --}}
-                    {{-- Dan $currentPeriodeId adalah ID periode yang sedang aktif/dipilih --}}
-                    <option value="">Semua Periode</option>
-                    
-                    {{-- Contoh data statis, ganti dengan loop Blade --}}
-                    <option value="1" {{ request('periode_id') == 1 ? 'selected' : '' }}>Gasal 2024/2025</option>
-                    <option value="2" {{ request('periode_id') == 2 ? 'selected' : '' }}>Genap 2023/2024</option>
-                    <option value="3" {{ request('periode_id') == 3 ? 'selected' : '' }}>Gasal 2023/2024</option>
+                    <option value={{ null }} @if (!request('periode_id')) selected @endif>Semua Periode</option>
+                    @foreach ($all_periode as $p)
+                     <option value={{ $p->id }} {{ request('periode_id') == $p->id ? 'selected' : '' }}>{{ $p->nama_periode }}</option>
+                    @endforeach
                 </select>
-                <button type="submit" class="d-none">Filter</button>
             </form>
 
             <a href="{{ route('admin.form_kelas') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle-fill"></i> Buka Kelas Baru</a>

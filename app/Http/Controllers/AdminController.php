@@ -6,6 +6,7 @@ use App\Models\DetailPenilaian;
 use App\Models\Dosen;
 use App\Models\Enrollment;
 use App\Models\Fasilitas;
+use App\Models\Feedback;
 use App\Models\Indikator;
 use App\Models\Kategori;
 use App\Models\Kelas;
@@ -13,6 +14,7 @@ use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Penilaian;
 use App\Models\Periode;
+use App\Models\Praktikum;
 use App\Models\ProgramStudi;
 use App\Models\Unit;
 use App\Models\User;
@@ -31,8 +33,12 @@ class AdminController extends Controller
       return view('admin.dashboard');
    }
 
-   public function user() {
-      $users = User::orderBy("is_active", "desc")->get();
+   public function user(Request $request) {
+      if($request->role) {
+         $users = User::where('role', $request->role)->orderBy("is_active", "desc")->get();
+      } else {
+         $users = User::orderBy("is_active", "desc")->get();
+      }
 
       return view('admin.user', ['users' => $users]);
    }
@@ -451,9 +457,14 @@ class AdminController extends Controller
       return view('admin.form_mata_kuliah', ['matkul' => $matkul]);
    }
 
-   public function kelas() {
-      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode', 'program_studi')->withCount('enrollment')->orderBy('is_active', 'desc')->get();
-      return view('admin.kelas', ['kelas' => $kelas]);
+   public function kelas(Request $request) {
+      $all_periode = Periode::orderBy('id', 'desc')->get();
+      if ($request->periode_id) {
+         $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode', 'program_studi')->withCount('enrollment')->where('periode_id', $request->periode_id)->orderBy('is_active', 'desc')->get();
+      } else {
+         $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode', 'program_studi')->withCount('enrollment')->orderBy('is_active', 'desc')->get();
+      }
+      return view('admin.kelas', ['all_periode' => $all_periode, 'kelas' => $kelas]);
    }
 
    public function form_kelas() {
@@ -634,9 +645,18 @@ class AdminController extends Controller
       return view('admin.form_indikator', ['indikator' => $indikator, 'kategori_id' => $kategori_id]);
    }
 
-   public function penilaian() {
-      $penilaian = Penilaian::with('penilai', 'kategori', 'periode', 'dinilai')->get();
-      return view('admin.penilaian', ['penilaian' => $penilaian]);
+   public function penilaian(Request $request) {
+      $all_kategori = Kategori::all();
+      $all_periode = Periode::orderBy('id', 'desc')->get();
+      $penilaian = Penilaian::with('penilai', 'kategori', 'periode', 'dinilai');
+      if($request->kategori_id) {
+         $penilaian = $penilaian->where('kategori_id', $request->kategori_id);
+      }
+      if($request->periode_id) {
+         $penilaian = $penilaian->where('periode_id', $request->periode_id);
+      }
+      $penilaian = $penilaian->get();
+      return view('admin.penilaian', ['all_kategori' => $all_kategori, 'all_periode' => $all_periode, 'penilaian' => $penilaian]);
    }
 
    public function detail_penilaian($id) {
@@ -645,11 +665,107 @@ class AdminController extends Controller
       return view('admin.detail_penilaian', ['penilaian' => $penilaian, 'details' => $details]);
    }
 
-   public function laporan() {
-      return view('admin.laporan');
+   public function laporan(Request $request) {
+      // $all_kategori = Kategori::all();
+      // $all_periode = Periode::orderBy('id', 'desc')->get();
+      // if($request->kategori_id) {
+      //    $curKategori = Kategori::findOrFail($request->kategori_id);
+      //    if($request->kategori_id == 1) {
+      //       $penilaian = Dosen::with('user', 'penilaian');
+      //    } else if($request->kategori_id == 2) {
+      //       $penilaian = Mahasiswa::with('user', 'penilaian');
+      //    } else if($request->kategori_id == 3) {
+      //       $penilaian = Fasilitas::with('penilaian');
+      //    } else if($request->kategori_id == 4) {
+      //       $penilaian = Unit::with('penilaian');
+      //    } else {
+      //       $penilaian = Praktikum::with('kelas.mataKuliah', 'penilaian');
+      //    }
+      // } else {
+      //    $curKategori = Kategori::findOrFail(1);
+      //    $penilaian = Dosen::with('user', 'penilaian');
+      // }
+      // if($request->periode_id) {
+      //    $periode_id = $request->periode_id;
+      //    $penilaian = $penilaian->withAvg(['penilaian' => function($query) use ($periode_id) {
+      //       $query->where('periode_id', $periode_id);
+      //    }], 'avg_score');
+      // } else {
+      //    $last = Periode::max('id');
+      //    $penilaian = $penilaian->withAvg(['penilaian' => function($query) use ($last) {
+      //       $query->where('periode_id', $last);
+      //    }], 'avg_score');
+
+      // }
+      // $penilaian = $penilaian->withCount('penilaian')->get();
+      // return view('admin.laporan', ['all_kategori' => $all_kategori, 'all_periode' => $all_periode, 'penilaian' => $penilaian, 'curKategori' => $curKategori]);
+
+      $all_kategori = Kategori::all();
+      $all_periode = Periode::orderBy('id', 'desc')->get();
+
+      $curKategori = Kategori::findOrFail($request->kategori_id ?? 1);
+
+      // Mapping kategori to models
+      $kategoriModels = [
+         1 => Dosen::class,
+         2 => Mahasiswa::class,
+         3 => Fasilitas::class,
+         4 => Unit::class,
+         5 => Praktikum::class
+      ];
+
+      $modelClass = $kategoriModels[$curKategori->id] ?? Dosen::class;
+      $penilaian = $modelClass::with('penilaian');
+
+      if (in_array($curKategori->id, [1,2])) {
+         $penilaian = $penilaian->with('user');
+      }
+
+      if ($curKategori->id == 5) {
+         $penilaian = $penilaian->with('kelas.mataKuliah');
+      }
+
+      $periode_id = $request->periode_id ?? Periode::max('id');
+      $penilaian = $penilaian->withAvg(['penilaian' => function($query) use ($periode_id) {
+         $query->where('periode_id', $periode_id);
+      }], 'avg_score');
+
+      $penilaian = $penilaian->withCount('penilaian')->get();
+
+      return view('admin.laporan', [
+         'all_kategori' => $all_kategori,
+         'all_periode' => $all_periode,
+         'penilaian' => $penilaian,
+         'curKategori' => $curKategori
+      ]);
    }
 
-   public function feedback() {
-      return view('admin.feedback');
+   public function feedback(Request $request) {
+      $all_kategori = Kategori::all();
+      $feedbacks = Feedback::with('pengirim', 'kategori');
+      if($request->kategori_id) {
+         $feedbacks = $feedbacks->where('kategori_id', $request->kategori_id);
+      }
+      if($request->has('status') && $request->status != '') {
+         $feedbacks = $feedbacks->where('status', intval($request->status));
+      }
+      $feedbacks = $feedbacks->get();
+      return view('admin.feedback', ['all_kategori' => $all_kategori, 'feedbacks' => $feedbacks]);
+   }
+
+   public function update_feedback($id) {
+      $feedback = Feedback::findOrFail($id);
+      if($feedback->status == 1) {
+         $feedback->status = 0;
+      } else {
+         $feedback->status = 1;
+      }
+      $feedback->save();
+      return redirect()->route('admin.feedback')->with('success', 'Feedback updated successfully!');
+   }
+
+   public function detail_feedback($id) {
+      $feedback = Feedback::with('pengirim.mahasiswa.program_studi', 'kategori')->findOrFail($id);
+      return view('admin.detail_feedback', ['feedback' => $feedback]);
    }
 }
