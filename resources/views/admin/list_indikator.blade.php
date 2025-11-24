@@ -2,9 +2,9 @@
 
 @section('title', 'Daftar Indikator KPI')
 
-@section('page-title', 'Indikator KPI - Kinerja Dosen')
-@section('page-subtitle', 'Kelola semua indikator penilaian untuk kategori Kinerja Dosen')
-@section('user-name', 'Administrator')
+@section('page-title', 'Indikator KPI')
+@section('page-subtitle', 'Kelola semua indikator penilaian')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

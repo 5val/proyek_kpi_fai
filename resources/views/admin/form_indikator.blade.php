@@ -4,7 +4,7 @@
 
 @section('page-title', 'Formulir Indikator KPI')
 @section('page-subtitle', 'Tambah atau edit indikator untuk sebuah kategori')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

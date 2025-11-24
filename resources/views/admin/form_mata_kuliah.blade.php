@@ -4,7 +4,7 @@
 
 @section('page-title', 'Formulir Mata Kuliah')
 @section('page-subtitle', 'Tambah atau ubah data mata kuliah')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

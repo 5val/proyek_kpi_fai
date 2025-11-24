@@ -4,7 +4,7 @@
 
 @section('page-title', 'Manajemen Kelas')
 @section('page-subtitle', 'Kelola kelas yang dibuka setiap periode')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

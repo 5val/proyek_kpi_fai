@@ -4,7 +4,7 @@
 
 @section('page-title', 'Laporan Key Performance Indicator')
 @section('page-subtitle', 'Generate dan export laporan KPI')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 
@@ -60,8 +60,8 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <div><i class="bi bi-file-earmark-text-fill"></i> Hasil Laporan: {{ $curKategori->name }}</div>
         <div>
-            <button class="btn btn-success btn-sm"><i class="bi bi-file-earmark-excel-fill"></i> Export Excel</button>
-            <button class="btn btn-danger btn-sm"><i class="bi bi-file-earmark-pdf-fill"></i> Export PDF</button>
+            <a href="{{ route('admin.laporan.export.excel', [$curKategori->id, $periode_id]) }}" class="btn btn-success btn-sm"><i class="bi bi-file-earmark-excel-fill"></i> Export Excel</a>
+            <a href="{{ route('admin.laporan.export.pdf', [$curKategori->id, $periode_id]) }}" class="btn btn-danger btn-sm"><i class="bi bi-file-earmark-pdf-fill"></i> Export PDF</a>
         </div>
     </div>
     <div class="card-body">

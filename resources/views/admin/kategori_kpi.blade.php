@@ -4,7 +4,7 @@
 
 @section('page-title', 'Kategori Key Performance Indicator (KPI)')
 @section('page-subtitle', 'Kelola kategori utama untuk penilaian')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

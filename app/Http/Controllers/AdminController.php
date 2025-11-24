@@ -18,19 +18,92 @@ use App\Models\Praktikum;
 use App\Models\ProgramStudi;
 use App\Models\Unit;
 use App\Models\User;
+use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Cell;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+// Excel Export (PhpSpreadsheet)
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+// PDF Export (Dompdf)
+use Dompdf\Dompdf;
 
 class AdminController extends Controller
 {
    public function dashboard() {
-      return view('admin.dashboard');
+      $total_pengguna = User::count();
+      $total_dosen = Dosen::count();
+      $total_mahasiswa = Mahasiswa::count();
+      $total_penilaian = Penilaian::count();
+
+      $last6Months = collect();
+      for ($i = 5; $i >= 0; $i--) {
+         $month = Carbon::now()->subMonths($i);
+         $last6Months->push($month->format('Y-m'));
+      }
+
+      // 2. Ambil rata-rata skor per bulan
+      $chart_bulan_data = Penilaian::select(
+            DB::raw('DATE_FORMAT(created_at, "%Y-%m") as ym'),
+            DB::raw('AVG(avg_score) as rata_rata_skor')
+         )
+         ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
+         ->groupBy('ym')
+         ->orderBy('ym', 'asc')
+         ->get()
+         ->keyBy('ym'); // supaya bisa diakses per 'Y-m'
+
+      // 3. Merge dengan list bulan untuk fill missing 0
+      $chart_bulan = $last6Months->map(function($ym) use ($chart_bulan_data) {
+         $item = $chart_bulan_data->get($ym);
+         return (object)[
+            'ym' => $ym,
+            'rata_rata_skor' => $item ? (float)$item->rata_rata_skor : 0,
+            'bulan' => Carbon::createFromFormat('Y-m', $ym)
+                              ->locale('id')
+                              ->translatedFormat('F Y')
+         ];
+      });
+
+      $allKategori = Kategori::all()->keyBy('id');
+
+      // 2. Ambil rata-rata skor per kategori
+      $kategoriData = Penilaian::select(
+            'kategori_id',
+            DB::raw('AVG(avg_score) as rata_rata_skor')
+         )
+         ->groupBy('kategori_id')
+         ->get()
+         ->keyBy('kategori_id');
+
+      // 3. Merge untuk fill missing 0
+      $chart_kategori = $allKategori->map(function($kategori) use ($kategoriData) {
+         $data = $kategoriData->get($kategori->id);
+         return (object)[
+            'nama_kategori' => $kategori->name,
+            'rata_rata_skor' => $data ? (float)$data->rata_rata_skor : 0
+         ];
+      });
+
+      $feedbacks = Feedback::with('pengirim', 'kategori')->orderBy('id', 'desc')->limit(5)->get();
+
+      return view('admin.dashboard', [
+         'total_pengguna' => $total_pengguna,
+         'total_dosen' => $total_dosen,
+         'total_mahasiswa' => $total_mahasiswa,
+         'total_penilaian' => $total_penilaian,
+         'chart_bulan' => $chart_bulan,
+         'chart_kategori' => $chart_kategori,
+         'feedbacks' => $feedbacks,
+      ]);
    }
 
    public function user(Request $request) {
@@ -704,40 +777,80 @@ class AdminController extends Controller
       $all_periode = Periode::orderBy('id', 'desc')->get();
 
       $curKategori = Kategori::findOrFail($request->kategori_id ?? 1);
-
-      // Mapping kategori to models
-      $kategoriModels = [
-         1 => Dosen::class,
-         2 => Mahasiswa::class,
-         3 => Fasilitas::class,
-         4 => Unit::class,
-         5 => Praktikum::class
-      ];
-
-      $modelClass = $kategoriModels[$curKategori->id] ?? Dosen::class;
-      $penilaian = $modelClass::with('penilaian');
-
-      if (in_array($curKategori->id, [1,2])) {
-         $penilaian = $penilaian->with('user');
-      }
-
-      if ($curKategori->id == 5) {
-         $penilaian = $penilaian->with('kelas.mataKuliah');
-      }
-
       $periode_id = $request->periode_id ?? Periode::max('id');
-      $penilaian = $penilaian->withAvg(['penilaian' => function($query) use ($periode_id) {
-         $query->where('periode_id', $periode_id);
-      }], 'avg_score');
 
-      $penilaian = $penilaian->withCount('penilaian')->get();
+      $penilaian = $this->getPenilaian($curKategori->id, $periode_id);
 
       return view('admin.laporan', [
          'all_kategori' => $all_kategori,
          'all_periode' => $all_periode,
          'penilaian' => $penilaian,
-         'curKategori' => $curKategori
+         'curKategori' => $curKategori,
+         'periode_id' => $periode_id
       ]);
+   }
+
+   public function laporan_export_excel($kategori_id, $periode_id) {
+      $penilaian = $this->getPenilaian($kategori_id, $periode_id);
+
+      $curKategori = Kategori::findOrFail($kategori_id);
+
+      // Prepare Spreadsheet
+      $spreadsheet = new Spreadsheet();
+      $sheet = $spreadsheet->getActiveSheet();
+
+      // Header
+      $sheet->setCellValue('A1', 'Nama ' . ucfirst($curKategori->target_role));
+      $sheet->setCellValue('B1', 'Skor Rata-rata');
+      $sheet->setCellValue('C1', 'Jumlah Penilai');
+
+      // Isi baris
+      $row = 2;
+      foreach ($penilaian as $p) {
+
+         if (in_array($curKategori->id, [1, 2])) {
+               $nama = $p->user->name ?? '';
+         } elseif (in_array($curKategori->id, [3, 4])) {
+               $nama = $p->name ?? '';
+         } else {
+               $nama = $p->kelas->mataKuliah->name ?? '';
+         }
+
+         $sheet->setCellValue("A{$row}", $nama);
+         $sheet->setCellValue("B{$row}", $p->penilaian_avg_avg_score ?? 'Belum Ada Penilaian');
+         $sheet->setCellValue("C{$row}", $p->penilaian_count);
+         $row++;
+      }
+
+      // Filename
+      $filename = "laporan_kpi_{$curKategori->name}.xlsx";
+
+      // Output file ke browser
+      $writer = new Xlsx($spreadsheet);
+
+      return response()->streamDownload(function () use ($writer) {
+         $writer->save('php://output');
+      }, $filename);
+   }
+
+   public function laporan_export_pdf($kategori_id, $periode_id) {
+      $penilaian = $this->getPenilaian($kategori_id, $periode_id);
+
+      $curKategori = Kategori::findOrFail($kategori_id);
+
+      // Generate HTML untuk PDF
+      $html = view('admin.laporan_pdf', [
+         'penilaian' => $penilaian,
+         'curKategori' => $curKategori
+      ])->render();
+
+      // Load Dompdf
+      $dompdf = new Dompdf();
+      $dompdf->loadHtml($html);
+      $dompdf->setPaper('A4', 'portrait');
+      $dompdf->render();
+
+      return $dompdf->stream("laporan_kpi_{$curKategori->name}.pdf");
    }
 
    public function feedback(Request $request) {
@@ -767,5 +880,96 @@ class AdminController extends Controller
    public function detail_feedback($id) {
       $feedback = Feedback::with('pengirim.mahasiswa.program_studi', 'kategori')->findOrFail($id);
       return view('admin.detail_feedback', ['feedback' => $feedback]);
+   }
+
+   public function profile() {
+      $user = User::where('id', Auth::user()->id)->firstOrFail();
+      return view('admin.profile', ['user' => $user]);
+   }
+
+   public function update_profile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'email' => 'required|email|unique:users,email,'. $user->id,
+            'phone_number' => 'required|numeric|min_digits:12|max_digits:13|unique:users,phone_number,'. $user->id,
+        ]);
+
+        $user->update([
+            'email' => $request->email,
+            'phone_number' => $request->phone_number,
+        ]);
+
+        return redirect()->route('admin.profile')->with('success', 'Profile updated successfully!');
+    }   
+    
+    public function change_password(Request $request)
+    {
+        $user = Auth::user();
+    
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ]);
+    
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Password lama yang Anda masukkan salah.']);
+        }
+    
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+    
+        return back()->with('success', 'Password updated successfully!');
+    }
+
+   public function upload_prof_pic(Request $request, $id) {
+      $request->validate([
+         'file' => 'required|file|mimes:jpg,jpeg,png|max:5120',
+      ]);
+      $user = Auth::user();
+      if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
+         Storage::disk('public')->delete($user->photo_profile);
+      }
+      $file = $request->file('file');
+      $path = $file->store('profiles', 'public');
+      $user->update([
+         'photo_profile' => $path,
+      ]);
+      return redirect()
+         ->route('admin.profile')
+         ->with('success', 'Photo Profile updated successfully!');
+   }
+
+   private function getPenilaian($kategori_id, $periode_id){
+      // Mapping kategori to models
+      $kategoriModels = [
+         1 => Dosen::class,
+         2 => Mahasiswa::class,
+         3 => Fasilitas::class,
+         4 => Unit::class,
+         5 => Praktikum::class
+      ];
+
+      $modelClass = $kategoriModels[$kategori_id] ?? Dosen::class;
+      $penilaian = $modelClass::with('penilaian');
+
+      if (in_array($kategori_id, [1,2])) {
+         $penilaian = $penilaian->with('user');
+      }
+
+      if ($kategori_id == 5) {
+         $penilaian = $penilaian->with('kelas.mataKuliah');
+      }
+
+      
+      $penilaian = $penilaian->withAvg(['penilaian' => function($query) use ($periode_id) {
+         $query->where('periode_id', $periode_id);
+      }], 'avg_score');
+
+      $penilaian = $penilaian->withCount('penilaian')->get();
+
+      return $penilaian;
    }
 }

@@ -4,7 +4,7 @@
 
 @section('page-title', 'Detail Enrollment Kelas')
 @section('page-subtitle', 'Daftar mahasiswa terdaftar di kelas Algoritma & Pemrograman')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

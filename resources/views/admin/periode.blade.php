@@ -4,7 +4,7 @@
 
 @section('page-title', 'Manajemen Periode')
 @section('page-subtitle', 'Kelola periode akademik untuk penilaian dan kelas')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

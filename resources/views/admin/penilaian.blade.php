@@ -4,7 +4,7 @@
 
 @section('page-title', 'Data Penilaian Masuk')
 @section('page-subtitle', 'Monitoring semua data penilaian yang telah diinput')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

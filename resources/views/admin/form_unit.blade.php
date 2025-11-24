@@ -4,7 +4,7 @@
 
 @section('page-title', 'Formulir Unit')
 @section('page-subtitle', 'Tambah atau edit data unit layanan/akademik')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

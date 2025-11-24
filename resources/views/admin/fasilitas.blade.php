@@ -4,7 +4,7 @@
 
 @section('page-title', 'Manajemen Fasilitas')
 @section('page-subtitle', 'Kelola data fasilitas kampus')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

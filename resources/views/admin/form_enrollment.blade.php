@@ -4,7 +4,7 @@
 
 @section('page-title', 'Formulir Enrollment')
 @section('page-subtitle', 'Unggah data mahasiswa untuk didaftarkan ke kelas')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

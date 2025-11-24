@@ -4,7 +4,7 @@
 
 @section('page-title', 'Detail Feedback')
 @section('page-subtitle', 'Rincian lengkap masukan dari pengguna')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

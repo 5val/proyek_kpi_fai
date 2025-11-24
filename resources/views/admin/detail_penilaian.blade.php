@@ -4,7 +4,7 @@
 
 @section('page-title', 'Detail Penilaian')
 @section('page-subtitle', 'Rincian skor dan komentar dari penilaian')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 

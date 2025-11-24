@@ -62,4 +62,17 @@ class AuthController extends Controller
 
         return redirect()->route('login')->with('status', 'Anda telah logout.');
     }
+
+    public function redirectProfiles() {
+      if(Auth::check()) {
+           if (Auth::user()->role == 'admin') {
+               return redirect()->route('admin.profile');
+           } elseif (Auth::user()->role == 'dosen') {
+               return redirect()->route('dosen.profile');
+           } elseif (Auth::user()->role == 'mahasiswa') {
+               return redirect()->route('mahasiswa.profile');
+           }
+        }
+        return back(); 
+    }
 }

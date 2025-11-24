@@ -4,7 +4,7 @@
 
 @section('page-title', 'Formulir Kelas')
 @section('page-subtitle', 'Buka kelas baru untuk periode akademik')
-@section('user-name', 'Administrator')
+@section('user-name', Auth::user()->name)
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 
