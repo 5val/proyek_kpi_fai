@@ -1,9 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Formulir Penilaian')
+@section('title', 'Formulir Penilaian - ' . ucfirst($tipe))
 
-@section('page-title', 'Penilaian')
-@section('page-subtitle', 'Beri penilaian untuk')
+@section('page-title', 'Penilaian - ' . ucfirst($tipe))
+
+@section('page-subtitle', 'Beri penilaian untuk: ' . $targetName)
 @section('user-name', 'Andi Pratama')
 @section('user-role', 'Mahasiswa - Teknik Informatika')
 @section('user-initial', 'AP')
@@ -24,8 +25,8 @@
 @endif
 <div class="card-custom">
     <div class="card-header">
-        <a href="#" class="btn btn-secondary btn-sm me-2"><i class="bi bi-arrow-left"></i> Kembali</a>
-        <i class="bi bi-building"></i> Formulir Penilaian 
+        <a href="{{ url()->previous() }}" class="btn btn-secondary btn-sm me-2"><i class="bi bi-arrow-left"></i> Kembali</a>
+        <i class="bi bi-building"></i> Formulir Penilaian {{ ucfirst($tipe) }}
     </div>
     <div class="card-body">
         <form action="{{ route('penilaian.store', ['tipe' => $tipe, 'id' => $id]) }}" method="POST">

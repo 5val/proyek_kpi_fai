@@ -18,30 +18,35 @@ class PenilaianController extends Controller
 
     public function index($tipe, $id)
     {
-
         if ($tipe === 'dosen') {
             $kategoriIds = [1];
-
+            $target = Dosen::where('id', $id)->orWhere('user_id', $id)->firstOrFail();
+            $targetName = $target->name;
         } elseif ($tipe === 'mahasiswa') {
             $kategoriIds = [2];
-
+            $target = Mahasiswa::where('id', $id)->orWhere('user_id', $id)->firstOrFail();
+            $targetName = $target->name;
         } elseif ($tipe === 'unit') {
             $kategoriIds = [4];
-
+            $target = Unit::findOrFail($id);
+            $targetName = $target->name;
         } elseif ($tipe === 'fasilitas') {
             $kategoriIds = [3];
-
+            $target = Fasilitas::findOrFail($id);
+            $targetName = $target->name;
         } elseif ($tipe === 'praktikum') {
             $kategoriIds = [5];
-
+            $target = Praktikum::findOrFail($id);
+            $targetName = '';
         } else {
-            abort(404, 'Halaman penilaian tidak ditemukan.');
+            abort(404);
         }
         $indikator = Indikator::whereIn('kategori_id', $kategoriIds)->get();
         return view('penilaian', [
-            'tipe'      => $tipe,
-            'indikator' => $indikator,
-            'id' => $id
+            'tipe'        => $tipe,
+            'indikator'   => $indikator,
+            'id'          => $id,
+            'targetName'  => $targetName,
         ]);
     }
 
