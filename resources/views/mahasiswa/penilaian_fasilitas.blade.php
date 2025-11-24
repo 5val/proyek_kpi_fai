@@ -27,6 +27,7 @@
 @endsection
 
 @section('content')
+
 <div class="card-custom">
     <div class="card-body">
         <ul class="nav nav-tabs" id="assessmentTab" role="tablist">
@@ -54,7 +55,7 @@
                                 <small class="text-muted">{{ $f->lokasi }}</small>
                             </div>
                         </div>
-                        <a href="{{ route('penilaian.form', 'unit') }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('penilaian.form', ['tipe' => 'fasilitas', 'id' => $f->id]) }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-pencil-square"></i> Beri Penilaian
                         </a>
                     </div>

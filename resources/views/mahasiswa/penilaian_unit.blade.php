@@ -54,7 +54,7 @@
                                     <small class="text-muted">{{ $unit->penanggungJawab->name ?? 'Belum ditentukan' }}</small>
                                 </div>
                             </div>
-                            <a href="{{ route('penilaian.form', 'unit') }}" class="btn btn-primary btn-sm">
+                            <a href="{{ route('penilaian.form', ['tipe' => 'unit', 'id' => $unit->id]) }}" class="btn btn-primary btn-sm">
                                 <i class="bi bi-pencil-square"></i> Beri Penilaian
                             </a>
                         </div>

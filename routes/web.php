@@ -171,9 +171,9 @@ Route::prefix('admin')
 |--------------------------------------------------------------------------
 */
 
-Route::get('/penilaian/{tipe}', [PenilaianController::class, 'index'])
+Route::get('/penilaian/{tipe}/{id}', [PenilaianController::class, 'index'])
     ->name('penilaian.form');
 
-Route::post('/penilaian/{tipe}', [PenilaianController::class, 'store'])
+Route::post('/penilaian/{tipe}/{id}', [PenilaianController::class, 'store'])
     ->name('penilaian.store');
 

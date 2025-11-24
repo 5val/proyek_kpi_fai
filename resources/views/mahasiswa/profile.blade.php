@@ -48,7 +48,9 @@
                  class="rounded-circle mb-3" width="150" alt="Profile Picture" height="150">
             <h4 class="mb-1">{{ $mahasiswa->user->name }}</h4>
             <p class="text-muted mb-1">NIM: {{ $mahasiswa->nrp }}</p>
-            <p class="text-muted">Jurusan: {{ $mahasiswa->program_studi }}</p>
+            <p class="text-muted">
+                Jurusan: {{ $mahasiswa->program_studi->name ?? '-' }}
+            </p>
             <form action="{{ route('mahasiswa.uploadProfpic', Auth::id()) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">

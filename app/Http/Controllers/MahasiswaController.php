@@ -26,7 +26,7 @@ class MahasiswaController extends Controller
    }
 
    public function profile(){
-      $mahasiswa = Mahasiswa::where('user_id', Auth::id())->firstOrFail();
+      $mahasiswa = Mahasiswa::with('program_studi')->where('user_id', Auth::id())->firstOrFail();
       return view('mahasiswa.profile', compact('mahasiswa'));
    }
    public function changePassword(Request $request, $id)

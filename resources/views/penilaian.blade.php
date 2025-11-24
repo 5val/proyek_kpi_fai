@@ -1,21 +1,35 @@
 @extends('layouts.app')
 
-@section('title', 'Formulir Penilaian Fasilitas')
+@section('title', 'Formulir Penilaian')
 
-@section('page-title', 'Penilaian Fasilitas')
-@section('page-subtitle', 'Beri penilaian untuk Laboratorium Komputer Jaringan')
+@section('page-title', 'Penilaian')
+@section('page-subtitle', 'Beri penilaian untuk')
 @section('user-name', 'Andi Pratama')
 @section('user-role', 'Mahasiswa - Teknik Informatika')
 @section('user-initial', 'AP')
 
 @section('content')
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 <div class="card-custom">
     <div class="card-header">
         <a href="#" class="btn btn-secondary btn-sm me-2"><i class="bi bi-arrow-left"></i> Kembali</a>
-        <i class="bi bi-building"></i> Formulir Penilaian Fasilitas
+        <i class="bi bi-building"></i> Formulir Penilaian 
     </div>
     <div class="card-body">
-        <form>
+        <form action="{{ route('penilaian.store', ['tipe' => $tipe, 'id' => $id]) }}" method="POST">
+            @csrf
             <div class="table-responsive">
                 <table class="table">
                     <thead class="table-light">
@@ -25,9 +39,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php
-                            $indicators = ['Kebersihan dan Kerapian', 'Kelengkapan Peralatan', 'Kondisi Peralatan (Fungsionalitas)', 'Kenyamanan Ruangan', 'Ketersediaan Akses (Internet/Listrik)'];
-                        @endphp
                        @foreach($indikator as $i)
                         <tr>
                             <td>{{ $i->name }}</td>
