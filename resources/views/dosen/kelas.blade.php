@@ -7,24 +7,6 @@
 @section('user-name', $user->name)
 @section('user-role', $user->role)
 
-@section('sidebar-menu')
-    <a class="nav-link" href="/dosen"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a class="nav-link" href="/dosen/profile"><i class="bi bi-person-badge"></i> Profil Saya</a>
-    <a class="nav-link" href="/dosen/kpi"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
-    <a class="nav-link active" href="/dosen/kelas"><i class="bi bi-pencil-square"></i> Kelas</a>
-    <a class="nav-link" href="/dosen/penilaian_mahasiswa"><i class="bi bi-people"></i> Penilaian Mahasiswa</a>
-    <a class="nav-link" href="/dosen/penilaian_fasilitas"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
-    <a class="nav-link" href="/dosen/penilaian_unit"><i class="bi bi-bank2"></i> Penilaian Unit</a>
-    <a class="nav-link" href="/dosen/laporan"><i class="bi bi-file-earmark-bar-graph"></i> Laporan Kinerja</a>
-    <a class="nav-link" href="/dosen/feedback"><i class="bi bi-chat-left-text"></i> Feedback</a>
-    <form action="{{ route('logout') }}" method="POST" style="float: right;">
-      @csrf
-      <div style="align-items: center; justify-content: center; display: flex;">
-        <button class="btn btn-danger" type="submit">Logout</button>
-      </div>
-   </form>
-@endsection
-
 @section('content')
 @if(session('success'))
    <div class="alert alert-success">{{ session('success') }}</div>
