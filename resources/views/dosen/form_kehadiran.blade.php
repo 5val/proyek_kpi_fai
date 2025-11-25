@@ -58,16 +58,18 @@
 <div class="card-custom">
     <div class="card-header"><i class="bi bi-upload"></i> Unggah Data Kehadiran</div>
     <div class="card-body">
-        <form>
+        <form action="{{ route('dosen.kehadiran.upload', $kelas->id) }}" method="POST" enctype="multipart/form-data">
+         @csrf
             <!-- Info -->
             <div class="p-3 mb-4 rounded" style="background-color: #f8f9fa;">
-                <p class="mb-1"><strong>Kelas:</strong> Algoritma & Pemrograman</p>
-                <p class="mb-0"><strong>Dosen:</strong> Prof. Budi Santoso</p>
+                <p class="mb-1"><strong>Kelas:</strong> {{ $kelas->mataKuliah->name }}</p>
+                <p class="mb-1"><strong>Program Studi:</strong> {{ $kelas->program_studi->name }}</p>
+                <p class="mb-0"><strong>Dosen:</strong> {{ $kelas->dosen->user->name }}</p>
             </div>
 
             <div class="mb-3">
                 <label for="pertemuan" class="form-label">Pilih Pertemuan</label>
-                <select class="form-select" id="pertemuan">
+                <select class="form-select" id="pertemuan" name="pertemuan">
                     <option selected disabled>Pilih pertemuan ke-...</option>
                     <option value="1">Pertemuan 1</option>
                     <option value="2">Pertemuan 2</option>
@@ -84,25 +86,31 @@
                     <option value="13">Pertemuan 13</option>
                     <option value="14">Pertemuan 14</option>
                 </select>
+                @error('pertemuan')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
             </div>
             
             <div class="mb-3">
                 <label class="form-label">File Excel Kehadiran</label>
                 <div class="drop-zone" id="dropZone">
-                    <input class="drop-zone__input" type="file" id="file_excel" accept=".xlsx, .xls" multiple="false">
+                    <input class="drop-zone__input" type="file" id="file_excel" accept=".xlsx, .xls" multiple="false" name="file">
                     <i class="bi bi-cloud-arrow-up-fill drop-zone__icon"></i>
                     <span class="drop-zone__prompt">Klik di sini atau seret file ke sini</span>
+                    <div class="form-text mt-1">Format File: .xlsx, .xls</div>
+                @error('file')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
                 </div>
-                 <div class="form-text mt-1">
-                    <i class="bi bi-info-circle-fill"></i>
-                    Format: Kolom A (NIM), Kolom B (Status: H/I/A/S).
-                    <a href="#">Unduh template</a>.
-                </div>
-            </div>
+                 
+                <div class="mt-4">
+                  <button type="submit" class="btn btn-primary w-100 mb-2"><i class="bi bi-send-fill"></i> Kirim</button>
+                  <a href="{{ route('dosen.kehadiran.download', $kelas->id) }}" class="btn btn-outline-secondary w-100">Unduh Template Excel</a>
+               </div>
 
-             <div class="d-flex justify-content-end mt-4">
-                <a href="#" class="btn btn-secondary me-2">Batal</a>
-                <button type="submit" class="btn btn-primary"><i class="bi bi-upload"></i> Unggah & Proses</button>
+               <div class="d-flex justify-content-end mt-4">
+                  <a href="{{ route('dosen.kelas') }}" class="btn btn-secondary">Batal</a>
+               </div>
             </div>
         </form>
     </div>

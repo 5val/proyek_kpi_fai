@@ -80,7 +80,9 @@ Route::prefix('dosen')
 
         Route::get('/kelas', [DosenController::class, 'kelas'])->name('kelas');
 
-        Route::get('/kelas/kehadiran/create', fn() => view('dosen.form_kehadiran'))->name('form_kehadiran');
+        Route::get('/kelas/{id}/kehadiran/create', [DosenController::class, 'insert_kehadiran'])->name('form_kehadiran');
+        Route::get('/kelas/{id}/kehadiran/download', [DosenController::class, 'download_kehadiran'])->name('kehadiran.download');
+        Route::post('/kelas/{id}/kehadiran/upload', [DosenController::class, 'upload_kehadiran'])->name('kehadiran.upload');
 
         Route::get('/penilaian_mahasiswa', [DosenController::class, 'penilaianMahasiswa'])->name('penilaian_mahasiswa');
         Route::get('/penilaian_mahasiswa/{id}/nilai', [DosenController::class, 'formNilaiMahasiswa'])->name('nilai_mahasiswa');

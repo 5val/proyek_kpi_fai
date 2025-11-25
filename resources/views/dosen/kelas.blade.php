@@ -26,7 +26,9 @@
 @endsection
 
 @section('content')
-
+@if(session('success'))
+   <div class="alert alert-success">{{ session('success') }}</div>
+@endif
 <!-- Filter Section -->
 <div class="row mb-4">
     <div class="col-md-12">
@@ -58,7 +60,7 @@
             <table class="table table-hover">
                 <thead class="table-light">
                     <tr>
-                        <th>Kode MK</th>
+                        <!-- <th>Kode MK</th> -->
                         <th>Nama Mata Kuliah</th>
                         <th>Program Studi</th>
                         <th>SKS</th>
@@ -69,13 +71,13 @@
                 <tbody>
             @forelse($kelasList as $kelas)
                 <tr>
-                    <td>{{ $kelas->kode_mk }}</td>
-                    <td>{{ $kelas->nama_mk }}</td>
-                    <td>{{ $kelas->program_studi }}</td>
+                    <!-- <td>{{ $kelas->mataKuliah->code }}</td> -->
+                    <td>{{ $kelas->mataKuliah->name }}</td>
+                    <td>{{ $kelas->program_studi->name }}</td>
                     <td class="text-center">{{ $kelas->sks }}</td>
-                    <td class="text-center">{{ $kelas->jumlah_mahasiswa }}</td>
+                    <td class="text-center">{{ $kelas->enrollment_count }}</td>
                     <td>
-                        <a href="#" class="btn btn-primary btn-sm">
+                        <a href="{{ route('dosen.form_kehadiran', $kelas->id) }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-calendar-plus-fill"></i> Input Kehadiran
                         </a>
                         @if($kelas->punya_praktikum ?? false)
