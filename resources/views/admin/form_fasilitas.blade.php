@@ -64,13 +64,6 @@
                     @enderror
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="location" class="form-label">Lokasi</label>
-                    <input type="text" class="form-control" id="location" placeholder="Contoh: Gedung A Lantai 2" name="lokasi" value="{{ isset($editing) ? $editing->lokasi : old('lokasi') }}">
-                    @error('lokasi')
-                        <p class="text-danger">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="col-md-6 mb-3">
                     <label for="condition" class="form-label">Kondisi</label>
                     <select id="condition" class="form-select" name="kondisi">
                         <option selected>Pilih kondisi...</option>

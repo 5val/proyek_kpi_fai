@@ -187,7 +187,7 @@ class AdminController extends Controller
          Mahasiswa::create([
                'user_id' => $user->id,
                'nrp' => $roleData['nrp'],
-               'program_studi' => $roleData['program_studi'],
+               'program_studi_id' => $roleData['program_studi'],
                'points_balance' => $roleData['points'],
                'ipk' => $roleData['ipk'],
          ]);
@@ -230,7 +230,8 @@ class AdminController extends Controller
          $roleData = $request->validate([
                'nrp' => [
                   'required',
-                  Rule::unique('mahasiswa', 'nrp')->ignore(optional($user->mahasiswa)->id),
+                  Rule::unique('mahasiswa', 'nrp')
+                     ->ignore($user->mahasiswa->nrp, 'nrp'),
                ],
                'program_studi' => 'required',
                'points' => 'required|integer|min:0',
@@ -242,8 +243,8 @@ class AdminController extends Controller
                   'required',
                   Rule::unique('dosen', 'nidn')->ignore(optional($user->dosen)->id),
                ],
-               'start_date' => 'required|date|after_or_equal:today',
-               'end_date' => 'required|date|after_or_equal:today',
+               'start_date' => 'required|date',
+               'end_date' => 'required|date',
          ]);
       }
 
@@ -297,7 +298,7 @@ class AdminController extends Controller
    public function form_user_edit($id) {
       $user = User::findOrFail($id);
       if($user->role == 'mahasiswa') {
-         $user = User::with(['mahasiswa', 'program_studi'])->findOrFail($id);
+         $user = User::with('mahasiswa.program_studi')->findOrFail($id);
       } elseif ($user->role == 'dosen') {
          $user = User::with('dosen')->findOrFail($id);
       }
@@ -333,7 +334,6 @@ class AdminController extends Controller
       $data = $request->validate([
          'name' => 'required|string|max:255',
          'kategori' => 'required|in:Umum,Akademik,Laboratorium,Olahraga,Kesehatan,Administrasi',
-         'lokasi' => 'required|string|max:255',
          'kondisi' => 'required|in:baik,perbaikan'
       ]);
 
@@ -351,7 +351,6 @@ class AdminController extends Controller
       $data = $request->validate([
          'name' => 'required|string|max:255',
          'kategori' => 'required|in:Umum,Akademik,Laboratorium,Olahraga,Kesehatan,Administrasi',
-         'lokasi' => 'required|string|max:255',
          'kondisi' => 'required|in:baik,perbaikan'
       ]);
 
@@ -493,15 +492,8 @@ class AdminController extends Controller
 
    public function insert_mata_kuliah(Request $request) {
       $data = $request->validate([
-         'name' => 'required|string|max:255',
-         'program_studi' => 'required|in:Informatika,SIB,DKV,Industri,Elektro,Desain Produk,MBD',
-         'sks' => 'required|integer|min:2|max:4'
+         'name' => 'required|string|max:255|unique:mata_kuliah,name'
       ]);
-
-      $matkulFound = MataKuliah::where('name', $request->name)->where('program_studi', $request->program_studi)->first();
-      if($matkulFound) {
-         return back()->withErrors(['program_studi' => 'Mata Kuliah with this name already exists in this program studi!'])->withInput();
-      }
 
       MataKuliah::create($data);
       return redirect()->route('admin.mata_kuliah')->with('success', 'Mata Kuliah added successfully!');
@@ -510,15 +502,8 @@ class AdminController extends Controller
    public function update_mata_kuliah(Request $request, $id) {
       $matkul = MataKuliah::findOrFail($id);
       $data = $request->validate([
-         'name' => 'required|string|max:255',
-         'program_studi' => 'required|in:Informatika,SIB,DKV,Industri,Elektro,Desain Produk,MBD',
-         'sks' => 'required|integer|min:2|max:4'
+         'name' => 'required|string|max:255|unique:mata_kuliah,name,' . $matkul->id
       ]);
-
-      $matkulFound = MataKuliah::where('id', '!=', $id)->where('name', $request->name)->where('program_studi', $request->program_studi)->first();
-      if($matkulFound) {
-         return back()->withErrors(['program_studi' => 'Mata Kuliah with this name already exists in this program studi!'])->withInput();
-      }
 
       $matkul->update($data);
       return redirect()->route('admin.mata_kuliah')->with('success', 'Mata Kuliah updated successfully!');
@@ -543,9 +528,10 @@ class AdminController extends Controller
    public function form_kelas() {
       $matkul = MataKuliah::all();
       $periode = Periode::all();
+      $program_studi = ProgramStudi::all();
       $dosen = Dosen::with('user')->get();
 
-      return view('admin.form_kelas', ['matkul' => $matkul, 'periode' => $periode, 'dosen' => $dosen]);
+      return view('admin.form_kelas', ['matkul' => $matkul, 'periode' => $periode, 'dosen' => $dosen, 'program_studi' => $program_studi]);
    }
 
    public function delete_kelas($id) {
@@ -566,15 +552,21 @@ class AdminController extends Controller
       $data = $request->validate([
          'mata_kuliah' => 'required',
          'periode' => 'required',
-         'dosen' => 'required'
+         'dosen' => 'required',
+         'program_studi' => 'required',
+         'sks' => 'required|integer|min:2'
       ]);
 
-      $kelasFound = Kelas::where('mata_kuliah_id', $request->mata_kuliah)->where('periode_id', $request->periode)->first();
+      $kelasFound = Kelas::where('mata_kuliah_id', $request->mata_kuliah)->where('periode_id', $request->periode)->where('program_studi_id', $request->program_studi)->first();
       if($kelasFound) {
-         return back()->withErrors(['mata_kuliah' => 'Kelas with this mata kuliah already exists in this periode!'])->withInput();
+         return back()->withErrors(['mata_kuliah' => 'Kelas already exists in this periode!'])->withInput();
       }
 
-      Kelas::create(['mata_kuliah_id' => $request->mata_kuliah, 'periode_id' => $request->periode, 'dosen_nidn' => $request->dosen]);
+      $has_praktikum = 0;
+      if($request->has_praktikum) {
+         $has_praktikum = 1;
+      }
+      Kelas::create(['mata_kuliah_id' => $request->mata_kuliah, 'periode_id' => $request->periode, 'dosen_nidn' => $request->dosen, 'program_studi_id' => $request->program_studi, 'sks' => $request->sks, 'has_praktikum' => $has_praktikum]);
       return redirect()->route('admin.kelas')->with('success', 'Kelas added successfully!');
    }
 
@@ -583,17 +575,27 @@ class AdminController extends Controller
       $data = $request->validate([
          'mata_kuliah' => 'required',
          'periode' => 'required',
-         'dosen' => 'required'
+         'dosen' => 'required',
+         'program_studi' => 'required',
+         'sks' => 'required|integer|min:2'
       ]);
 
-      $kelasFound = Kelas::where('id', '!=', $id)->where('mata_kuliah_id', $request->mata_kuliah)->where('periode_id', $request->periode)->first();
+      $kelasFound = Kelas::where('id', '!=', $id)->where('mata_kuliah_id', $request->mata_kuliah)->where('periode_id', $request->periode)->where('program_studi_id', $request->program_studi)->first();
       if($kelasFound) {
-         return back()->withErrors(['mata_kuliah' => 'Kelas with this mata kuliah already exists in this periode!'])->withInput();
+         return back()->withErrors(['mata_kuliah' => 'Kelas already exists in this periode!'])->withInput();
+      }
+
+      $has_praktikum = 0;
+      if($request->has_praktikum) {
+         $has_praktikum = 1;
       }
 
       $kelas->mata_kuliah_id = $request->mata_kuliah;
       $kelas->periode_id = $request->periode;
       $kelas->dosen_nidn = $request->dosen;
+      $kelas->program_studi_id = $request->program_studi;
+      $kelas->sks = $request->sks;
+      $kelas->has_praktikum = $has_praktikum;
       $kelas->save();
       return redirect()->route('admin.kelas')->with('success', 'Kelas updated successfully!');
    }
@@ -602,12 +604,13 @@ class AdminController extends Controller
       $kelas = Kelas::findOrFail($id);
       $matkul = MataKuliah::all();
       $periode = Periode::all();
+      $program_studi = ProgramStudi::all();
       $dosen = Dosen::with('user')->get();
-      return view('admin.form_kelas', ['kelas' => $kelas, 'matkul' => $matkul, 'periode' => $periode, 'dosen' => $dosen]);
+      return view('admin.form_kelas', ['kelas' => $kelas, 'matkul' => $matkul, 'periode' => $periode, 'dosen' => $dosen, 'program_studi' => $program_studi]);
    }
 
    public function enrollment($id) {
-      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->where('id', $id)->first();
+      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode', 'program_studi')->where('id', $id)->first();
       $enrollments = Enrollment::with(['mahasiswa.user', 'mahasiswa.program_studi'])->where('kelas_id', $id)->get();
 
       return view('admin.enrollment', ['kelas' => $kelas, 'enrollments' => $enrollments]);
@@ -620,7 +623,7 @@ class AdminController extends Controller
    }
 
    public function form_enrollment($id) {
-      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->where('id', $id)->first();
+      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode', 'program_studi')->where('id', $id)->first();
       return view('admin.form_enrollment', ['kelas' => $kelas]);
    }
 

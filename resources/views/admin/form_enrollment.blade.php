@@ -62,6 +62,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <h5>{{ $kelas->mataKuliah->name }}</h5>
+                    <p class="mb-1"><strong>Program Studi:</strong> {{ $kelas->program_studi->name }}</p>
                     <p class="mb-1"><strong>Dosen Pengampu:</strong> {{ $kelas->dosen->user->name }}</p>
                     <p class="mb-0"><strong>Periode:</strong> {{ $kelas->periode->nama_periode }}</p>
                 </div>

@@ -45,29 +45,6 @@
                      <p class="text-danger">{{ $message }}</p>
                @enderror
             </div>
-            <div class="col-md-6 mb-3">
-               <label for="program_studi" class="form-label">Program Studi</label>
-               <select id="program_studi" class="form-select" name="program_studi">
-                     <option selected disabled>Pilih program studi...</option>
-                     <option value="Informatika" {{ old('program_studi', $matkul->program_studi ?? '') == 'Informatika' ? 'selected' : '' }}>Informatika</option>
-                     <option value="SIB" {{ old('program_studi', $matkul->program_studi ?? '') == 'SIB' ? 'selected' : '' }}>SIB</option>
-                     <option value="DKV" {{ old('program_studi', $matkul->program_studi ?? '') == 'DKV' ? 'selected' : '' }}>DKV</option>
-                     <option value="Industri" {{ old('program_studi', $matkul->program_studi ?? '') == 'Industri' ? 'selected' : '' }}>Industri</option>
-                     <option value="Elektro" {{ old('program_studi', $matkul->program_studi ?? '') == 'Elektro' ? 'selected' : '' }}>Elektro</option>
-                     <option value="Desain Produk" {{ old('program_studi', $matkul->program_studi ?? '') == 'Desain Produk' ? 'selected' : '' }}>Desain Produk</option>
-                     <option value="MBD" {{ old('program_studi', $matkul->program_studi ?? '') == 'MBD' ? 'selected' : '' }}>MBD</option>
-               </select>
-               @error('program_studi')
-                     <p class="text-danger">{{ $message }}</p>
-               @enderror
-            </div>
-            <div class="mb-3">
-                <label for="sks" class="form-label">Jumlah SKS</label>
-                <input type="number" class="form-control" id="sks" placeholder="Contoh: 3" name="sks" value="{{ isset($matkul) ? $matkul->sks : old('sks') }}">
-                @error('sks')
-                     <p class="text-danger">{{ $message }}</p>
-               @enderror
-            </div>
             <div class="d-flex justify-content-end">
                 <a href="{{ route('admin.mata_kuliah') }}" class="btn btn-secondary me-2">Batal</a>
                 <button type="submit" class="btn btn-primary">Simpan</button>

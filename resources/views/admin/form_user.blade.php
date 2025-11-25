@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             extraFieldsContainer.innerHTML = `
                 <div class="col-md-6 mb-3">
                     <label for="nrp" class="form-label">NRP</label>
-                    <input type="text" class="form-control" id="nrp" name="nrp" placeholder="Masukkan NRP" value="{{ isset($user) ? $user->mahasiswa->nrp ?? '' : old('nrp') }}" {{ isset($user) ? 'disabled' : '' }}>
+                    <input type="text" class="form-control" id="nrp" name="nrp" placeholder="Masukkan NRP" value="{{ isset($user) ? $user->mahasiswa->nrp ?? '' : old('nrp') }}" {{ isset($user) ? 'readonly' : '' }}>
                     @error('nrp')
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <select id="program_studi" class="form-select" name="program_studi">
                         <option selected disabled>Pilih program studi...</option>
                         @foreach ($program_studi as $p)
-                           <option value="{{ $p->id }}" {{ old('program_studi', $user->mahasiswa->program_studi->name ?? '') == 'Informatika' ? 'selected' : '' }}>{{ $p->name }}</option>
+                           <option value="{{ $p->id }}" {{ old('program_studi', $user->mahasiswa->program_studi_id ?? '') == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
                         @endforeach
                     </select>
                     @error('program_studi')

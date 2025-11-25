@@ -45,6 +45,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <h5>{{ $kelas->mataKuliah->name }}</h5>
+                    <p class="mb-1"><strong>Program Studi:</strong> {{ $kelas->program_studi->name }}</p>
                     <p class="mb-1"><strong>Dosen Pengampu:</strong> {{ $kelas->dosen->user->name }}</p>
                     <p class="mb-0"><strong>Periode:</strong> {{ $kelas->periode->nama_periode }}</p>
                 </div>
@@ -68,8 +69,8 @@
                      <tr>
                         <td>{{ $e->id }}</td>
                         <td>{{ $e->mahasiswa_nrp }}</td>
-                        <td>{{ $e->mahasiswa->user->name }}</td>
-                        <td>{{ $e->mahasiswa->program_studi->name }}</td>
+                        <td>{{ $e->mahasiswa->user->name ?? '' }}</td>
+                        <td>{{ $e->mahasiswa->program_studi->name ?? '' }}</td>
                         <td>
                            <a href="{{ route('admin.enrollment.delete', [$e->kelas_id, $e->id]) }}" class="btn btn-danger btn-sm"><i class="bi bi-trash-fill"></i></a>
                         </td>
