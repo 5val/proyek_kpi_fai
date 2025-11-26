@@ -8,6 +8,24 @@
 @section('user-role', 'Mahasiswa - Teknik Informatika')
 @section('user-initial', 'AP')
 
+@section('sidebar-menu')
+    <a class="nav-link" href="{{ route('mahasiswa.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a class="nav-link" href="{{ route('mahasiswa.profile') }}"><i class="bi bi-person-badge"></i> Profil Saya</a>
+    <a class="nav-link" href="{{ route('mahasiswa.kpi') }}"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
+    <a class="nav-link active" href="{{ route('mahasiswa.penilaian_dosen') }}"><i class="bi bi-star"></i> Penilaian Dosen</a>
+    <a class="nav-link" href="{{ route('mahasiswa.penilaian_fasilitas') }}"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
+    <a class="nav-link" href="{{ route('mahasiswa.penilaian_unit') }}"><i class="bi bi-bank2"></i> Penilaian Unit</a>
+    <a class="nav-link" href="{{ route('mahasiswa.penilaian_praktikum') }}"><i class="bi bi-person-workspace"></i> Penilaian Praktikum</a>
+    <a class="nav-link" href="{{ route('mahasiswa.feedback') }}"><i class="bi bi-chat-left-text"></i> Feedback</a>
+    <a class="nav-link" href="{{ route('mahasiswa.laporan') }}"><i class="bi bi-bar-chart"></i> Laporan KPI</a>
+    <form action="{{ route('logout') }}" method="POST" style="float: right;">
+      @csrf
+      <div style="align-items: center; justify-content: center; display: flex;">
+        <button class="btn btn-danger" type="submit">Logout</button>
+      </div>
+   </form>
+@endsection
+
 @section('content')
 <div class="card-custom">
     <div class="card-body">
@@ -27,39 +45,19 @@
             <!-- Pending Assessment Tab -->
             <div class="tab-pane fade show active" id="pending" role="tabpanel">
                 <div class="list-group list-group-flush">
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3"><i class="bi bi-person-circle fs-2 text-primary"></i></div>
-                            <div>
-                                <h6 class="mb-0">Dr. Budi Hartono, M.Kom.</h6>
+                    @foreach ($dosenList as $d)
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3"><i class="bi bi-person-circle fs-2 text-primary"></i></div>
+                                <div>
+                                    <h6 class="mb-0">{{ $d->name }}</h6>
+                                </div>
                             </div>
-                        </div>
-                        <a href="{{ route('penilaian.form', 'dosen') }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil-square"></i> Beri Penilaian
-                        </a>
-                    </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                             <div class="me-3"><i class="bi bi-person-circle fs-2 text-primary"></i></div>
-                            <div>
-                                <h6 class="mb-0">Siti Aminah, S.T., M.T.</h6>
-                            </div>
-                        </div>
-                        <a href="{{ route('penilaian.form', 'dosen') }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil-square"></i> Beri Penilaian
-                        </a>
-                    </div>
-                     <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                             <div class="me-3"><i class="bi bi-person-circle fs-2 text-primary"></i></div>
-                            <div>
-                                <h6 class="mb-0">Prof. Dr. Ir. Rina Wijaya</h6>
-                            </div>
-                        </div>
-                       <a href="{{ route('penilaian.form', 'dosen') }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil-square"></i> Beri Penilaian
-                        </a>
-                    </div>
+                            <a href="{{ route('penilaian.form', ['tipe' => 'dosen', 'id' => $d->id]) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-pencil-square"></i> Beri Penilaian
+                            </a>
+                        </div>  
+                    @endforeach   
                 </div>
             </div>
             <!-- Completed Assessment Tab -->

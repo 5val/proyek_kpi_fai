@@ -6,6 +6,7 @@ use App\Models\Dosen;
 use App\Models\Fasilitas;
 use App\Models\Feedback;
 use App\Models\Kategori;
+use App\Models\Enrollment;
 use App\Models\Mahasiswa;
 use App\Models\Unit;
 use App\Models\User;
@@ -72,9 +73,21 @@ class MahasiswaController extends Controller
       return view('mahasiswa.kelas');
    }
 
-   public function penilaian_dosen() {
-      return view('mahasiswa.penilaian_dosen');
+  public function penilaian_dosen()
+   {
+      $mahasiswa = auth()->user()->mahasiswa; 
+      $dosenList = Enrollment::with('kelas.dosen.user')
+         ->where('mahasiswa_nrp', $mahasiswa->nrp)
+         ->get()
+         ->pluck('kelas.dosen')      
+         ->filter()                  
+         ->unique('nidn')            
+         ->map(function ($dosen) {   
+               return $dosen->user;
+         });
+      return view('mahasiswa.penilaian_dosen', compact('dosenList'));
    }
+
    public function penilaian_fasilitas() {
       $fasilitas = Fasilitas::paginate(10);
       return view('mahasiswa.penilaian_fasilitas', ['fasilitas' => $fasilitas]);
@@ -84,7 +97,18 @@ class MahasiswaController extends Controller
       return view('mahasiswa.penilaian_unit', ['units' => $units]);
    }
    public function penilaian_praktikum() {
-      return view('mahasiswa.penilaian_praktikum');
+      $mahasiswa = auth()->user()->mahasiswa;
+      $praktikumList = Enrollment::with('kelas.mataKuliah')
+         ->where('mahasiswa_nrp', $mahasiswa->nrp)
+         ->whereHas('kelas', function ($query) {
+               $query->where('has_praktikum', 1);
+         })
+         ->get()
+         ->map(function ($enrollment) {
+               return $enrollment->kelas; 
+         });
+
+      return view('mahasiswa.penilaian_praktikum', compact('praktikumList'));
    }
 
    public function laporan() {
