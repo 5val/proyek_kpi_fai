@@ -17,6 +17,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('loginData')->midd
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/', [AuthController::class, 'redirectPathFor']);
+Route::get('/profiles', [AuthController::class, 'redirectProfiles'])->middleware('auth');
 
 
 /*
@@ -79,7 +80,9 @@ Route::prefix('dosen')
 
         Route::get('/kelas', [DosenController::class, 'kelas'])->name('kelas');
 
-        Route::get('/kelas/kehadiran/create', fn() => view('dosen.form_kehadiran'))->name('form_kehadiran');
+        Route::get('/kelas/{id}/kehadiran/create', [DosenController::class, 'insert_kehadiran'])->name('form_kehadiran');
+        Route::get('/kelas/{id}/kehadiran/download', [DosenController::class, 'download_kehadiran'])->name('kehadiran.download');
+        Route::post('/kelas/{id}/kehadiran/upload', [DosenController::class, 'upload_kehadiran'])->name('kehadiran.upload');
 
         Route::get('/penilaian_mahasiswa', [DosenController::class, 'penilaianMahasiswa'])->name('penilaian_mahasiswa');
         Route::get('/penilaian_mahasiswa/{id}/nilai', [DosenController::class, 'formNilaiMahasiswa'])->name('nilai_mahasiswa');
@@ -160,20 +163,23 @@ Route::prefix('admin')
         Route::get('/penilaian/detail/{id}', [AdminController::class, 'detail_penilaian'])->name('detail_penilaian');
 
         Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
+        Route::get('/laporan/{kategori_id}/{periode_id}/export/excel', [AdminController::class, 'laporan_export_excel'])->name('laporan.export.excel');
+        Route::get('/laporan/{kategori_id}/{periode_id}/export/pdf', [AdminController::class, 'laporan_export_pdf'])->name('laporan.export.pdf');
+
         Route::get('/feedback', [AdminController::class, 'feedback'])->name('feedback');
         Route::get('/feedback/{id}', [AdminController::class, 'detail_feedback'])->name('feedback.detail');
         Route::get('/feedback/{id}/update', [AdminController::class, 'update_feedback'])->name('feedback.update');
+
+        Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
+        Route::post('/profile/update', [AdminController::class, 'update_profile'])->name('updateProfile');
+        Route::post('/profile/password', [AdminController::class, 'change_password'])->name('changePassword');
+        Route::post('/profile/{id}/upload', [AdminController::class, 'upload_prof_pic'])->name('uploadProfpic');
     });
 
-/*
-|--------------------------------------------------------------------------
-| Halaman umum (tanpa login)
-|--------------------------------------------------------------------------
-*/
 
-Route::get('/penilaian/{tipe}/{id}', [PenilaianController::class, 'index'])
+Route::get('/penilaian/{tipe}', [PenilaianController::class, 'index'])
     ->name('penilaian.form');
 
-Route::post('/penilaian/{tipe}/{id}', [PenilaianController::class, 'store'])
+Route::post('/penilaian/{tipe}', [PenilaianController::class, 'store'])
     ->name('penilaian.store');
 

@@ -4,9 +4,9 @@
 
 @section('page-title', 'Profil Saya')
 @section('page-subtitle', 'Kelola informasi akun dan password Anda')
-@section('user-name', 'Andi Pratama')
-@section('user-role', 'Mahasiswa - Teknik Informatika')
-@section('user-initial', 'AP')
+@section('user-name', Auth::user()->name)
+@section('user-role', 'Admin')
+@section('user-initial', 'AD')
 
 @section('content')
 @if (session('success'))
@@ -26,14 +26,10 @@
     <!-- Profile Card -->
     <div class="card-custom">
         <div class="card-body text-center">
-            <img src="{{ $mahasiswa->user->photo_profile ? Storage::url($mahasiswa->user->photo_profile) : asset('images/default-user.png') }}"
+            <img src="{{ $user->photo_profile ? Storage::url($user->photo_profile) : asset('images/default-user.png') }}"
                  class="rounded-circle mb-3" width="150" alt="Profile Picture" height="150">
-            <h4 class="mb-1">{{ $mahasiswa->user->name }}</h4>
-            <p class="text-muted mb-1">NIM: {{ $mahasiswa->nrp }}</p>
-            <p class="text-muted">
-                Jurusan: {{ $mahasiswa->program_studi->name ?? '-' }}
-            </p>
-            <form action="{{ route('mahasiswa.uploadProfpic', Auth::id()) }}" method="POST" enctype="multipart/form-data">
+            <h4 class="mb-1">{{ $user->name }}</h4>
+            <form action="{{ route('admin.uploadProfpic', Auth::id()) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                     <label for="file" class="form-label fw-medium">Pilih Foto (JPG/PNG - Max 5MB)</label>
@@ -64,38 +60,51 @@
                 <div class="tab-content pt-3" id="profileTabContent">
                     <!-- Account Info Tab -->
                     <div class="tab-pane fade show active" id="info" role="tabpanel">
-                        <form>
+                        <form action="{{ route('admin.updateProfile') }}" method="POST">
+                           @csrf
                             <div class="mb-3">
                                 <label for="namaLengkap" class="form-label">Nama Lengkap</label>
-                                <input type="text" class="form-control" id="namaLengkap" value="{{ $mahasiswa->user->name }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="nim" class="form-label">NIM</label>
-                                <input type="text" class="form-control" id="nim" value="{{ $mahasiswa->nrp }}" readonly>
+                                <input type="text" class="form-control" id="namaLengkap" value="{{ $user->name }}" name="name" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Alamat Email</label>
-                                <input type="email" class="form-control" id="email" value="{{ $mahasiswa->user->email }}">
+                                <input type="email" class="form-control" id="email" value="{{ $user->email }}" name="email">
+                                @error('email')
+                                       <p class="text-danger">{{ $message }}</p>
+                                 @enderror
                             </div>
-                             <div class="mb-3">
-                                <label for="prodi" class="form-label">Program Studi</label>
-                                <input type="text" class="form-control" id="prodi" value="{{ $mahasiswa->program_studi }}" readonly>
+                            <div class="mb-3">
+                                <label for="phone_number" class="form-label">Nomor HP</label>
+                                <input type="text" class="form-control" id="phone_number" value="{{ $user->phone_number }}" name="phone_number">
+                                @error('phone_number')
+                                       <p class="text-danger">{{ $message }}</p>
+                                 @enderror
                             </div>
                             <button type="submit" class="btn btn-primary btn-custom"><i class="bi bi-save"></i> Simpan Perubahan</button>
                         </form>
                     </div>
                     <!-- Change Password Tab -->
                     <div class="tab-pane fade" id="password" role="tabpanel">
-                        <form method="POST" action="{{ route('mahasiswa.changePassword', Auth::id()) }}">
+                        <form method="POST" action="{{ route('admin.changePassword') }}">
                             @csrf
                             <div class="mb-3">
-                                <label for="newPassword" class="form-label">Password Baru</label>
-                                <input type="password" name="password" class="form-control" id="newPassword" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="confirmPassword" class="form-label">Konfirmasi Password Baru</label>
-                                <input type="password" name="password_confirmation" class="form-control" id="confirmPassword" required>
-                            </div>
+                              <label class="form-label">Password Lama</label>
+                              <input type="password" name="current_password" class="form-control" required>
+                              @error('current_password')
+                                       <p class="text-danger">{{ $message }}</p>
+                                 @enderror
+                           </div>
+                           <div class="mb-3">
+                              <label class="form-label">Password Baru</label>
+                              <input type="password" name="new_password" class="form-control" required>
+                              @error('new_password')
+                                       <p class="text-danger">{{ $message }}</p>
+                                 @enderror
+                           </div>
+                           <div class="mb-3">
+                              <label class="form-label">Konfirmasi Password Baru</label>
+                              <input type="password" name="new_password_confirmation" class="form-control" required>
+                           </div>
                             <button type="submit" class="btn btn-primary btn-custom">
                                 <i class="bi bi-key"></i> Ubah Password
                             </button>

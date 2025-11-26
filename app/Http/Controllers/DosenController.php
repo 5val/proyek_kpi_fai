@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kehadiran;
 use Illuminate\Http\Request;
 use App\Models\Dosen;
 use App\Models\Enrollment;
@@ -19,6 +20,7 @@ use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Cell;
 use Illuminate\Support\Facades\Auth;
 use League\Config\Exception\ValidationException;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 
 class DosenController extends Controller
@@ -121,13 +123,82 @@ class DosenController extends Controller
         $dosen = Dosen::where('user_id', $user->id)->first();
 
         // Ambil semua kelas yang diajar oleh dosen ini (via relasi)
-        $kelasList = $dosen->kelas()->get();
+        $kelasList = Kelas::with('mataKuliah', 'program_studi', 'periode')->withCount('enrollment')->where('dosen_nidn', $dosen->nidn)->where('is_active', 1)->get();
 
         return view('dosen.kelas', [
             'user' => $user,
             'kelasList' => $kelasList,
         ]);
     }
+
+    public function insert_kehadiran($id) {
+      $kelas = Kelas::with('mataKuliah', 'program_studi', 'periode', 'dosen.user')->findOrFail($id);
+      return view('dosen.form_kehadiran', ['kelas' => $kelas]);
+    }
+
+    public function download_kehadiran($id) {
+      $kelas = Kelas::with('mataKuliah', 'dosen.user', 'periode')->where('id', $id)->first();
+      $filePath = storage_path('app/template_excel/template_kehadiran.xlsx');
+
+      if (!file_exists($filePath)) {
+         abort(404, 'Template file not found.');
+      }
+
+      // Load Excel template
+      $spreadsheet = IOFactory::load($filePath);
+      $sheet = $spreadsheet->getActiveSheet();
+
+      $mahasiswas = Enrollment::where('kelas_id', $id)->pluck('mahasiswa_nrp')->toArray() ?? []; // adjust relation name
+
+      $row = 2;
+      foreach ($mahasiswas as $mhs) {
+         $sheet->setCellValue("A{$row}", $mhs);
+         $sheet->setCellValue("B{$row}", 1);
+         $row++;
+      }
+
+      /*
+      |-----------------------------------------------------------
+      | Return the modified XLSX file as a download
+    |-----------------------------------------------------------
+    */
+    $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+    $tempFile = tempnam(sys_get_temp_dir(), 'excel_');
+    $writer->save($tempFile);
+
+    return response()->download($tempFile, 'template_enrollment_filled.xlsx');
+   }
+
+   public function upload_kehadiran(Request $request, $id) {
+      $request->validate([
+            'pertemuan' => 'required',
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        $file = $request->file('file');
+        $spreadsheet = IOFactory::load($file->getPathname());
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $sheet->toArray();
+
+        // Skip header row (row 0)
+        for ($i = 1; $i < count($rows); $i++) {
+            $row = $rows[$i];
+
+            // Skip completely empty rows
+            if (empty(array_filter($row))) {
+               continue;
+            }
+
+            Kehadiran::create([
+               'kelas_id' => $id,
+               'pertemuan_ke' => $request->pertemuan,
+               'mahasiswa_nrp' => $row[0] ?? null,
+               'is_present' => $row[1] ?? null,
+            ]);
+         }
+
+        return redirect()->route('dosen.kelas')->with('success', 'Kehadiran uploaded successfully.');
+   }
 
     // PENILAIAN MAHASISWA 
 
