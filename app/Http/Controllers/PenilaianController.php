@@ -90,7 +90,7 @@ class PenilaianController extends Controller
             'dinilai_id'  => $targetId,
             'dinilai_type' => $dinilaiType, 
             'periode_id'  => 1,
-            'komentar'    => $request->komentar,
+            'komentar'    => $request->feedback,
             'avg_score'   => collect($request->rating)->avg(),
         ]);
         foreach ($request->rating as $indikator_id => $nilai) {

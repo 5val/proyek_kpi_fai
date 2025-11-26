@@ -66,7 +66,7 @@
             </div>
             <div class="mt-3">
                 <label for="feedback" class="form-label">Laporan Kerusakan atau Masukan Lainnya (Opsional)</label>
-                <textarea class="form-control" id="feedback" rows="4" placeholder="Jika ada kerusakan atau saran, mohon jelaskan di sini..."></textarea>
+                <textarea class="form-control" name="feedback" id="feedback" rows="4" placeholder="Jika ada kerusakan atau saran, mohon jelaskan di sini..."></textarea>
             </div>
             <hr>
             <button type="submit" class="btn btn-primary"><i class="bi bi-send-check"></i> Kirim Penilaian</button>

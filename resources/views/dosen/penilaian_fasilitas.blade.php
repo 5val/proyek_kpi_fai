@@ -5,8 +5,8 @@
 @section('page-title', 'Penilaian Fasilitas')
 @section('page-subtitle', 'Beri penilaian terhadap kualitas Fasilitas kampus')
 
-@section('user-name', $user->name)
-@section('user-role', $user->role)
+{{-- @section('user-name', $user->name) --}}
+{{-- @section('user-role', $user->role) --}}
 
 @section('content')
 <div class="card-custom">
@@ -32,48 +32,63 @@
                     {{-- ========================
                          FASILITAS SUDAH DINILAI
                     ========================= --}}
-                    @foreach ($completed as $item)
-                        <tr>
-                            <td>{{ $item->fasilitas->name }}</td>
-                            <td>{{ $item->fasilitas->lokasi }}</td>
-                            <td>
-                                <span class="badge bg-success">Sudah Dinilai</span>
-                            </td>
-                            <td>
-                                <button class="btn btn-secondary btn-sm" disabled>
-                                    <i class="bi bi-check-circle"></i> Nilai
-                                </button>
-                            </td>
-                        </tr>
-                    @endforeach
+             <tbody>
+    @foreach ($fasilitas as $f)
+        {{-- LOGIKA PENGECEKAN --}}
+        @php
+            // Cek apakah user saat ini sudah memberikan penilaian pada fasilitas ini
+            // Sesuaikan 'penilaian' dengan nama relasi di Model Fasilitas Anda
+            // Contoh logika: Ambil data penilaian dimana user_id = user yang login
+            $sudahDinilai = $f->penilaian->where('user_id', Auth::id())->count() > 0;
+        @endphp
 
-                    {{-- ========================
-                         FASILITAS BELUM DINILAI
-                    ========================= --}}
-                    @foreach ($pending as $fasilitas)
-                        <tr>
-                            <td>{{ $fasilitas->name }}</td>
-                            <td>{{ $fasilitas->lokasi }}</td>
-                            <td>
-                                <span class="badge bg-danger">Belum Dinilai</span>
-                            </td>
-                            <td>
-                                <a href="{{ route('dosen.penilaian_fasilitas.form', $fasilitas->id) }}"
-                                   class="btn btn-primary btn-sm">
-                                    <i class="bi bi-pencil-square"></i> Nilai
-                                </a>
-                            </td>
-                        </tr>
-                    @endforeach
+        <tr>
+            <td>{{ $f->name }}</td>
+            <td>{{ $f->lokasi }}</td>
+            
+            {{-- KONDISI STATUS (BADGE) --}}
+            <td>
+                @if($sudahDinilai)
+                    <span class="badge bg-success">Sudah Dinilai</span>
+                @else
+                    <span class="badge bg-danger">Belum Dinilai</span>
+                @endif
+            </td>
+
+            {{-- KONDISI TOMBOL --}}
+            <td>
+                @if($sudahDinilai)
+                    {{-- Opsi 1: Tombol disable jika sudah menilai --}}
+                    <button class="btn btn-secondary btn-sm" disabled>
+                        <i class="bi bi-check-circle"></i> Selesai
+                    </button>
+                    
+                    {{-- Opsi 2: Atau tombol Edit jika ingin mengubah nilai --}}
+                    {{-- 
+                    <a href="{{ route('penilaian.form', ['tipe' => 'fasilitas', 'id' => $f->id]) }}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil-square"></i> Edit Nilai
+                    </a> 
+                    --}}
+                @else
+                    {{-- Tombol Nilai jika belum --}}
+                    <a href="{{ route('penilaian.form', ['tipe' => 'fasilitas', 'id' => $f->id]) }}" 
+                       class="btn btn-primary btn-sm">
+                        <i class="bi bi-pencil-square"></i> Nilai
+                    </a>
+                @endif
+            </td>
+        </tr>
+    @endforeach
+</tbody>
 
                     {{-- Jika tidak ada data --}}
-                    @if ($pending->isEmpty() && $completed->isEmpty())
+                    {{-- @if ($pending->isEmpty() && $completed->isEmpty())
                         <tr>
                             <td colspan="4" class="text-center text-muted">
                                 Tidak ada fasilitas terdaftar.
                             </td>
                         </tr>
-                    @endif
+                    @endif --}} 
 
                 </tbody>
             </table>

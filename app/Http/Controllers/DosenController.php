@@ -25,120 +25,121 @@ use Box\Spout\Common\Entity\Cell;
 use Illuminate\Support\Facades\Auth;
 use League\Config\Exception\ValidationException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Http\Controllers\DB;
 
 
 class DosenController extends Controller
 {
     // DASHBOARD
 
-    // public function dashboard() {
-    // return view('dosen.dashboard');
-    // }
-
-    public function dashboard()
-{
-    $user = Auth::user();
-
-    // Ambil data dosen berdasarkan user_id
-    $dosen = Dosen::where('user_id', $user->id)->first();
-
-    if (!$dosen) {
-        return back()->with('error', 'Data dosen tidak ditemukan.');
+    public function dashboard() {
+    return view('dosen.dashboard');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | 1. SKOR KINERJA DOSEN (Kategori: dosen)
-    |--------------------------------------------------------------------------
-    | dari tabel: penilaian + detail_penilaian
-    */
-    $kategoriDosen = Kategori::where('name', 'dosen')->first();
+//     public function dashboard()
+// {
+//     $user = Auth::user();
 
-    $skorKinerja = DetailPenilaian::whereHas('penilaian', function ($q) use ($dosen, $kategoriDosen) {
-        $q->where('dinilai_id', $dosen->nidn)
-          ->where('kategori_id', $kategoriDosen->id); 
-    })->avg('score') ?? 0;
+//     // Ambil data dosen berdasarkan user_id
+//     $dosen = Dosen::where('user_id', $user->id)->first();
 
+//     if (!$dosen) {
+//         return back()->with('error', 'Data dosen tidak ditemukan.');
+//     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | 2. MAHASISWA BIMBINGAN
-    |--------------------------------------------------------------------------
-    | dari tabel mahasiswa (FK: mahasiswa.dosen_nidn)
-    */
-    $bimbingan = Mahasiswa::where('dosen_nidn', $dosen->nidn)->get();
-    $jumlahBimbingan = $bimbingan->count();
+//     /*
+//     |--------------------------------------------------------------------------
+//     | 1. SKOR KINERJA DOSEN (Kategori: dosen)
+//     |--------------------------------------------------------------------------
+//     | dari tabel: penilaian + detail_penilaian
+//     */
+//     $kategoriDosen = Kategori::where('name', 'dosen')->first();
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | 3. MAHASISWA BELUM DINILAI (Kategori: mahasiswa)
-    |--------------------------------------------------------------------------
-    | dinilai_id = mahasiswa.nrp
-    */
-    $kategoriMhs = Kategori::where('name', 'mahasiswa')->first();
-
-    $pendingMahasiswa = Mahasiswa::where('dosen_nidn', $dosen->nidn)
-        ->whereDoesntHave('penilaian', function ($q) use ($kategoriMhs, $dosen) {
-            $q->where('kategori_id', $kategoriMhs->id)
-              ->where('penilai_id', $dosen->nidn);
-        })
-        ->get();
+//     $skorKinerja = DetailPenilaian::whereHas('penilaian', function ($q) use ($dosen, $kategoriDosen) {
+//         $q->where('dinilai_id', $dosen->nidn)
+//           ->where('kategori_id', $kategoriDosen->id); 
+//     })->avg('score') ?? 0;
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | 4. TREND SKOR KINERJA PER PERIODE / SEMESTER
-    |--------------------------------------------------------------------------
-    | ambil rata-rata score dari detail_penilaian grouped by periode
-    */
-    $trend = DetailPenilaian::select(
-            'penilaian.periode_id',
-            DB::raw('AVG(detail_penilaian.score) as avg_skor')
-        )
-        ->join('penilaian', 'penilaian.id', '=', 'detail_penilaian.penilaian_id')
-        ->where('penilaian.dinilai_id', $dosen->nidn)
-        ->where('penilaian.kategori_id', $kategoriDosen->id)
-        ->groupBy('penilaian.periode_id')
-        ->join('periode', 'periode.id', '=', 'penilaian.periode_id')
-        ->orderBy('periode.tahun')
-        ->orderBy('periode.semester')
-        ->get();
+//     /*
+//     |--------------------------------------------------------------------------
+//     | 2. MAHASISWA BIMBINGAN
+//     |--------------------------------------------------------------------------
+//     | dari tabel mahasiswa (FK: mahasiswa.dosen_nidn)
+//     */
+//     $bimbingan = Mahasiswa::where('dosen_nidn', $dosen->nidn)->get();
+//     $jumlahBimbingan = $bimbingan->count();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | 5. RATING PER INDIKATOR (Kategori: dosen)
-    |--------------------------------------------------------------------------
-    */
-    $ratingIndikator = DetailPenilaian::select(
-            'indikator_id',
-            DB::raw('AVG(score) as avg_score')
-        )
-        ->whereHas('penilaian', function ($q) use ($dosen, $kategoriDosen) {
-            $q->where('dinilai_id', $dosen->nidn)
-              ->where('kategori_id', $kategoriDosen->id);
-        })
-        ->with('indikator')
-        ->groupBy('indikator_id')
-        ->get();
+//     /*
+//     |--------------------------------------------------------------------------
+//     | 3. MAHASISWA BELUM DINILAI (Kategori: mahasiswa)
+//     |--------------------------------------------------------------------------
+//     | dinilai_id = mahasiswa.nrp
+//     */
+//     $kategoriMhs = Kategori::where('name', 'mahasiswa')->first();
+
+//     $pendingMahasiswa = Mahasiswa::where('dosen_nidn', $dosen->nidn)
+//         ->whereDoesntHave('penilaian', function ($q) use ($kategoriMhs, $dosen) {
+//             $q->where('kategori_id', $kategoriMhs->id)
+//               ->where('penilai_id', $dosen->nidn);
+//         })
+//         ->get();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | RETURN KE DASHBOARD VIEW
-    |--------------------------------------------------------------------------
-    */
-    return view('dosen.dashboard', [
-        'user'              => $user,
-        'dosen'             => $dosen,
-        'skorKinerja'       => $skorKinerja,
-        'jumlahBimbingan'   => $jumlahBimbingan,
-        'pendingMahasiswa'  => $pendingMahasiswa,
-        'trend'             => $trend,
-        'ratingIndikator'   => $ratingIndikator,
-    ]);
-}
+//     /*
+//     |--------------------------------------------------------------------------
+//     | 4. TREND SKOR KINERJA PER PERIODE / SEMESTER
+//     |--------------------------------------------------------------------------
+//     | ambil rata-rata score dari detail_penilaian grouped by periode
+//     */
+//     $trend = DetailPenilaian::select(
+//             'penilaian.periode_id',
+//             DB::raw('AVG(detail_penilaian.score) as avg_skor')
+//         )
+//         ->join('penilaian', 'penilaian.id', '=', 'detail_penilaian.penilaian_id')
+//         ->where('penilaian.dinilai_id', $dosen->nidn)
+//         ->where('penilaian.kategori_id', $kategoriDosen->id)
+//         ->groupBy('penilaian.periode_id')
+//         ->join('periode', 'periode.id', '=', 'penilaian.periode_id')
+//         ->orderBy('periode.tahun')
+//         ->orderBy('periode.semester')
+//         ->get();
+
+
+//     /*
+//     |--------------------------------------------------------------------------
+//     | 5. RATING PER INDIKATOR (Kategori: dosen)
+//     |--------------------------------------------------------------------------
+//     */
+//     $ratingIndikator = DetailPenilaian::select(
+//             'indikator_id',
+//             DB::raw('AVG(score) as avg_score')
+//         )
+//         ->whereHas('penilaian', function ($q) use ($dosen, $kategoriDosen) {
+//             $q->where('dinilai_id', $dosen->nidn)
+//               ->where('kategori_id', $kategoriDosen->id);
+//         })
+//         ->with('indikator')
+//         ->groupBy('indikator_id')
+//         ->get();
+
+
+//     /*
+//     |--------------------------------------------------------------------------
+//     | RETURN KE DASHBOARD VIEW
+//     |--------------------------------------------------------------------------
+//     */
+//     return view('dosen.dashboard', [
+//         'user'              => $user,
+//         'dosen'             => $dosen,
+//         'skorKinerja'       => $skorKinerja,
+//         'jumlahBimbingan'   => $jumlahBimbingan,
+//         'pendingMahasiswa'  => $pendingMahasiswa,
+//         'trend'             => $trend,
+//         'ratingIndikator'   => $ratingIndikator,
+//     ]);
+// }
 
 
     // PROFILE 
@@ -336,181 +337,60 @@ class DosenController extends Controller
 
     // PENILAIAN FASILITAS
 
-    // =======================================
-    // PENILAIAN FASILITAS - INDEX
-    // =======================================
-    public function penilaianFasilitas()
+       public function penilaianFasilitas() {
+      $fasilitas = Fasilitas::paginate(10);
+      return view('dosen.penilaian_fasilitas', ['fasilitas' => $fasilitas]);
+   }
+
+    // PENILAIAN UNIT 
+       public function penilaianUnit() {
+      $units = Unit::with('penanggungJawab')->paginate(10);
+      return view('dosen.penilaian_unit', ['units' => $units]);
+   }
+
+    // LAPORAN KERJA 
+//     public function laporanKinerja()
+//     {
+//         $user = Auth::user();
+    
+//         // CEGAH ERROR: Jika user belum punya data dosen
+//         $dosen = Dosen::where('user_id', $user->id)->first();
+    
+//         // Ambil semua indikator
+//         $indikator = Indikator::all();
+    
+//         // Ambil nilai KPI untuk dosen ini
+//         $nilai = Penilaian::where('dosen_id', $dosen->id)
+//             ->select('indikator_id', DB::raw('AVG(skor) as skor'))
+//             ->groupBy('indikator_id')
+//             ->get()
+//             ->keyBy('indikator_id');
+    
+//         // Hitung skor akhir
+//         $skorAkhir = $nilai->avg('skor') ?? 0;
+    
+//         // Tentukan kategori
+//         $kategori = 'Buruk';
+//         if ($skorAkhir >= 3.5) $kategori = 'Sangat Baik';
+//         elseif ($skorAkhir >= 3.0) $kategori = 'Baik';
+//         elseif ($skorAkhir >= 2.0) $kategori = 'Cukup';
+    
+//     return view('dosen.laporan', [
+//         'user' => $user,
+//         'dosen' => $dosen,
+//         'indikator' => $indikator,
+//         'nilai' => $nilai,
+//         'skorAkhir' => $skorAkhir,
+//         'kategori' => $kategori
+//     ]);
+// }
+
+   
+    public function laporanKinerja()
     {
         $user = Auth::user();
         $dosen = Dosen::where('user_id', $user->id)->first();
-
-        $penilai = Auth::id();
-
-        // kategori: fasilitas
-        $kategori = Kategori::where('name', 'fasilitas')->first();
-
-        if (!$kategori) {
-            return back()->with('error', 'Kategori fasilitas tidak ditemukan.');
-        }
-
-        // BELUM DINILAI
-        $pending = Fasilitas::whereDoesntHave('penilaian', function ($q) use ($penilai, $kategori) {
-            $q->where('penilai_id', $penilai)
-              ->where('kategori_id', $kategori->id);
-        })->get();
-
-        // SUDAH DINILAI
-        $completed = Penilaian::with(['fasilitas'])
-            ->where('penilai_id', $penilai)
-            ->where('kategori_id', $kategori->id)
-            ->get();
-
-        return view('dosen.penilaian_fasilitas', compact('pending', 'completed', 'user','dosen'));
+        $indikator = Indikator::where('kategori_id', 1)->get();
+        return view('dosen.laporan', compact('user', 'dosen', 'indikator'));
     }
-
-
-
-    // =======================================
-    // FORM PENILAIAN FASILITAS
-    // =======================================
-    public function penilaianFasilitasForm($id)
-{
-    $user = Auth::user();
-    $dosen = Dosen::where('user_id', $user->id)->first();
-
-    $fasilitas = Fasilitas::findOrFail($id);
-    $kategori = Kategori::where('name', 'fasilitas')->first();
-    $indikator = Indikator::where('kategori_id', $kategori->id)->get();
-    $periode = Periode::orderBy('id', 'desc')->first();
-
-    return view('penilaian', [
-        'tipe' => 'fasilitas',
-        'id' => $id,
-        'fasilitas' => $fasilitas,
-        'indikator' => $indikator,
-        'kategori' => $kategori,
-        'periode' => $periode,
-        'user' => $user,
-        'dosen' => $dosen
-    ]);
-}
-
-
-
-    // =======================================
-    // STORE PENILAIAN FASILITAS
-    // =======================================
-   public function penilaianFasilitasStore(Request $request)
-{
-    $request->validate([
-        'tipe' => 'required',
-        'id' => 'required|exists:fasilitas,id',
-        'rating.*' => 'required|numeric|min:1|max:4',
-    ]);
-
-    $penilaiId = Auth::id();
-    $kategori = Kategori::where('name', 'fasilitas')->first();
-    $periode = Periode::orderBy('id', 'desc')->first();
-
-    // Hitung rata-rata
-    $ratings = $request->rating;
-    $avg = array_sum($ratings) / count($ratings);
-
-    // Simpan penilaian utama
-    $penilaian = Penilaian::create([
-        'penilai_id' => $penilaiId,
-        'dinilai_id' => $request->id,
-        'kategori_id' => $kategori->id,
-        'periode_id' => $periode->id,
-        'komentar' => $request->feedback,
-        'avg_score' => $avg,
-    ]);
-
-    // Simpan detail per indikator
-    foreach ($ratings as $indikatorId => $score) {
-        DetailPenilaian::create([
-            'penilaian_id' => $penilaian->id,
-            'indikator_id' => $indikatorId,
-            'score' => $score
-        ]);
-    }
-
-    return redirect()->route('dosen.penilaian_fasilitas')
-        ->with('success', 'Penilaian fasilitas berhasil disimpan.');
-}
-
-
-    // PENILAIAN UNIT 
-public function penilaianUnit()
-{
-    $penilai = Auth::id();
-
-    // Pastikan kategori ditemukan
-    $kategori = Kategori::where('name', 'unit_layanan')->first();
-
-    if (!$kategori) {
-        return redirect()->back()->with('error', 'Kategori Unit Layanan tidak ditemukan.');
-    }
-
-    // ===== BELUM DINILAI =====
-    // Ambil fasilitas yang belum pernah dinilai oleh user ini
-    $pending = Fasilitas::whereDoesntHave('penilaian', function ($q) use ($penilai, $kategori) {
-        $q->where('penilai_id', $penilai)
-          ->where('kategori_id', $kategori->id);
-    })->get();
-
-    // ===== SUDAH DINILAI =====
-    // Ambil penilaian yang sudah dilakukan user, dan sertakan fasilitasnya
-    $completed = Penilaian::with('fasilitas')
-        ->where('penilai_id', $penilai)
-        ->where('kategori_id', $kategori->id)
-        ->get();
-
-    return view('dosen.penilaian_unit', [
-        'pending'   => $pending,
-        'completed' => $completed
-    ]);
-}
-
-    // LAPORAN KERJA 
-public function laporanKinerja()
-{
-    $user = Auth::user();
-
-    // CEGAH ERROR: Jika user belum punya data dosen
-    $dosen = Dosen::where('user_id', $user->id)->first();
-    if (!$dosen) {
-        return back()->with('error', 'Data dosen tidak ditemukan.');
-    }
-
-    // Ambil semua indikator
-    $indikator = Indikator::all();
-
-    // Ambil nilai KPI untuk dosen ini
-    $nilai = Penilaian::where('dosen_id', $dosen->id)
-        ->select('indikator_id', DB::raw('AVG(skor) as skor'))
-        ->groupBy('indikator_id')
-        ->get()
-        ->keyBy('indikator_id');
-
-    // Hitung skor akhir
-    $skorAkhir = $nilai->avg('skor') ?? 0;
-
-    // Tentukan kategori
-    $kategori = 'Buruk';
-    if ($skorAkhir >= 3.5) $kategori = 'Sangat Baik';
-    elseif ($skorAkhir >= 3.0) $kategori = 'Baik';
-    elseif ($skorAkhir >= 2.0) $kategori = 'Cukup';
-
-return view('dosen.laporan', [
-    'user' => $user,
-    'dosen' => $dosen,
-    'indikator' => $indikator,
-    'nilai' => $nilai,
-    'skorAkhir' => $skorAkhir,
-    'kategori' => $kategori
-]);
-}
-
-
 }

@@ -92,13 +92,7 @@ Route::prefix('dosen')
         // Route::get('/penilaian_fasilitas', fn() => view('dosen.penilaian_fasilitas'))->name('penilaian_fasilitas');
         Route::get('/penilaian_fasilitas', [DosenController::class, 'penilaianFasilitas'])
             ->name('penilaian_fasilitas');
-
-        Route::get('/penilaian_fasilitas/form/{id}', [DosenController::class, 'penilaianFasilitasForm'])
-            ->name('penilaian_fasilitas.form');
-
-        Route::post('/penilaian_fasilitas/store', [DosenController::class, 'penilaianFasilitasStore'])
-            ->name('penilaian_fasilitas.store');
-
+            
         Route::get('/penilaian_unit', [DosenController::class, 'penilaianUnit'])
             ->name('penilaian_unit');
 
@@ -192,9 +186,9 @@ Route::prefix('admin')
     });
 
 
-Route::get('/penilaian/{tipe}', [PenilaianController::class, 'index'])
+Route::get('/penilaian/{tipe}/{id}', [PenilaianController::class, 'index'])
     ->name('penilaian.form');
 
-Route::post('/penilaian/{tipe}', [PenilaianController::class, 'store'])
+Route::post('/penilaian/{tipe}/{id}', [PenilaianController::class, 'store'])
     ->name('penilaian.store');
 

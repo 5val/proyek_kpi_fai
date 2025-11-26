@@ -25,6 +25,7 @@ class Penilaian extends Model
          'kategori_id', // Kategori KPI yang digunakan
          'penilai_id', // User (Mahasiswa/Dosen) yang menilai
          'dinilai_id', // ID dari model yang dinilai (Dosen, Mhs, Fasilitas, Unit)
+         'dinilai_type', // ID dari model yang dinilai (Dosen, Mhs, Fasilitas, Unit)
          'periode_id', // Periode penilaian
          'komentar',
          'avg_score',

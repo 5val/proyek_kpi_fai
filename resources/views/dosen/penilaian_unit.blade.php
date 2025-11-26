@@ -20,7 +20,6 @@
                 <thead class="table-light">
                     <tr>
                         <th>Nama Unit</th>
-                        <th>Deskripsi</th>
                         <th>Status Penilaian</th>
                         <th>Aksi</th>
                     </tr>
@@ -28,10 +27,9 @@
                 <tbody>
 
                     {{-- SUDAH DINILAI --}}
-                    @foreach ($completed as $item)
+                    @foreach ($units as $u)
                     <tr>
-                        <td>{{ $item->fasilitas->nama }}</td>
-                        <td>{{ $item->fasilitas->deskripsi }}</td>
+                        <td>{{ $u->name }}</td>
                         <td>
                             <span class="badge bg-success">Sudah Dinilai</span>
                         </td>
@@ -42,32 +40,6 @@
                         </td>
                     </tr>
                     @endforeach
-
-                    {{-- BELUM DINILAI --}}
-                    @foreach ($pending as $item)
-                    <tr>
-                        <td>{{ $item->nama }}</td>
-                        <td>{{ $item->deskripsi }}</td>
-                        <td>
-                            <span class="badge bg-danger">Belum Dinilai</span>
-                        </td>
-                        <td>
-                            <a href="{{ route('dosen.penilaian.unit.form', $item->id) }}" class="btn btn-primary btn-sm">
-                                <i class="bi bi-pencil-square"></i> Nilai
-                            </a>
-                        </td>
-                    </tr>
-                    @endforeach
-
-                    {{-- Jika kosong --}}
-                    @if ($pending->isEmpty() && $completed->isEmpty())
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">
-                            Tidak ada data unit layanan.
-                        </td>
-                    </tr>
-                    @endif
-
                 </tbody>
             </table>
         </div>
