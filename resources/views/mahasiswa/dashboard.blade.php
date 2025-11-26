@@ -204,7 +204,7 @@
                                 <strong>Penilaian Perpustakaan</strong>
                                 <p class="mb-0 text-muted small">Kategori: Fasilitas</p>
                             </div>
-                                <a href="{{ route('penilaian.form', 'fasilitas') }}" class="btn btn-primary btn-sm">
+                                <a href="" class="btn btn-primary btn-sm">
                                     Isi
                                 </a>
                         </div>
@@ -213,7 +213,7 @@
                                 <strong>Penilaian Lab Komputer</strong>
                                 <p class="mb-0 text-muted small">Kategori: Fasilitas</p>
                             </div>
-                                <a href="{{ route('penilaian.form', 'fasilitas') }}" class="btn btn-primary btn-sm">
+                                <a href="" class="btn btn-primary btn-sm">
                                     Isi
                                 </a>
                         </div>
@@ -222,7 +222,7 @@
                                 <strong>Penilaian BAA</strong>
                                 <p class="mb-0 text-muted small">Layanan Akademik</p>
                             </div>
-                            <a href="{{ route('penilaian.form', 'unit') }}" class="btn btn-primary btn-sm">
+                            <a href="" class="btn btn-primary btn-sm">
                                 Isi
                             </a>
                         </div>
@@ -231,7 +231,7 @@
                                 <strong>Penilaian BAK</strong>
                                 <p class="mb-0 text-muted small">Layanan Kemahasiswaan</p>
                             </div>
-                            <a href="{{ route('penilaian.form', 'unit') }}" class="btn btn-primary btn-sm">
+                            <a href="" class="btn btn-primary btn-sm">
                                 Isi
                             </a>
                         </div>
