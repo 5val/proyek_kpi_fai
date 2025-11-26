@@ -10,7 +10,10 @@
 
 @section('content')
 <div class="card-custom">
-    <div class="card-header"><i class="bi bi-bank2"></i> Daftar Unit Layanan untuk Dinilai</div>
+    <div class="card-header">
+        <i class="bi bi-bank2"></i> Daftar Unit Layanan untuk Dinilai
+    </div>
+
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-hover">
@@ -23,18 +26,48 @@
                     </tr>
                 </thead>
                 <tbody>
-                     <tr>
-                        <td>Biro Administrasi Akademik (BAA)</td>
-                        <td>Layanan administrasi akademik dan perkuliahan</td>
-                        <td><span class="badge bg-success">Sudah Dinilai</span></td>
-                        <td><button class="btn btn-secondary btn-sm" disabled><i class="bi bi-check-circle"></i> Nilai</button></td>
-                    </tr>
+
+                    {{-- SUDAH DINILAI --}}
+                    @foreach ($completed as $item)
                     <tr>
-                        <td>Biro Administrasi Keuangan (BAK)</td>
-                        <td>Layanan administrasi keuangan dan pembayaran</td>
-                         <td><span class="badge bg-danger">Belum Dinilai</span></td>
-                        <td><button class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Nilai</button></td>
+                        <td>{{ $item->fasilitas->nama }}</td>
+                        <td>{{ $item->fasilitas->deskripsi }}</td>
+                        <td>
+                            <span class="badge bg-success">Sudah Dinilai</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" disabled>
+                                <i class="bi bi-check-circle"></i> Nilai
+                            </button>
+                        </td>
                     </tr>
+                    @endforeach
+
+                    {{-- BELUM DINILAI --}}
+                    @foreach ($pending as $item)
+                    <tr>
+                        <td>{{ $item->nama }}</td>
+                        <td>{{ $item->deskripsi }}</td>
+                        <td>
+                            <span class="badge bg-danger">Belum Dinilai</span>
+                        </td>
+                        <td>
+                            <a href="{{ route('dosen.penilaian.unit.form', $item->id) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-pencil-square"></i> Nilai
+                            </a>
+                        </td>
+                    </tr>
+                    @endforeach
+
+                    {{-- Jika kosong --}}
+                    @if ($pending->isEmpty() && $completed->isEmpty())
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">
+                            Tidak ada data unit layanan.
+                        </td>
+                    </tr>
+                    @endif
+
                 </tbody>
             </table>
         </div>
