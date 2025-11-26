@@ -89,9 +89,24 @@ Route::prefix('dosen')
 
         // Route::get('/penilaian_mahasiswa', fn() => view('dosen.penilaian_mahasiswa'))->name('penilaian_mahasiswa');
 
-        Route::get('/penilaian_fasilitas', fn() => view('dosen.penilaian_fasilitas'))->name('penilaian_fasilitas');
-        Route::get('/penilaian_unit', fn() => view('dosen.penilaian_unit'))->name('penilaian_unit');
-        Route::get('/laporan', fn() => view('dosen.laporan'))->name('laporan');
+        // Route::get('/penilaian_fasilitas', fn() => view('dosen.penilaian_fasilitas'))->name('penilaian_fasilitas');
+        Route::get('/penilaian_fasilitas', [DosenController::class, 'penilaianFasilitas'])
+            ->name('penilaian_fasilitas');
+
+        Route::get('/penilaian_fasilitas/form/{id}', [DosenController::class, 'penilaianFasilitasForm'])
+            ->name('penilaian_fasilitas.form');
+
+        Route::post('/penilaian_fasilitas/store', [DosenController::class, 'penilaianFasilitasStore'])
+            ->name('penilaian_fasilitas.store');
+
+        Route::get('/penilaian_unit', [DosenController::class, 'penilaianUnit'])
+            ->name('penilaian_unit');
+
+
+        Route::get('/laporan', [DosenController::class, 'laporanKinerja'])
+            ->name('laporan');    
+
+        // Route::get('/laporan', fn() => view('dosen.laporan'))->name('laporan');
         Route::get('/feedback', fn() => view('dosen.feedback'))->name('feedback');
     });
 
