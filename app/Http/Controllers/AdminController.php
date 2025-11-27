@@ -39,10 +39,44 @@ use Dompdf\Dompdf;
 class AdminController extends Controller
 {
    public function dashboard() {
-      $total_pengguna = User::count();
-      $total_dosen = Dosen::count();
-      $total_mahasiswa = Mahasiswa::count();
-      $total_penilaian = Penilaian::count();
+
+      $belum_dinilai_count = [
+         'dosen'     => Dosen::doesntHave('penilaian')->count(),
+         'mahasiswa' => Mahasiswa::doesntHave('penilaian')->count(),
+         'fasilitas' => Fasilitas::doesntHave('penilaian')->count(),
+         'unit'      => Unit::doesntHave('penilaian')->count(),
+         'praktikum' => Praktikum::doesntHave('penilaian')->count(),
+      ];
+
+      $feedbacks = Feedback::select('kategori_id', 'target_type', 'target_id', DB::raw('count(*) as total'))
+         ->groupBy('kategori_id', 'target_type', 'target_id')
+         ->orderByDesc('total')
+         ->take(3)
+         ->get()
+         ->map(function ($item) {
+               // Mengambil nama objek asli dari relasi polimorfik manual
+               $modelClass = $item->target_type; // misal: App\Models\Fasilitas
+               $object = $modelClass::find($item->target_id);
+               
+               // Bersihkan nama tipe untuk tampilan (ambil nama class saja)
+               $typeDisplay = class_basename($item->target_type); 
+
+               return (object) [
+                  'type' => $typeDisplay,
+                  'name' => $object->name ?? $object->nama_mk ?? $object->user->name ?? 'Unknown',
+                  'kategori_id' => $item->kategori_id,
+                  'count' => $item->total,
+                  'target_id' => $item->target_id
+               ];
+         });
+      
+         $low_kpi = [
+            'dosen' => Dosen::has('penilaian')->orderBy('avg_kpi', 'asc')->with('user')->take(3)->get(),
+            'mahasiswa' => Mahasiswa::has('penilaian')->orderBy('avg_kpi', 'asc')->with('user')->take(3)->get(),
+            'fasilitas' => Fasilitas::has('penilaian')->orderBy('avg_kpi', 'asc')->take(3)->get(),
+            'unit' => Unit::has('penilaian')->orderBy('avg_kpi', 'asc')->take(3)->get(),
+            'praktikum' => Praktikum::has('penilaian')->orderBy('avg_kpi', 'asc')->with('kelas.mataKuliah', 'kelas.program_studi')->take(3)->get(),
+        ];
 
       $last6Months = collect();
       for ($i = 5; $i >= 0; $i--) {
@@ -93,17 +127,163 @@ class AdminController extends Controller
          ];
       });
 
-      $feedbacks = Feedback::with('pengirim', 'kategori')->orderBy('id', 'desc')->limit(5)->get();
-
       return view('admin.dashboard', [
-         'total_pengguna' => $total_pengguna,
-         'total_dosen' => $total_dosen,
-         'total_mahasiswa' => $total_mahasiswa,
-         'total_penilaian' => $total_penilaian,
+         'belum_dinilai_count' => $belum_dinilai_count,
+         'feedbacks' => $feedbacks,
+         'low_kpi' => $low_kpi,
          'chart_bulan' => $chart_bulan,
          'chart_kategori' => $chart_kategori,
-         'feedbacks' => $feedbacks,
       ]);
+   }
+
+   public function detail_dashboard_card($type) {
+      if($type == 'belum_dinilai_dosen') {
+         $data = [
+            'pageTitle' => 'Dosen Belum Dinilai',
+            'pageSubtitle' => 'Daftar dosen yang belum memiliki data penilaian masuk',
+            'tableTitle' => 'List Dosen',
+            'headers' => ['Nama Dosen', 'NIDN'],
+            'keys' => ['name', 'nidn'], // Sesuaikan dengan nama kolom/atribut model
+            'items' => Dosen::doesntHave('penilaian')->with('user')->get()->map(function($dosen) {
+                    return [
+                        'id' => $dosen->id,
+                        'name' => $dosen->user->name ?? 'User Tidak Ditemukan', // Ambil nama dari user
+                        'nidn' => $dosen->nidn,
+                    ];
+                }), 
+            'actionType' => 'remind'
+         ];
+      } elseif($type == 'belum_dinilai_mahasiswa') {
+         $data = [
+            'pageTitle' => 'Mahasiswa Belum Dinilai',
+            'pageSubtitle' => 'Daftar mahasiswa yang belum memiliki data penilaian masuk',
+            'tableTitle' => 'List Mahasiswa',
+            'headers' => ['Nama Mahasiswa', 'NRP', 'Program Studi'],
+            'keys' => ['name', 'nrp', 'program_studi'], // Sesuaikan dengan nama kolom/atribut model
+            'items' => Mahasiswa::doesntHave('penilaian')->with('user', 'program_studi')->get()->map(function($mhs) {
+                    return [
+                        'id' => $mhs->id,
+                        'name' => $mhs->user->name ?? 'User Tidak Ditemukan',
+                        'nrp' => $mhs->nrp, // Sesuaikan dengan nama kolom di DB (misal nrp/nim)
+                        'program_studi' => $mhs->program_studi->name ?? '-',
+                    ];
+                }), 
+            'actionType' => 'remind'
+         ];
+      } elseif($type == 'belum_dinilai_fasilitas') {
+         $data = [
+            'pageTitle' => 'Fasilitas Belum Dinilai',
+            'pageSubtitle' => 'Daftar fasilitas yang belum memiliki data penilaian masuk',
+            'tableTitle' => 'List Fasilitas',
+            'headers' => ['Nama Fasilitas'],
+            'keys' => ['name'], // Sesuaikan dengan nama kolom/atribut model
+            'items' => Fasilitas::doesntHave('penilaian')->get(), 
+            'actionType' => 'remind'
+         ];
+      } elseif($type == 'belum_dinilai_unit') {
+         $data = [
+            'pageTitle' => 'Unit Belum Dinilai',
+            'pageSubtitle' => 'Daftar unit yang belum memiliki data penilaian masuk',
+            'tableTitle' => 'List Unit',
+            'headers' => ['Nama Unit'],
+            'keys' => ['name'], // Sesuaikan dengan nama kolom/atribut model
+            'items' => Unit::doesntHave('penilaian')->get(), 
+            'actionType' => 'remind'
+         ];
+      } elseif($type == 'belum_dinilai_praktikum') {
+         $data = [
+            'pageTitle' => 'Praktikum Belum Dinilai',
+            'pageSubtitle' => 'Daftar praktikum yang belum memiliki data penilaian masuk',
+            'tableTitle' => 'List Praktikum',
+            'headers' => ['Nama Praktikum', 'Program Studi'],
+            'keys' => ['name', 'program_studi'], // Sesuaikan dengan nama kolom/atribut model
+            'items' => Praktikum::doesntHave('penilaian')->with('kelas.mataKuliah', 'kelas.program_studi')->get()->map(function($prak) {
+                    return [
+                        'id' => $prak->id,
+                        'name' => $prak->kelas->mataKuliah->name ?? 'Praktikum Tidak Ditemukan',
+                        'program_studi' => $prak->kelas->program_studi->name ?? '-',
+                    ];
+                }), 
+            'actionType' => 'remind'
+         ];
+      } 
+      return view('admin.detail_dashboard', ['data' => $data]);
+   }
+
+   public function detail_dashboard_list($type, $id) {
+      if($type == 'dosen') {
+         $data = [
+            'pageTitle' => 'Dosen Performa Rendah',
+            'pageSubtitle' => 'Daftar penilaian dosen dengan skor rata-rata KPI rendah',
+            'tableTitle' => 'List Penilaian',
+            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar'],
+            'keys' => ['created_at', 'avg_score', 'komentar'], // Sesuaikan dengan nama kolom/atribut model
+            'items' => Penilaian::where('dinilai_type', 'App\Models\Dosen')->where('dinilai_id', $id)->orderBy('avg_score', 'asc')->get(), 
+            'actionType' => 'remind'
+         ];
+      } elseif($type == 'mahasiswa') {
+         $data = [
+            'pageTitle' => 'Mahasiswa Performa Rendah',
+            'pageSubtitle' => 'Daftar penilaian mahasiswa dengan skor rata-rata KPI rendah',
+            'tableTitle' => 'List Penilaian',
+            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar'],
+            'keys' => ['created_at', 'avg_score', 'komentar'], // Sesuaikan dengan nama kolom/atribut model
+            'items' => Penilaian::where('dinilai_type', 'App\Models\Mahasiswa')->where('dinilai_id', $id)->orderBy('avg_score', 'asc')->get(), 
+            'actionType' => 'remind'
+         ];
+      } elseif($type == 'fasilitas') {
+         $data = [
+            'pageTitle' => 'Fasilitas Performa Rendah',
+            'pageSubtitle' => 'Daftar penilaian fasilitas dengan skor rata-rata KPI rendah',
+            'tableTitle' => 'List Penilaian',
+            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar'],
+            'keys' => ['created_at', 'avg_score', 'komentar'], // Sesuaikan dengan nama kolom/atribut model
+            'items' => Penilaian::where('dinilai_type', 'App\Models\Fasilitas')->where('dinilai_id', $id)->orderBy('avg_score', 'asc')->get(), 
+            'actionType' => 'remind'
+         ];
+      } elseif($type == 'unit') {
+         $data = [
+            'pageTitle' => 'Unit Performa Rendah',
+            'pageSubtitle' => 'Daftar penilaian unit dengan skor rata-rata KPI rendah',
+            'tableTitle' => 'List Penilaian',
+            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar'],
+            'keys' => ['created_at', 'avg_score', 'komentar'], // Sesuaikan dengan nama kolom/atribut model
+            'items' => Penilaian::where('dinilai_type', 'App\Models\Unit')->where('dinilai_id', $id)->orderBy('avg_score', 'asc')->get(), 
+            'actionType' => 'remind'
+         ];
+      } else {
+         $data = [
+            'pageTitle' => 'Praktikum Performa Rendah',
+            'pageSubtitle' => 'Daftar penilaian praktikum dengan skor rata-rata KPI rendah',
+            'tableTitle' => 'List Penilaian',
+            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar'],
+            'keys' => ['created_at', 'avg_score', 'komentar'], // Sesuaikan dengan nama kolom/atribut model
+            'items' => Penilaian::where('dinilai_type', 'App\Models\Praktikum')->where('dinilai_id', $id)->orderBy('avg_score', 'asc')->get(), 
+            'actionType' => 'remind'
+         ];
+      }
+      return view('admin.detail_dashboard', ['data' => $data]);
+   }
+
+   public function detail_dashboard_feedback($kategori_id, $target_id) {
+      $data = [
+         'pageTitle' => 'Daftar Feedback',
+         'pageSubtitle' => 'Daftar feedback untuk objek terbanyak',
+         'tableTitle' => 'Semua Feedback',
+         'headers' => ['Pengirim', 'Isi', 'Status'],
+         'keys' => ['pengirim', 'isi', 'status'],
+         'items' => Feedback::with(['pengirim', 'kategori'])->where('kategori_id', $kategori_id)->where('target_id', $target_id)->get()->map(function($fb) {
+            return [
+               'id' => $fb->id,
+               'pengirim' => $fb->is_anonymous ? 'Anonim' : ($fb->pengirim->name ?? '-'),
+               'isi' => \Str::limit($fb->isi, 50),
+               'status' => $fb->status == 1 ? 'Sudah Ditanggapi' : 'Belum Ditanggapi',
+            ];
+         }),
+         'actionType' => 'feedback'
+      ];
+
+      return view('admin.detail_dashboard', ['data' => $data]);
    }
 
    public function user(Request $request) {

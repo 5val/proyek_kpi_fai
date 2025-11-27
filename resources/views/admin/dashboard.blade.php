@@ -8,65 +8,6 @@
 @section('user-role', 'Admin')
 @section('user-initial', 'AD')
 
-@php
-    // --- MOCK DATA (SIMULASI CONTROLLER) ---
-    // Nanti data ini dikirim dari AdminController
-    
-    // 1. Count Belum Dinilai
-    $unassessed = [
-        'dosen' => 5,
-        'mahasiswa' => 120,
-        'fasilitas' => 3,
-        'unit' => 1,
-        'praktikum' => 4
-    ];
-
-    // 2. Top Feedback (Objek Paling Banyak Dikomentari)
-    $top_feedbacks = collect([
-        (object)['type' => 'Fasilitas', 'name' => 'AC Ruang 301', 'count' => 15, 'id' => 1],
-        (object)['type' => 'Unit', 'name' => 'Layanan BAA', 'count' => 12, 'id' => 1],
-        (object)['type' => 'Fasilitas', 'name' => 'WiFi Gedung C', 'count' => 9, 'id' => 2],
-    ]);
-
-    // 3. Low KPI Lists (Top 3 Terendah)
-    $low_kpi_dosen = collect([
-        (object)['name' => 'Dr. Budi Santoso', 'avg_kpi' => 2.5, 'id' => 1],
-        (object)['name' => 'Siti Aminah, M.T.', 'avg_kpi' => 3.1, 'id' => 2],
-        (object)['name' => 'Ahmad, M.Kom', 'avg_kpi' => 3.2, 'id' => 3],
-    ]);
-
-    $low_kpi_mhs = collect([
-        (object)['name' => 'Andi Pratama', 'nim' => '2021001', 'avg_kpi' => 1.8, 'id' => 1],
-        (object)['name' => 'Budi Setiawan', 'nim' => '2021002', 'avg_kpi' => 2.0, 'id' => 2],
-        (object)['name' => 'Citra Kirana', 'nim' => '2021003', 'avg_kpi' => 2.2, 'id' => 3],
-    ]);
-
-    $low_kpi_fasilitas = collect([
-        (object)['name' => 'Toilet Gedung B', 'avg_kpi' => 1.5, 'id' => 1],
-        (object)['name' => 'Parkiran Motor', 'avg_kpi' => 2.1, 'id' => 2],
-        (object)['name' => 'Kantin Pusat', 'avg_kpi' => 2.8, 'id' => 3],
-    ]);
-
-    $low_kpi_unit = collect([
-        (object)['name' => 'Keamanan (Satpam)', 'avg_kpi' => 2.9, 'id' => 1],
-        (object)['name' => 'Kebersihan', 'avg_kpi' => 3.0, 'id' => 2],
-        (object)['name' => 'Poliklinik', 'avg_kpi' => 3.5, 'id' => 3],
-    ]);
-
-    $low_kpi_praktikum = collect([
-        (object)['name' => 'Jaringan Komputer', 'avg_kpi' => 2.4, 'id' => 1],
-        (object)['name' => 'Sistem Operasi', 'avg_kpi' => 3.1, 'id' => 2],
-        (object)['name' => 'Basis Data', 'avg_kpi' => 3.3, 'id' => 3],
-    ]);
-
-    // Chart Data (Mock)
-    $chart_bulan_labels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
-    $chart_bulan_values = [3.5, 3.6, 3.8, 3.7, 4.0, 4.2];
-    
-    $chart_kategori_labels = ['Dosen', 'Mhs', 'Fasilitas', 'Unit', 'Praktikum'];
-    $chart_kategori_values = [4.2, 3.8, 3.5, 4.0, 3.9];
-@endphp
-
 @section('content')
 
 <!-- SECTION 1: STATUS PENILAIAN (BELUM DINILAI) -->
@@ -75,44 +16,54 @@
         <h6 class="text-uppercase text-muted fw-bold mb-3"><i class="bi bi-exclamation-circle"></i> Status: Belum Ada Penilaian</h6>
     </div>
     <div class="col">
+      <a href="{{ route('admin.dashboard.detail.card', 'belum_dinilai_dosen') }}" class="text-decoration-none">
         <div class="card-custom bg-danger text-white h-100">
             <div class="card-body text-center p-3">
-                <h2 class="fw-bold mb-0">{{ $unassessed['dosen'] }}</h2>
+                <h2 class="fw-bold mb-0">{{ $belum_dinilai_count['dosen'] }}</h2>
                 <small>Dosen</small>
             </div>
         </div>
+      </a>
     </div>
     <div class="col">
+      <a href="{{ route('admin.dashboard.detail.card', 'belum_dinilai_mahasiswa') }}" class="text-decoration-none">
         <div class="card-custom bg-warning text-dark h-100">
             <div class="card-body text-center p-3">
-                <h2 class="fw-bold mb-0">{{ $unassessed['mahasiswa'] }}</h2>
+                <h2 class="fw-bold mb-0">{{ $belum_dinilai_count['mahasiswa'] }}</h2>
                 <small>Mahasiswa</small>
             </div>
         </div>
+      </a>
     </div>
     <div class="col">
+      <a href="{{ route('admin.dashboard.detail.card', 'belum_dinilai_fasilitas') }}" class="text-decoration-none">
         <div class="card-custom bg-secondary text-white h-100">
             <div class="card-body text-center p-3">
-                <h2 class="fw-bold mb-0">{{ $unassessed['fasilitas'] }}</h2>
+                <h2 class="fw-bold mb-0">{{ $belum_dinilai_count['fasilitas'] }}</h2>
                 <small>Fasilitas</small>
             </div>
         </div>
+      </a>
     </div>
     <div class="col">
+      <a href="{{ route('admin.dashboard.detail.card', 'belum_dinilai_unit') }}" class="text-decoration-none">
         <div class="card-custom bg-info text-white h-100">
             <div class="card-body text-center p-3">
-                <h2 class="fw-bold mb-0">{{ $unassessed['unit'] }}</h2>
+                <h2 class="fw-bold mb-0">{{ $belum_dinilai_count['unit'] }}</h2>
                 <small>Unit</small>
             </div>
         </div>
+      </a>
     </div>
     <div class="col">
+      <a href="{{ route('admin.dashboard.detail.card', 'belum_dinilai_praktikum') }}" class="text-decoration-none">
         <div class="card-custom bg-dark text-white h-100">
             <div class="card-body text-center p-3">
-                <h2 class="fw-bold mb-0">{{ $unassessed['praktikum'] }}</h2>
+                <h2 class="fw-bold mb-0">{{ $belum_dinilai_count['praktikum'] }}</h2>
                 <small>Praktikum</small>
             </div>
         </div>
+      </a>
     </div>
 </div>
 
@@ -130,17 +81,22 @@
             </div>
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
-                    @foreach($top_feedbacks as $item)
+                    @forelse($feedbacks as $feedback)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
-                            <strong>{{ $item->name }}</strong>
-                            <br><small class="text-muted">{{ $item->type }}</small>
+                            <strong>{{ $feedback->name }}</strong>
+                            <br><small class="text-muted">{{ $feedback->type }}</small>
                         </div>
-                        <a href="#" class="btn btn-sm btn-outline-danger rounded-pill">
-                            {{ $item->count }} Feedback <i class="bi bi-chevron-right"></i>
+                        <a href="{{ route('admin.dashboard.detail.feedback', [$feedback->kategori_id, $feedback->target_id]) }}" class="btn btn-sm btn-outline-danger rounded-pill">
+                            {{ $feedback->count }} Feedback <i class="bi bi-chevron-right"></i>
                         </a>
                     </li>
-                    @endforeach
+                    @empty
+                    <li class="list-group-item text-center py-4 text-muted">
+                        <i class="bi bi-check-circle fs-1 d-block mb-2 opacity-25"></i>
+                        <small>Tidak ada keluhan signifikan</small>
+                    </li>
+                    @endforelse
                 </ul>
             </div>
         </div>
@@ -154,17 +110,22 @@
             </div>
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
-                    @foreach($low_kpi_dosen as $item)
+                    @forelse($low_kpi['dosen'] as $dosen)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div class="text-truncate" style="max-width: 60%;">
-                            {{ $item->name }}
+                            {{ $dosen->user->name }}
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-danger">{{ $item->avg_kpi }}</span>
-                            <a href="#" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
+                            <span class="badge bg-danger">{{ $dosen->avg_kpi }}</span>
+                            <a href="{{ route('admin.dashboard.detail.list', ['dosen', $dosen->user->id]) }}" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
                         </div>
                     </li>
-                    @endforeach
+                    @empty
+                    <li class="list-group-item text-center py-4 text-muted">
+                        <i class="bi bi-emoji-smile fs-1 d-block mb-2 opacity-25"></i>
+                        <small>Semua kinerja dosen baik</small>
+                    </li>
+                    @endforelse
                 </ul>
             </div>
         </div>
@@ -178,18 +139,23 @@
             </div>
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
-                    @foreach($low_kpi_mhs as $item)
+                    @forelse($low_kpi['mahasiswa'] as $mahasiswa)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div class="text-truncate" style="max-width: 60%;">
-                            {{ $item->name }}
-                            <br><small class="text-muted">{{ $item->nim }}</small>
+                            {{ $mahasiswa->user->name }}
+                            <br><small class="text-muted">{{ $mahasiswa->nrp }}</small>
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-danger">{{ $item->avg_kpi }}</span>
-                            <a href="#" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
+                            <span class="badge bg-danger">{{ $mahasiswa->avg_kpi }}</span>
+                            <a href="{{ route('admin.dashboard.detail.list', ['mahasiswa', $mahasiswa->user->id]) }}" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
                         </div>
                     </li>
-                    @endforeach
+                    @empty
+                    <li class="list-group-item text-center py-4 text-muted">
+                        <i class="bi bi-emoji-smile fs-1 d-block mb-2 opacity-25"></i>
+                        <small>Semua kinerja mahasiswa baik</small>
+                    </li>
+                    @endforelse
                 </ul>
             </div>
         </div>
@@ -203,15 +169,20 @@
             </div>
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
-                    @foreach($low_kpi_fasilitas as $item)
+                    @forelse($low_kpi['fasilitas'] as $fasilitas)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>{{ $item->name }}</div>
+                        <div>{{ $fasilitas->name }}</div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-danger">{{ $item->avg_kpi }}</span>
-                            <a href="#" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
+                            <span class="badge bg-danger">{{ $fasilitas->avg_kpi }}</span>
+                            <a href="{{ route('admin.dashboard.detail.list', ['fasilitas', $fasilitas->id]) }}" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
                         </div>
                     </li>
-                    @endforeach
+                    @empty
+                    <li class="list-group-item text-center py-4 text-muted">
+                        <i class="bi bi-check2-circle fs-1 d-block mb-2 opacity-25"></i>
+                        <small>Fasilitas dalam kondisi baik</small>
+                    </li>
+                    @endforelse
                 </ul>
             </div>
         </div>
@@ -225,15 +196,20 @@
             </div>
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
-                    @foreach($low_kpi_unit as $item)
+                    @forelse($low_kpi['unit'] as $unit)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>{{ $item->name }}</div>
+                        <div>{{ $unit->name }}</div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-danger">{{ $item->avg_kpi }}</span>
-                            <a href="#" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
+                            <span class="badge bg-danger">{{ $unit->avg_kpi }}</span>
+                            <a href="{{ route('admin.dashboard.detail.list', ['unit', $unit->id]) }}" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
                         </div>
                     </li>
-                    @endforeach
+                    @empty
+                    <li class="list-group-item text-center py-4 text-muted">
+                        <i class="bi bi-check2-circle fs-1 d-block mb-2 opacity-25"></i>
+                        <small>Layanan unit optimal</small>
+                    </li>
+                    @endforelse
                 </ul>
             </div>
         </div>
@@ -247,15 +223,23 @@
             </div>
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
-                    @foreach($low_kpi_praktikum as $item)
+                    @forelse($low_kpi['praktikum'] as $praktikum)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>{{ $item->name }}</div>
+                        <div>
+                           {{ $praktikum->kelas->mataKuliah->name }}
+                           <br><small class="text-muted">{{ $praktikum->kelas->program_studi->name }}</small>
+                        </div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-danger">{{ $item->avg_kpi }}</span>
-                            <a href="#" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
+                            <span class="badge bg-danger">{{ $praktikum->avg_kpi }}</span>
+                            <a href="{{ route('admin.dashboard.detail.list', ['praktikum', $praktikum->id]) }}" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
                         </div>
                     </li>
-                    @endforeach
+                    @empty
+                    <li class="list-group-item text-center py-4 text-muted">
+                        <i class="bi bi-check2-circle fs-1 d-block mb-2 opacity-25"></i>
+                        <small>Pelaksanaan praktikum baik</small>
+                    </li>
+                    @endforelse
                 </ul>
             </div>
         </div>

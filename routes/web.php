@@ -116,6 +116,9 @@ Route::prefix('admin')
     ->middleware(['auth', 'role:admin'])
     ->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+        Route::get('/dashboard/detail/{type}', [AdminController::class, 'detail_dashboard_card'])->name('dashboard.detail.card');
+        Route::get('/dashboard/detail/{type}/{id}', [AdminController::class, 'detail_dashboard_list'])->name('dashboard.detail.list');
+        Route::get('/dashboard/feedback/{kategori_id}/{target_id}', [AdminController::class, 'detail_dashboard_feedback'])->name('dashboard.detail.feedback');
         
         Route::get('/user', [AdminController::class, 'user'])->name('user');
         Route::get('/user/create', [AdminController::class, 'form_user'])->name('form_user');
