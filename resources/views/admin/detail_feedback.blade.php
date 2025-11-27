@@ -62,6 +62,7 @@
                     <h6 class="text-muted text-uppercase small fw-bold mb-2">Feedback</h6>
                     <div class="mb-3">
                         <span class="badge bg-info text-dark fs-6 mb-2">{{ $feedback->kategori->name }}</span>
+                        <h4 class="fw-bold">{{ $feedback->target_user->name ?? $feedback->target->name }}</h4>
                     </div>
                     
                     <div class="p-3 bg-light rounded border text-dark">

@@ -36,7 +36,7 @@
             <table class="table table-hover data-table">
                 <thead class="table-light">
                     <tr>
-                        <th>Penilai</th>
+                        <th>ID</th>
                         <th>Subjek yang Dinilai</th>
                         <th>Kategori</th>
                         <th>Periode</th>
@@ -48,7 +48,7 @@
                 <tbody>
                   @foreach ($penilaian as $p)
                      <tr>
-                        <td>{{ $p->penilai->name }}</td>
+                        <td>{{ $p->id }}</td>
                         <td>{{ $p->dinilai_user->name ?? $p->dinilai->name }}</td>
                         <td>{{ $p->kategori->name }}</td>
                         <td>{{ $p->periode->nama_periode }}</td>

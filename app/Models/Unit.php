@@ -27,7 +27,8 @@ class Unit extends Model
         'name',
         'type', // Misal: BAA, BAK, BAU, UKM
         'penanggung_jawab_id',
-        'is_active'
+        'is_active',
+        'avg_kpi'
     ];
 
     /**
@@ -36,6 +37,11 @@ class Unit extends Model
     public function penilaian()
     {
         return $this->morphMany(Penilaian::class, 'dinilai');
+    }
+
+    public function feedback()
+    {
+        return $this->morphMany(Feedback::class, 'target');
     }
 
     public function penanggungJawab()

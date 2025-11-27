@@ -100,6 +100,16 @@ class PenilaianController extends Controller
                 'score'        => $nilai,
             ]);
         }
+
+        $newAvgKpi = Penilaian::where('dinilai_type', $dinilaiType)
+            ->where('dinilai_id', $targetId)
+            ->avg('avg_score');
+
+        // Update kolom avg_kpi pada model target
+        $target->update([
+            'avg_kpi' => $newAvgKpi
+        ]);
+
         return back()->with('success', 'Penilaian berhasil disimpan!');
     }
 

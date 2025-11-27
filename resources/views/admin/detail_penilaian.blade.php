@@ -23,10 +23,6 @@
             <div class="card-body">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between">
-                        <strong>Penilai:</strong>
-                        <span>{{ $penilaian->penilai->name }}</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
                         <strong>Subjek Dinilai:</strong>
                         <span>{{ $penilaian->dinilai_user->name ?? $penilaian->dinilai->name }}</span>
                     </li>

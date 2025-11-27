@@ -22,7 +22,8 @@ class Praktikum extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'kelas_id' // Ditambahkan berdasarkan UI
+        'kelas_id',
+        'avg_kpi'
     ];
 
     /**
@@ -39,6 +40,11 @@ class Praktikum extends Model
     public function penilaian()
     {
         return $this->morphMany(Penilaian::class, 'dinilai');
+    }
+
+    public function feedback()
+    {
+        return $this->morphMany(Feedback::class, 'target');
     }
 }
 

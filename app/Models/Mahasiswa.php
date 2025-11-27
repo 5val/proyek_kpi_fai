@@ -30,6 +30,7 @@ class Mahasiswa extends Model
         'points_balance',
         'class_group',
         'ipk',
+        'avg_kpi'
     ];
 
     /**
@@ -90,6 +91,11 @@ class Mahasiswa extends Model
     public function penilaian()
     {
         return $this->morphMany(Penilaian::class, 'dinilai', 'dinilai_type', 'dinilai_id', 'user_id');
+    }
+
+    public function feedback()
+    {
+        return $this->morphMany(Feedback::class, 'target', 'target_type', 'target_id', 'user_id');
     }
 }
 

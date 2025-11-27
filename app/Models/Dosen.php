@@ -30,6 +30,7 @@ class Dosen extends Model
         'start_date',
         'end_date',
         'is_certified',
+        'avg_kpi'
     ];
 
     /**
@@ -76,6 +77,10 @@ class Dosen extends Model
     public function penilaian()
     {
         return $this->morphMany(Penilaian::class, 'dinilai', 'dinilai_type', 'dinilai_id', 'user_id');
+    }
+    public function feedback()
+    {
+        return $this->morphMany(Feedback::class, 'target', 'target_type', 'target_id', 'user_id');
     }
 }
 

@@ -54,6 +54,7 @@ Route::prefix('mahasiswa')
         Route::get('/penilaian_unit', [MahasiswaController::class, 'penilaian_unit'])->name('penilaian_unit');
         Route::get('/penilaian_praktikum', [MahasiswaController::class, 'penilaian_praktikum'])->name('penilaian_praktikum');
         Route::get('/feedback', [MahasiswaController::class, 'feedback'])->name('feedback');
+        Route::get('/feedback/get_targets', [MahasiswaController::class, 'get_targets'])->name('feedback.get_targets');
         Route::post('/feedback', [MahasiswaController::class, 'insertFeedback'])->name('insertFeedback');
         Route::get('/laporan', [MahasiswaController::class, 'laporan'])->name('laporan');
     });

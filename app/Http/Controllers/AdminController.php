@@ -566,7 +566,10 @@ class AdminController extends Controller
       if($request->has_praktikum) {
          $has_praktikum = 1;
       }
-      Kelas::create(['mata_kuliah_id' => $request->mata_kuliah, 'periode_id' => $request->periode, 'dosen_nidn' => $request->dosen, 'program_studi_id' => $request->program_studi, 'sks' => $request->sks, 'has_praktikum' => $has_praktikum]);
+      $kelas = Kelas::create(['mata_kuliah_id' => $request->mata_kuliah, 'periode_id' => $request->periode, 'dosen_nidn' => $request->dosen, 'program_studi_id' => $request->program_studi, 'sks' => $request->sks, 'has_praktikum' => $has_praktikum]);
+      if($has_praktikum == 1) {
+         Praktikum::create(['kelas_id' => $kelas->id]);
+      }
       return redirect()->route('admin.kelas')->with('success', 'Kelas added successfully!');
    }
 
@@ -858,7 +861,7 @@ class AdminController extends Controller
 
    public function feedback(Request $request) {
       $all_kategori = Kategori::all();
-      $feedbacks = Feedback::with('pengirim', 'kategori');
+      $feedbacks = Feedback::with('pengirim', 'kategori', 'target');
       if($request->kategori_id) {
          $feedbacks = $feedbacks->where('kategori_id', $request->kategori_id);
       }
@@ -881,7 +884,7 @@ class AdminController extends Controller
    }
 
    public function detail_feedback($id) {
-      $feedback = Feedback::with('pengirim.mahasiswa.program_studi', 'kategori')->findOrFail($id);
+      $feedback = Feedback::with('pengirim.mahasiswa.program_studi', 'kategori', 'target')->findOrFail($id);
       return view('admin.detail_feedback', ['feedback' => $feedback]);
    }
 

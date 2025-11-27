@@ -30,6 +30,7 @@ class Fasilitas extends Model
         'kondisi',
         'penanggung_jawab',
         'is_active',
+        'avg_kpi'
     ];
 
     /**
@@ -38,6 +39,11 @@ class Fasilitas extends Model
     public function penilaian()
     {
         return $this->morphMany(Penilaian::class, 'dinilai');
+    }
+
+    public function feedback()
+    {
+        return $this->morphMany(Feedback::class, 'target');
     }
 }
 

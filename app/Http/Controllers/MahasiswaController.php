@@ -116,14 +116,57 @@ class MahasiswaController extends Controller
    }
 
    public function feedback() {
-      $kategori = Kategori::where('id', '!=', 2)->get();
+      $kategori = Kategori::where('id', '!=', 2)->where('id', '!=', 5)->get();
       return view('mahasiswa.feedback', ['kategori' => $kategori]);
    }
+
+   public function get_targets(Request $request) {
+      $kategoriId = $request->kategori_id;
+        
+      // Cari detail kategori untuk mengetahui target_role nya
+      $kategori = Kategori::find($kategoriId);
+      
+      if (!$kategori) {
+         return response()->json([]);
+      }
+
+      $data = [];
+
+      // Switch case berdasarkan kolom 'target_role' di database kategori_kpi
+      // Asumsi value target_role: 'dosen', 'fasilitas', 'unit', 'akademik'
+      switch ($kategori->target_role) {
+         case 'dosen':
+               // Ambil data dosen + nama user
+               $data = Dosen::with('user')->get()->map(function($dosen) {
+                  return [
+                     'id' => $dosen->user_id, // ID Dosen (bukan User ID) untuk disimpan di target_id
+                     'name' => $dosen->user->name ?? 'Nama Tidak Ditemukan'
+                  ];
+               });
+               break;
+
+         case 'fasilitas':
+               $data = Fasilitas::all();
+               break;
+
+         case 'unit':
+               $data = Unit::all();
+               break;
+
+         default:
+               // Jika kategori umum/lainnya, mungkin tidak butuh target spesifik
+               $data = []; 
+               break;
+      }
+
+      return response()->json($data);
+   }
+
    public function insertFeedback(Request $request) 
    {
       $validated = $request->validate([
-         'subjek' => 'required|string|max:255',
          'kategori' => 'required|exists:kategori,id',
+         'target' => 'required',
          'deskripsi' => 'required|string|max:255',
          'file' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
       ]);
@@ -133,10 +176,19 @@ class MahasiswaController extends Controller
          $path = $request->file('file')->store('foto', 'public');
       }
       $user = auth()->user();
+      if($request->kategori == 1) {
+         $target_type = 'App\Models\Dosen';
+      } elseif($request->kategori == 3) {
+         $target_type = 'App\Models\Fasilitas';
+      } else {
+         $target_type = 'App\Models\Unit';
+      }
       $mahasiswa = Mahasiswa::where('user_id', $user->id)->firstOrFail();
       Feedback::create([
          'pengirim_id' => $user->id, 
          'kategori_id' => $validated['kategori'],
+         'target_id' => $validated['target'],
+         'target_type' => $target_type,
          'isi' => $validated['deskripsi'],
          'foto' => $path,
          'is_anonymous' => $isAnonim,

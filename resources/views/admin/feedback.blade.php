@@ -39,6 +39,7 @@
                         <th>No</th>
                         <th>Pengirim</th>
                         <th>Isi Feedback</th>
+                        <th>Kategori</th>
                         <th>Target</th>
                         <th>Tanggal</th>
                         <th>Status</th>
@@ -58,6 +59,7 @@
                         </td>
                         <td>{{ $feedback->isi }}</td>
                         <td>{{ $feedback->kategori->name }}</td>
+                        <td>{{ $feedback->target_user->name ?? $feedback->target->name }}</td>
                         <td>{{ $feedback->created_at->format('d M Y, H:i') }}</td>
                         <td>
                            @if ($feedback->status == 1)

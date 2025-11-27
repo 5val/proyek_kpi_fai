@@ -24,6 +24,8 @@ class Feedback extends Model
     protected $fillable = [
         'pengirim_id',
         'kategori_id',
+        'target_id',
+        'target_type',
         'isi', // Ditambahkan berdasarkan UI (menggantikan 'komentar')
         'foto',
         'is_anonymous',
@@ -51,6 +53,26 @@ class Feedback extends Model
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'kategori_id');
+    }
+
+    public function target()
+    {
+        return $this->morphTo(__FUNCTION__, 'target_type', 'target_id');
+    }
+
+    public function getTargetUserAttribute()
+    {
+        $model = $this->target;
+
+        if ($model instanceof \App\Models\Dosen) {
+            return $model->user;
+        }
+
+        if ($model instanceof \App\Models\Mahasiswa) {
+            return $model->user;
+        }
+
+        return null; // for fasilitas & unit
     }
 }
 
