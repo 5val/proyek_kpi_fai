@@ -39,16 +39,28 @@ use Dompdf\Dompdf;
 class AdminController extends Controller
 {
    public function dashboard() {
+      $periode = Periode::latest('id')->first();
 
       $belum_dinilai_count = [
-         'dosen'     => Dosen::doesntHave('penilaian')->count(),
-         'mahasiswa' => Mahasiswa::doesntHave('penilaian')->count(),
-         'fasilitas' => Fasilitas::doesntHave('penilaian')->count(),
-         'unit'      => Unit::doesntHave('penilaian')->count(),
-         'praktikum' => Praktikum::doesntHave('penilaian')->count(),
+         'dosen' => Dosen::whereDoesntHave('penilaian', function($q) use ($periode) {
+            $q->where('periode_id', $periode->id);
+         })->count(),
+         'mahasiswa' => Mahasiswa::whereDoesntHave('penilaian', function($q) use ($periode) {
+            $q->where('periode_id', $periode->id);
+         })->count(),
+         'fasilitas' => Fasilitas::whereDoesntHave('penilaian', function($q) use ($periode) {
+            $q->where('periode_id', $periode->id);
+         })->count(),
+         'unit' => Unit::whereDoesntHave('penilaian', function($q) use ($periode) {
+            $q->where('periode_id', $periode->id);
+         })->count(),
+         'praktikum' => Praktikum::whereDoesntHave('penilaian', function($q) use ($periode) {
+            $q->where('periode_id', $periode->id);
+         })->count(),
       ];
 
       $feedbacks = Feedback::select('kategori_id', 'target_type', 'target_id', DB::raw('count(*) as total'))
+         ->where('status', 0)
          ->groupBy('kategori_id', 'target_type', 'target_id')
          ->orderByDesc('total')
          ->take(3)
@@ -70,13 +82,39 @@ class AdminController extends Controller
                ];
          });
       
-         $low_kpi = [
-            'dosen' => Dosen::has('penilaian')->orderBy('avg_kpi', 'asc')->with('user')->take(3)->get(),
-            'mahasiswa' => Mahasiswa::has('penilaian')->orderBy('avg_kpi', 'asc')->with('user')->take(3)->get(),
-            'fasilitas' => Fasilitas::has('penilaian')->orderBy('avg_kpi', 'asc')->take(3)->get(),
-            'unit' => Unit::has('penilaian')->orderBy('avg_kpi', 'asc')->take(3)->get(),
-            'praktikum' => Praktikum::has('penilaian')->orderBy('avg_kpi', 'asc')->with('kelas.mataKuliah', 'kelas.program_studi')->take(3)->get(),
-        ];
+      //    $low_kpi = [
+      //       'dosen' => Dosen::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))->orderBy('avg_kpi', 'asc')->with('user')->take(3)->get(),
+      //       'mahasiswa' => Mahasiswa::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))->orderBy('avg_kpi', 'asc')->with('user')->take(3)->get(),
+      //       'fasilitas' => Fasilitas::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))->orderBy('avg_kpi', 'asc')->take(3)->get(),
+      //       'unit' => Unit::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))->orderBy('avg_kpi', 'asc')->take(3)->get(),
+      //       'praktikum' => Praktikum::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))->orderBy('avg_kpi', 'asc')->with('kelas.mataKuliah', 'kelas.program_studi')->take(3)->get(),
+      //   ];
+
+      $low_kpi = [
+         'dosen' => Dosen::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))
+               ->withAvg(['penilaian' => fn($q) => $q->where('periode_id', $periode->id)], 'avg_score')
+               ->orderBy('penilaian_avg_avg_score', 'asc')
+               ->with('user')
+               ->take(3)->get()->map(function($item) { $item->avg_kpi = $item->penilaian_avg_avg_score; return $item; }),
+         'mahasiswa' => Mahasiswa::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))
+               ->withAvg(['penilaian' => fn($q) => $q->where('periode_id', $periode->id)], 'avg_score')
+               ->orderBy('penilaian_avg_avg_score', 'asc')
+               ->with('user')
+               ->take(3)->get()->map(function($item) { $item->avg_kpi = $item->penilaian_avg_avg_score; return $item; }),
+         'fasilitas' => Fasilitas::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))
+               ->withAvg(['penilaian' => fn($q) => $q->where('periode_id', $periode->id)], 'avg_score')
+               ->orderBy('penilaian_avg_avg_score', 'asc')
+               ->take(3)->get()->map(function($item) { $item->avg_kpi = $item->penilaian_avg_avg_score; return $item; }),
+         'unit' => Unit::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))
+               ->withAvg(['penilaian' => fn($q) => $q->where('periode_id', $periode->id)], 'avg_score')
+               ->orderBy('penilaian_avg_avg_score', 'asc')
+               ->take(3)->get()->map(function($item) { $item->avg_kpi = $item->penilaian_avg_avg_score; return $item; }),
+         'praktikum' => Praktikum::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))
+               ->withAvg(['penilaian' => fn($q) => $q->where('periode_id', $periode->id)], 'avg_score')
+               ->orderBy('penilaian_avg_avg_score', 'asc')
+               ->with(['kelas.mataKuliah', 'kelas.program_studi']) // Eager load relasi praktikum
+               ->take(3)->get()->map(function($item) { $item->avg_kpi = $item->penilaian_avg_avg_score; return $item; }),
+      ];
 
       $last6Months = collect();
       for ($i = 5; $i >= 0; $i--) {
@@ -89,6 +127,7 @@ class AdminController extends Controller
             DB::raw('DATE_FORMAT(created_at, "%Y-%m") as ym'),
             DB::raw('AVG(avg_score) as rata_rata_skor')
          )
+         ->where('periode_id', $periode->id)
          ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
          ->groupBy('ym')
          ->orderBy('ym', 'asc')
@@ -114,6 +153,7 @@ class AdminController extends Controller
             'kategori_id',
             DB::raw('AVG(avg_score) as rata_rata_skor')
          )
+         ->where('periode_id', $periode->id)
          ->groupBy('kategori_id')
          ->get()
          ->keyBy('kategori_id');
@@ -137,6 +177,7 @@ class AdminController extends Controller
    }
 
    public function detail_dashboard_card($type) {
+      $periode = Periode::latest('id')->first();
       if($type == 'belum_dinilai_dosen') {
          $data = [
             'pageTitle' => 'Dosen Belum Dinilai',
@@ -144,14 +185,13 @@ class AdminController extends Controller
             'tableTitle' => 'List Dosen',
             'headers' => ['Nama Dosen', 'NIDN'],
             'keys' => ['name', 'nidn'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Dosen::doesntHave('penilaian')->with('user')->get()->map(function($dosen) {
+            'items' => Dosen::whereDoesntHave('penilaian', fn($q) => $q->where('periode_id', $periode->id))->with('user')->get()->map(function($dosen) {
                     return [
                         'id' => $dosen->id,
                         'name' => $dosen->user->name ?? 'User Tidak Ditemukan', // Ambil nama dari user
                         'nidn' => $dosen->nidn,
                     ];
-                }), 
-            'actionType' => 'remind'
+                })
          ];
       } elseif($type == 'belum_dinilai_mahasiswa') {
          $data = [
@@ -160,15 +200,14 @@ class AdminController extends Controller
             'tableTitle' => 'List Mahasiswa',
             'headers' => ['Nama Mahasiswa', 'NRP', 'Program Studi'],
             'keys' => ['name', 'nrp', 'program_studi'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Mahasiswa::doesntHave('penilaian')->with('user', 'program_studi')->get()->map(function($mhs) {
+            'items' => Mahasiswa::whereDoesntHave('penilaian', fn($q) => $q->where('periode_id', $periode->id))->with('user', 'program_studi')->get()->map(function($mhs) {
                     return [
                         'id' => $mhs->id,
                         'name' => $mhs->user->name ?? 'User Tidak Ditemukan',
                         'nrp' => $mhs->nrp, // Sesuaikan dengan nama kolom di DB (misal nrp/nim)
                         'program_studi' => $mhs->program_studi->name ?? '-',
                     ];
-                }), 
-            'actionType' => 'remind'
+                })
          ];
       } elseif($type == 'belum_dinilai_fasilitas') {
          $data = [
@@ -177,8 +216,7 @@ class AdminController extends Controller
             'tableTitle' => 'List Fasilitas',
             'headers' => ['Nama Fasilitas'],
             'keys' => ['name'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Fasilitas::doesntHave('penilaian')->get(), 
-            'actionType' => 'remind'
+            'items' => Fasilitas::whereDoesntHave('penilaian', fn($q) => $q->where('periode_id', $periode->id))->get()
          ];
       } elseif($type == 'belum_dinilai_unit') {
          $data = [
@@ -187,8 +225,7 @@ class AdminController extends Controller
             'tableTitle' => 'List Unit',
             'headers' => ['Nama Unit'],
             'keys' => ['name'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Unit::doesntHave('penilaian')->get(), 
-            'actionType' => 'remind'
+            'items' => Unit::whereDoesntHave('penilaian', fn($q) => $q->where('periode_id', $periode->id))->get()
          ];
       } elseif($type == 'belum_dinilai_praktikum') {
          $data = [
@@ -197,29 +234,29 @@ class AdminController extends Controller
             'tableTitle' => 'List Praktikum',
             'headers' => ['Nama Praktikum', 'Program Studi'],
             'keys' => ['name', 'program_studi'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Praktikum::doesntHave('penilaian')->with('kelas.mataKuliah', 'kelas.program_studi')->get()->map(function($prak) {
+            'items' => Praktikum::whereDoesntHave('penilaian', fn($q) => $q->where('periode_id', $periode->id))->with('kelas.mataKuliah', 'kelas.program_studi')->get()->map(function($prak) {
                     return [
                         'id' => $prak->id,
                         'name' => $prak->kelas->mataKuliah->name ?? 'Praktikum Tidak Ditemukan',
                         'program_studi' => $prak->kelas->program_studi->name ?? '-',
                     ];
-                }), 
-            'actionType' => 'remind'
+                })
          ];
       } 
       return view('admin.detail_dashboard', ['data' => $data]);
    }
 
    public function detail_dashboard_list($type, $id) {
+      $periode = Periode::latest('id')->first();
       if($type == 'dosen') {
          $data = [
             'pageTitle' => 'Dosen Performa Rendah',
             'pageSubtitle' => 'Daftar penilaian dosen dengan skor rata-rata KPI rendah',
             'tableTitle' => 'List Penilaian',
-            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar'],
+            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar', 'Aksi'],
             'keys' => ['created_at', 'avg_score', 'komentar'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Penilaian::where('dinilai_type', 'App\Models\Dosen')->where('dinilai_id', $id)->orderBy('avg_score', 'asc')->get(), 
-            'actionType' => 'remind'
+            'items' => Penilaian::where('dinilai_type', 'App\Models\Dosen')->where('dinilai_id', $id)->where('periode_id', $periode->id)->orderBy('avg_score', 'asc')->get(), 
+            'actionType' => 'detail'
          ];
       } elseif($type == 'mahasiswa') {
          $data = [
@@ -227,39 +264,39 @@ class AdminController extends Controller
             'pageSubtitle' => 'Daftar penilaian mahasiswa dengan skor rata-rata KPI rendah',
             'tableTitle' => 'List Penilaian',
             'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar'],
-            'keys' => ['created_at', 'avg_score', 'komentar'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Penilaian::where('dinilai_type', 'App\Models\Mahasiswa')->where('dinilai_id', $id)->orderBy('avg_score', 'asc')->get(), 
-            'actionType' => 'remind'
+            'keys' => ['created_at', 'avg_score', 'komentar', 'Aksi'], // Sesuaikan dengan nama kolom/atribut model
+            'items' => Penilaian::where('dinilai_type', 'App\Models\Mahasiswa')->where('dinilai_id', $id)->where('periode_id', $periode->id)->orderBy('avg_score', 'asc')->get(), 
+            'actionType' => 'detail'
          ];
       } elseif($type == 'fasilitas') {
          $data = [
             'pageTitle' => 'Fasilitas Performa Rendah',
             'pageSubtitle' => 'Daftar penilaian fasilitas dengan skor rata-rata KPI rendah',
             'tableTitle' => 'List Penilaian',
-            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar'],
+            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar', 'Aksi'],
             'keys' => ['created_at', 'avg_score', 'komentar'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Penilaian::where('dinilai_type', 'App\Models\Fasilitas')->where('dinilai_id', $id)->orderBy('avg_score', 'asc')->get(), 
-            'actionType' => 'remind'
+            'items' => Penilaian::where('dinilai_type', 'App\Models\Fasilitas')->where('dinilai_id', $id)->where('periode_id', $periode->id)->orderBy('avg_score', 'asc')->get(), 
+            'actionType' => 'detail'
          ];
       } elseif($type == 'unit') {
          $data = [
             'pageTitle' => 'Unit Performa Rendah',
             'pageSubtitle' => 'Daftar penilaian unit dengan skor rata-rata KPI rendah',
             'tableTitle' => 'List Penilaian',
-            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar'],
+            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar', 'Aksi'],
             'keys' => ['created_at', 'avg_score', 'komentar'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Penilaian::where('dinilai_type', 'App\Models\Unit')->where('dinilai_id', $id)->orderBy('avg_score', 'asc')->get(), 
-            'actionType' => 'remind'
+            'items' => Penilaian::where('dinilai_type', 'App\Models\Unit')->where('dinilai_id', $id)->where('periode_id', $periode->id)->orderBy('avg_score', 'asc')->get(), 
+            'actionType' => 'detail'
          ];
       } else {
          $data = [
             'pageTitle' => 'Praktikum Performa Rendah',
             'pageSubtitle' => 'Daftar penilaian praktikum dengan skor rata-rata KPI rendah',
             'tableTitle' => 'List Penilaian',
-            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar'],
+            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar', 'Aksi'],
             'keys' => ['created_at', 'avg_score', 'komentar'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Penilaian::where('dinilai_type', 'App\Models\Praktikum')->where('dinilai_id', $id)->orderBy('avg_score', 'asc')->get(), 
-            'actionType' => 'remind'
+            'items' => Penilaian::where('dinilai_type', 'App\Models\Praktikum')->where('dinilai_id', $id)->where('periode_id', $periode->id)->orderBy('avg_score', 'asc')->get(), 
+            'actionType' => 'detail'
          ];
       }
       return view('admin.detail_dashboard', ['data' => $data]);
@@ -270,9 +307,9 @@ class AdminController extends Controller
          'pageTitle' => 'Daftar Feedback',
          'pageSubtitle' => 'Daftar feedback untuk objek terbanyak',
          'tableTitle' => 'Semua Feedback',
-         'headers' => ['Pengirim', 'Isi', 'Status'],
+         'headers' => ['Pengirim', 'Isi', 'Status', 'Aksi'],
          'keys' => ['pengirim', 'isi', 'status'],
-         'items' => Feedback::with(['pengirim', 'kategori'])->where('kategori_id', $kategori_id)->where('target_id', $target_id)->get()->map(function($fb) {
+         'items' => Feedback::with(['pengirim', 'kategori'])->where('kategori_id', $kategori_id)->where('target_id', $target_id)->where('status', 0)->get()->map(function($fb) {
             return [
                'id' => $fb->id,
                'pengirim' => $fb->is_anonymous ? 'Anonim' : ($fb->pengirim->name ?? '-'),

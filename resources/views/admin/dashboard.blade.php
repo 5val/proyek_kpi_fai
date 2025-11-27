@@ -116,7 +116,7 @@
                             {{ $dosen->user->name }}
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-danger">{{ $dosen->avg_kpi }}</span>
+                            <span class="badge bg-danger">{{ number_format($dosen->avg_kpi, 1) }}</span>
                             <a href="{{ route('admin.dashboard.detail.list', ['dosen', $dosen->user->id]) }}" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
                         </div>
                     </li>
@@ -146,7 +146,7 @@
                             <br><small class="text-muted">{{ $mahasiswa->nrp }}</small>
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-danger">{{ $mahasiswa->avg_kpi }}</span>
+                            <span class="badge bg-danger">{{ number_format($mahasiswa->avg_kpi, 1) }}</span>
                             <a href="{{ route('admin.dashboard.detail.list', ['mahasiswa', $mahasiswa->user->id]) }}" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
                         </div>
                     </li>
@@ -173,7 +173,7 @@
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>{{ $fasilitas->name }}</div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-danger">{{ $fasilitas->avg_kpi }}</span>
+                            <span class="badge bg-danger">{{ number_format($fasilitas->avg_kpi, 1) }}</span>
                             <a href="{{ route('admin.dashboard.detail.list', ['fasilitas', $fasilitas->id]) }}" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
                         </div>
                     </li>
@@ -200,7 +200,7 @@
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>{{ $unit->name }}</div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-danger">{{ $unit->avg_kpi }}</span>
+                            <span class="badge bg-danger">{{ number_format($unit->avg_kpi, 1) }}</span>
                             <a href="{{ route('admin.dashboard.detail.list', ['unit', $unit->id]) }}" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
                         </div>
                     </li>
@@ -230,7 +230,7 @@
                            <br><small class="text-muted">{{ $praktikum->kelas->program_studi->name }}</small>
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-danger">{{ $praktikum->avg_kpi }}</span>
+                            <span class="badge bg-danger">{{ number_format($praktikum->avg_kpi, 1) }}</span>
                             <a href="{{ route('admin.dashboard.detail.list', ['praktikum', $praktikum->id]) }}" class="btn btn-xs btn-light border"><i class="bi bi-eye"></i></a>
                         </div>
                     </li>

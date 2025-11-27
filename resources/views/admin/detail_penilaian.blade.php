@@ -16,7 +16,7 @@
         <div class="card-custom mb-4">
              <div class="card-header d-flex justify-content-between align-items-center">
                 <div><i class="bi bi-info-circle-fill"></i> Ringkasan Penilaian</div>
-                <a href="{{-- route('admin.penilaian') --}}" class="btn btn-outline-secondary btn-sm">
+                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>

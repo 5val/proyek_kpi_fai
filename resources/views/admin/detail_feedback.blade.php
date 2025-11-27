@@ -16,7 +16,7 @@
                 <div>
                     <i class="bi bi-file-text-fill"></i> Rincian Feedback #{{ $feedback->id }}
                 </div>
-                <a href="{{ route('admin.feedback') }}" class="btn btn-secondary btn-sm">
+                <a href="{{ url()->previous() }}" class="btn btn-secondary btn-sm">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
             </div>

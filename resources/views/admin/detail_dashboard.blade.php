@@ -18,7 +18,7 @@
                 
                 <div class="d-flex gap-2">
                     {{-- Tombol Kembali --}}
-                    <a href="{{ url()->previous() }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary btn-sm">
                         <i class="bi bi-arrow-left"></i> Kembali
                     </a>
                 </div>
@@ -34,7 +34,6 @@
                                 @foreach($data['headers'] as $header)
                                     <th>{{ $header }}</th>
                                 @endforeach
-                                <th class="text-center" style="width: 120px">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -54,11 +53,11 @@
                                                 @endif
                                             @elseif($key === 'avg_kpi')
                                                 @if($item[$key] < 3.0)
-                                                    <span class="text-danger fw-bold">{{ number_format($item[$key], 2) }}</span>
+                                                    <span class="text-danger fw-bold">{{ number_format($item[$key], 1) }}</span>
                                                 @elseif($item[$key] >= 4.0)
-                                                    <span class="text-success fw-bold">{{ number_format($item[$key], 2) }}</span>
+                                                    <span class="text-success fw-bold">{{ number_format($item[$key], 1) }}</span>
                                                 @else
-                                                    <span class="text-dark fw-bold">{{ number_format($item[$key], 2) }}</span>
+                                                    <span class="text-dark fw-bold">{{ number_format($item[$key], 1) }}</span>
                                                 @endif
                                             @else
                                                 {!! $item[$key] ?? '<span class="text-muted">-</span>' !!}
@@ -66,23 +65,19 @@
                                         </td>
                                     @endforeach
 
-                                    <td class="text-center">
-                                        {{-- Tombol Aksi Dinamis --}}
-                                        <div class="btn-group" role="group">
-                                            <a href="#" class="btn btn-info btn-sm text-white" title="Detail">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            @if(isset($data['actionType']) && $data['actionType'] == 'remind')
-                                                <a href="#" class="btn btn-warning btn-sm text-dark" title="Kirim Pengingat">
-                                                    <i class="bi bi-bell"></i>
-                                                </a>
-                                            @elseif(isset($data['actionType']) && $data['actionType'] == 'feedback')
-                                                <a href="#" class="btn btn-success btn-sm text-white" title="Tanggapi">
-                                                    <i class="bi bi-reply"></i>
-                                                </a>
-                                            @endif
-                                        </div>
+                                    @if (isset($data['actionType']) && $data['actionType'] == 'detail')
+                                    <td>
+                                       <a href="{{ route('admin.detail_penilaian', $item['id']) }}" class="btn btn-info btn-sm text-white" title="Detail">
+                                          <i class="bi bi-eye"></i> Detail
+                                       </a>
                                     </td>
+                                    @elseif(isset($data['actionType']) && $data['actionType'] == 'feedback')
+                                    <td>
+                                       <a href="{{ route('admin.feedback.detail', $item['id']) }}" class="btn btn-info btn-sm text-white" title="Detail">
+                                          <i class="bi bi-eye"></i> Detail
+                                       </a>
+                                    </td>
+                                    @endif
                                 </tr>
                             @empty
                                 <tr>
