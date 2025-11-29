@@ -8,53 +8,71 @@
 @section('user-role', 'Mahasiswa - Teknik Informatika')
 @section('user-initial', 'AP')
 
-@section('sidebar-menu')
-    <a class="nav-link" href="{{ route('mahasiswa.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a class="nav-link" href="{{ route('mahasiswa.profile') }}"><i class="bi bi-person-badge"></i> Profil Saya</a>
-    <a class="nav-link" href="{{ route('mahasiswa.kpi') }}"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
-    <a class="nav-link" href="{{ route('mahasiswa.penilaian_dosen') }}"><i class="bi bi-star"></i> Penilaian Dosen</a>
-    <a class="nav-link" href="{{ route('mahasiswa.penilaian_fasilitas') }}"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
-    <a class="nav-link" href="{{ route('mahasiswa.penilaian_unit') }}"><i class="bi bi-bank2"></i> Penilaian Unit</a>
-    <a class="nav-link active" href="{{ route('mahasiswa.penilaian_praktikum') }}"><i class="bi bi-person-workspace"></i> Penilaian Praktikum</a>
-    <a class="nav-link" href="{{ route('mahasiswa.feedback') }}"><i class="bi bi-chat-left-text"></i> Feedback</a>
-    <a class="nav-link" href="{{ route('mahasiswa.laporan') }}"><i class="bi bi-bar-chart"></i> Laporan KPI</a>
-    <form action="{{ route('logout') }}" method="POST" style="float: right;">
-      @csrf
-      <div style="align-items: center; justify-content: center; display: flex;">
-        <button class="btn btn-danger" type="submit">Logout</button>
-      </div>
-   </form>
-@endsection
-
 @section('content')
-<div class="card-custom">
-    <div class="card-header">
-        <i class="bi bi-person-workspace"></i> Daftar Praktikum Semester Ini
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th>Nama Praktikum</th>
-                        <th>Dosen Pengampu</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($praktikumList as $p)
-                        <tr>
-                            <td>{{ $p->mataKuliah->nama }}</td>
-                            <td>{{ $p->dosen->user->name }}</td>
-                            <td><span class="badge bg-warning text-dark">Belum Dinilai</span></td>
-                            <td><a href="{{ route('penilaian.form', ['tipe' => 'praktikum', 'id' => $p->id]) }}" class="btn btn-primary btn-sm">
-                                Nilai
-                            </a></td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-12">
+        <div class="card card-custom shadow-sm border-0">
+            <div class="card-header bg-white py-3 fw-bold">
+                <i class="bi bi-person-workspace me-2"></i> Daftar Praktikum Semester Ini
+            </div>
+            <div class="card-body p-0 p-md-3">
+                <div class="table-responsive">
+                    {{-- text-nowrap: Agar tabel rapi scroll ke samping di HP --}}
+                    <table class="table table-hover align-middle w-100 text-nowrap mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nama Praktikum</th>
+                                <th>Dosen Pengampu</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center" width="100">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($praktikumList as $p)
+                                <tr>
+                                    {{-- Batasi lebar kolom Nama Praktikum --}}
+                                    <td style="max-width: 250px;" class="text-truncate" title="{{ $p->mataKuliah->nama }}">
+                                        <div class="fw-bold">{{ $p->mataKuliah->nama }}</div>
+                                        <small class="text-muted d-block">
+                                            <i class="bi bi-code-slash me-1"></i> Laboratorium Komputer
+                                        </small>
+                                    </td>
+                                    
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-light rounded-circle p-1 me-2 d-none d-md-block">
+                                                <i class="bi bi-person text-secondary"></i>
+                                            </div>
+                                            {{ $p->dosen->user->name }}
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                        {{-- Logika Badge (Contoh) --}}
+                                        <span class="badge bg-warning text-dark border border-warning bg-opacity-25 rounded-pill px-3">
+                                            Belum Dinilai
+                                        </span>
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                        <a href="{{ route('penilaian.form', ['tipe' => 'praktikum', 'id' => $p->id]) }}" class="btn btn-primary btn-sm shadow-sm rounded-pill px-3">
+                                            <i class="bi bi-pencil-square me-1"></i> Nilai
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        <i class="bi bi-journal-x fs-1 d-block mb-2 opacity-25"></i>
+                                        <p class="mb-0 fw-bold">Tidak ada praktikum aktif</p>
+                                        <small>Anda belum terdaftar di kelas praktikum manapun semester ini.</small>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>

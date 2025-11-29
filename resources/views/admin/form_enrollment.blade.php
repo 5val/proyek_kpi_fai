@@ -39,14 +39,24 @@
     <div class="card-header"><i class="bi bi-upload"></i> Unggah Data Enrollment</div>
     <div class="card-body">
       <div class="p-3 mb-4 rounded" style="background-color: #f8f9fa;">
-            <div class="row">
-                <div class="col-md-12">
-                    <h5>{{ $kelas->mataKuliah->name }}</h5>
-                    <p class="mb-1"><strong>Program Studi:</strong> {{ $kelas->program_studi->name }}</p>
-                    <p class="mb-1"><strong>Dosen Pengampu:</strong> {{ $kelas->dosen->user->name }}</p>
-                    <p class="mb-0"><strong>Periode:</strong> {{ $kelas->periode->nama_periode }}</p>
+            <div class="p-3 mb-4 rounded bg-light border border-start border-primary shadow-sm">
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="fw-bold text-dark mb-2">{{ $kelas->mataKuliah->name }}</h5>
+                            <div class="row g-2 text-muted small">
+                                <div class="col-12 col-md-4">
+                                    <i class="bi bi-mortarboard-fill me-1"></i> <strong>Prodi:</strong> {{ $kelas->program_studi->name }}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <i class="bi bi-person-video3 me-1"></i> <strong>Dosen:</strong> {{ $kelas->dosen->user->name }}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <i class="bi bi-calendar-event me-1"></i> <strong>Periode:</strong> {{ $kelas->periode->nama_periode }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
         </div>
 
         <form action="{{ route('admin.enrollment.upload', $kelas->id) }}" method="POST" enctype="multipart/form-data">

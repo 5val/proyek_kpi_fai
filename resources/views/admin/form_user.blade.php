@@ -13,7 +13,7 @@
     <div class="card-header">
         <i class="bi bi-plus-circle-fill"></i> Tambah Pengguna Baru
     </div>
-    <div class="card-body">
+    <div class="card-body p-3">
          @if (isset($user))
             <form action="{{ route('admin.user.update', $user->id) }}" method="POST">
          @else

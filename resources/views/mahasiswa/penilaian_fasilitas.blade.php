@@ -9,56 +9,112 @@
 @section('user-initial', 'AP')
 
 @section('content')
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-12">
+        <div class="card card-custom shadow-sm border-0">
+            <div class="card-body p-0 p-md-3">
+                
+                {{-- Tabs Navigation --}}
+                <ul class="nav nav-tabs nav-fill" id="assessmentTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active py-3 fw-bold" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
+                            Belum Dinilai <span class="badge bg-danger ms-1 rounded-pill">{{ count($fasilitas) }}</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link py-3 fw-bold" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">
+                            Sudah Dinilai <span class="badge bg-success ms-1 rounded-pill">6</span>
+                        </button>
+                    </li>
+                </ul>
 
-<div class="card-custom">
-    <div class="card-body">
-        <ul class="nav nav-tabs" id="assessmentTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
-                    Belum Dinilai <span class="badge bg-danger ms-1">4</span>
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">
-                    Sudah Dinilai <span class="badge bg-success ms-1">6</span>
-                </button>
-            </li>
-        </ul>
-        <div class="tab-content pt-3" id="assessmentTabContent">
-            <!-- Pending Assessment Tab -->
-            <div class="tab-pane fade show active" id="pending" role="tabpanel">
-                <div class="list-group list-group-flush">
-                    @foreach($fasilitas as $f)
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3"><i class="bi bi-pc-display-horizontal fs-2 text-info"></i></div>
-                            <div>
-                                <h6 class="mb-0">{{ $f->name }}</h6>
-                                <small class="text-muted">{{ $f->lokasi }}</small>
-                            </div>
-                        </div>
-                        <a href="{{ route('penilaian.form', ['tipe' => 'fasilitas', 'id' => $f->id]) }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil-square"></i> Beri Penilaian
-                        </a>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            <!-- Completed Assessment Tab -->
-            <div class="tab-pane fade" id="completed" role="tabpanel">
-                 <div class="list-group list-group-flush">
-                     <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div class="me-3"><i class="bi bi-wifi fs-2 text-success"></i></div>
-                            <div>
-                                <h6 class="mb-0">Jaringan WiFi Kampus</h6>
-                                <small class="text-muted">Kategori: Infrastruktur IT</small>
-                            </div>
-                        </div>
-                        <div>
-                            <span class="fw-bold me-2">Skor: 3.0/4.0</span>
+                <div class="tab-content" id="assessmentTabContent">
+                    
+                    <div class="tab-pane fade show active" id="pending" role="tabpanel">
+                        <div class="list-group list-group-flush">
+                            @forelse($fasilitas as $f)
+                                <div class="list-group-item p-3 border-bottom-0">
+                                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                                        {{-- Info Fasilitas --}}
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <div class="bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                    <i class="bi bi-pc-display-horizontal fs-3"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-1 fw-bold text-dark">{{ $f->name }}</h6>
+                                                <small class="text-muted d-block">
+                                                    <i class="bi bi-geo-alt-fill me-1"></i> {{ $f->lokasi ?? 'Lokasi Umum' }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                        
+                                        {{-- Tombol Aksi (Full width di mobile) --}}
+                                        <a href="{{ route('penilaian.form', ['tipe' => 'fasilitas', 'id' => $f->id]) }}" class="btn btn-primary btn-sm shadow-sm px-4 py-2 rounded-pill d-flex align-items-center justify-content-center">
+                                            <i class="bi bi-pencil-square me-2"></i> Beri Penilaian
+                                        </a>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-5">
+                                    <i class="bi bi-building-check text-success display-1 mb-3 opacity-50"></i>
+                                    <h5 class="fw-bold">Semua Fasilitas Dinilai!</h5>
+                                    <p class="text-muted">Terima kasih atas partisipasi Anda.</p>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
+
+                    <div class="tab-pane fade" id="completed" role="tabpanel">
+                        <div class="list-group list-group-flush">
+                            {{-- Item 1 --}}
+                            <div class="list-group-item p-3 border-bottom-0">
+                                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                <i class="bi bi-wifi fs-3"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold text-dark">Jaringan WiFi Kampus</h6>
+                                            <small class="text-muted">Infrastruktur IT</small>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 mt-sm-0 text-end">
+                                        <span class="badge bg-warning bg-opacity-10 text-dark border border-warning rounded-pill px-3 py-2">
+                                            Skor: 3.0 / 4.0
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Item 2 (Contoh Tambahan) --}}
+                            <div class="list-group-item p-3 border-bottom-0 bg-light bg-opacity-25">
+                                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <div class="bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                <i class="bi bi-book-half fs-3"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold text-dark">Perpustakaan Pusat</h6>
+                                            <small class="text-muted">Layanan Umum</small>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 mt-sm-0 text-end">
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3 py-2">
+                                            Skor: 4.0 / 4.0
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>

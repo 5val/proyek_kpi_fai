@@ -9,99 +9,127 @@
 @section('user-initial', 'AP')
 
 @section('content')
+
 @if (session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="bi bi-check-circle"></i> {{ session('success') }}
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
 
 @if (session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="bi bi-exclamation-triangle"></i> {{ session('error') }}
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i> {{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card-custom">
-            <div class="card-header"><i class="bi bi-chat-left-text-fill"></i> Kirim Feedback atau Laporan</div>
-            <div class="card-body">
+<div class="row g-4"> <div class="col-12 col-lg-8">
+        <div class="card card-custom shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">
+                <i class="bi bi-chat-left-text-fill me-2"></i> Kirim Feedback atau Laporan
+            </div>
+            <div class="card-body p-4">
                 <form action="{{ route('mahasiswa.insertFeedback') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     
-                    <div class="mb-3">
-                        <label for="kategori" class="form-label">Kategori</label>
-                        <!-- Tambahkan ID kategori untuk selector JS -->
-                        <select class="form-select" id="kategori" name="kategori" required>
-                            <option selected value="">Pilih kategori feedback...</option>
-                            @foreach($kategori as $c)
-                                <option value="{{ $c->id }}">{{ $c->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label for="kategori" class="form-label fw-bold">Kategori</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-tags"></i></span>
+                                <select class="form-select" id="kategori" name="kategori" required>
+                                    <option selected value="">Pilih kategori feedback...</option>
+                                    @foreach($kategori as $c)
+                                        <option value="{{ $c->id }}">{{ $c->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="target" class="form-label">Target / Objek</label>
-                        <!-- Tambahkan ID target untuk selector JS -->
-                        <select class="form-select" id="target" name="target" disabled>
-                            <option selected value="">Pilih kategori terlebih dahulu...</option>
-                            <!-- Option akan diisi via AJAX -->
-                        </select>
-                        <div id="loading-target" class="text-muted small mt-1" style="display:none;">
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memuat data...
+                        <div class="col-12 col-md-6">
+                            <label for="target" class="form-label fw-bold d-flex justify-content-between">
+                                <span>Target / Objek</span>
+                                <span id="loading-target" class="text-primary small" style="display:none;">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...
+                                </span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-bullseye"></i></span>
+                                <select class="form-select" id="target" name="target" disabled required>
+                                    <option selected value="">Pilih kategori dulu...</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="deskripsi" class="form-label">Deskripsi / Isi Feedback</label>
-                        <textarea class="form-control" id="deskripsi" name="deskripsi" rows="6" placeholder="Tuliskan rincian feedback, laporan, atau keluhan Anda di sini..." required></textarea>
+                        <label for="deskripsi" class="form-label fw-bold">Deskripsi / Isi Feedback</label>
+                        <textarea class="form-control" id="deskripsi" name="deskripsi" rows="6" placeholder="Jelaskan secara rinci feedback atau keluhan Anda..." required></textarea>
                     </div>
 
-                    <!-- Input Foto Bukti -->
-                    <div class="mb-3">
-                        <label for="bukti" class="form-label">Lampiran Bukti (Foto)</label>
+                    <div class="mb-4">
+                        <label for="bukti" class="form-label fw-bold">Lampiran Bukti (Foto)</label>
                         <input class="form-control" type="file" id="bukti" name="file" accept="image/*">
-                        <small class="text-muted">Opsional. Unggah foto sebagai bukti jika diperlukan.</small>
+                        <div class="form-text text-muted"><i class="bi bi-info-circle"></i> Opsional. Format: JPG, PNG. Max: 5MB.</div>
                     </div>
 
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="anonim" name="anonim" value="1">
-                        <label class="form-check-label" for="anonim">
-                            Kirim sebagai anonim
-                        </label>
+                    <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded mb-4 border">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input" type="checkbox" id="anonim" name="anonim" value="1" style="transform: scale(1.2);">
+                            <label class="form-check-label fw-bold ms-1" for="anonim">
+                                Kirim sebagai anonim
+                            </label>
+                        </div>
+                        <small class="text-muted d-none d-sm-block">Identitas Anda akan disembunyikan.</small>
                     </div>
 
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill"></i> Kirim Feedback</button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary py-2 fw-bold shadow-sm">
+                            <i class="bi bi-send-fill me-2"></i> Kirim Feedback
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
     
-    <div class="col-md-4">
-        <div class="card-custom">
-            <div class="card-header"><i class="bi bi-clock-history"></i> Riwayat Feedback Saya</div>
-            <div class="card-body" style="max-height: 500px; overflow-y: auto;">
-                {{-- Contoh data statis --}}
-                <div class="list-group list-group-flush">
-                    <div class="list-group-item">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h6 class="mb-1">AC di R.301 tidak dingin</h6>
-                            <small>3 hari lalu</small>
+    <div class="col-12 col-lg-4">
+        <div class="card card-custom shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">
+                <i class="bi bi-clock-history me-2"></i> Riwayat Feedback Saya
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush overflow-auto" style="max-height: 500px;">
+                    
+                    {{-- Item 1 --}}
+                    <div class="list-group-item p-3 border-bottom-0 border-top-0">
+                        <div class="d-flex w-100 justify-content-between align-items-start mb-1">
+                            <h6 class="mb-0 fw-bold text-truncate" style="max-width: 70%;">AC di R.301 tidak dingin</h6>
+                            <small class="text-muted text-nowrap">3 hari lalu</small>
                         </div>
-                        <p class="mb-1 small">Kategori: Fasilitas</p>
-                        <span class="badge bg-success">Sudah Ditanggapi</span>
-                    </div>
-                    <div class="list-group-item">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h6 class="mb-1">Antrian layanan BAA lama</h6>
-                            <small>1 minggu lalu</small>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <small class="text-muted"><i class="bi bi-building me-1"></i> Fasilitas</small>
+                            <span class="badge bg-success rounded-pill px-2">Sudah Ditanggapi</span>
                         </div>
-                        <p class="mb-1 small">Kategori: Unit Layanan</p>
-                        <span class="badge bg-warning text-dark">Belum Ditanggapi</span>
                     </div>
-                </div>
+                    
+                    <hr class="my-0 mx-3 opacity-25">
+
+                    {{-- Item 2 --}}
+                    <div class="list-group-item p-3 border-bottom-0">
+                        <div class="d-flex w-100 justify-content-between align-items-start mb-1">
+                            <h6 class="mb-0 fw-bold text-truncate" style="max-width: 70%;">Antrian layanan BAA lama</h6>
+                            <small class="text-muted text-nowrap">1 minggu lalu</small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <small class="text-muted"><i class="bi bi-bank2 me-1"></i> Unit Layanan</small>
+                            <span class="badge bg-warning text-dark rounded-pill px-2">Belum Ditanggapi</span>
+                        </div>
+                    </div>
+
+                    {{-- Empty State (Jika tidak ada riwayat) --}}
+                    </div>
             </div>
         </div>
     </div>
@@ -120,12 +148,12 @@
             targetDropdown.html('<option selected value="">Pilih objek feedback...</option>');
             
             if (kategoriId) {
-                // Enable dropdown dan tampilkan loading
+                // Disable dropdown & Show loading
                 targetDropdown.prop('disabled', true);
-                loading.show();
+                loading.fadeIn();
 
                 $.ajax({
-                    url: "{{ route('mahasiswa.feedback.get_targets') }}", // Panggil route API
+                    url: "{{ route('mahasiswa.feedback.get_targets') }}", 
                     type: "GET",
                     data: { kategori_id: kategoriId },
                     dataType: "json",
@@ -143,12 +171,13 @@
                     },
                     error: function() {
                         loading.hide();
-                        alert('Gagal memuat data target. Silakan coba lagi.');
+                        alert('Gagal memuat data target. Silakan periksa koneksi internet Anda.');
                         targetDropdown.prop('disabled', true);
                     }
                 });
             } else {
                 targetDropdown.prop('disabled', true);
+                loading.hide();
             }
         });
     });

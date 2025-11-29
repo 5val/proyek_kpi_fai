@@ -13,7 +13,7 @@
     <div class="card-header">
         <i class="bi bi-plus-circle-fill"></i> Tambah Unit Baru
     </div>
-    <div class="card-body">
+    <div class="card-body p-3">
          @if (isset($unit))
             <form action="{{ route('admin.unit.update', $unit->id) }}" method="POST">
          @else

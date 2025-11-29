@@ -9,69 +9,98 @@
 @section('user-initial', 'AD')
 
 @section('content')
-<a href="{{ route('admin.penilaian') }}" class="btn btn-secondary mb-3"><i class="bi bi-arrow-left"></i> Kembali</a>
-<div class="row">
-    <!-- Kolom Kiri: Ringkasan & Komentar -->
-    <div class="col-md-5">
-        <div class="card-custom mb-4">
-             <div class="card-header d-flex justify-content-between align-items-center">
-                <div><i class="bi bi-info-circle-fill"></i> Ringkasan Penilaian</div>
-                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left"></i> Kembali
+
+{{-- Tombol Kembali Utama --}}
+<div class="mb-3">
+    <a href="{{ route('admin.penilaian') }}" class="btn btn-secondary btn-sm px-3">
+        <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar
+    </a>
+</div>
+
+<div class="row g-4"> <div class="col-12 col-lg-5">
+        <div class="card card-custom shadow-sm border-0 mb-4 h-100">
+             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <div class="fw-bold">
+                    <i class="bi bi-info-circle-fill me-2"></i> Ringkasan Penilaian
+                </div>
+                {{-- Tombol kembali kecil disembunyikan di mobile agar header tidak penuh --}}
+                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm d-none d-md-inline-block">
+                    <i class="bi bi-arrow-left"></i>
                 </a>
             </div>
             <div class="card-body">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between">
-                        <strong>Subjek Dinilai:</strong>
-                        <span>{{ $penilaian->dinilai_user->name ?? $penilaian->dinilai->name }}</span>
+                    <li class="list-group-item d-flex justify-content-between align-items-start py-3">
+                        <strong class="text-muted small text-uppercase">Subjek Dinilai</strong>
+                        <span class="fw-bold text-end text-break ms-3">
+                            {{ $penilaian->dinilai_user->name ?? $penilaian->dinilai->name }}
+                        </span>
                     </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <strong>Kategori:</strong>
-                        <span>{{ $penilaian->kategori->name }}</span>
+                    <li class="list-group-item d-flex justify-content-between align-items-start py-3">
+                        <strong class="text-muted small text-uppercase">Kategori</strong>
+                        <span class="text-end ms-3">{{ $penilaian->kategori->name }}</span>
                     </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <strong>Periode:</strong>
-                        <span>{{ $penilaian->periode->nama_periode }}</span>
+                    <li class="list-group-item d-flex justify-content-between align-items-start py-3">
+                        <strong class="text-muted small text-uppercase">Periode</strong>
+                        <span class="text-end ms-3">{{ $penilaian->periode->nama_periode }}</span>
                     </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <strong>Waktu Penilaian:</strong>
-                        <span>{{ $penilaian->created_at }}</span>
+                    <li class="list-group-item d-flex justify-content-between align-items-start py-3">
+                        <strong class="text-muted small text-uppercase">Waktu Penilaian</strong>
+                        <span class="text-end ms-3">{{ \Carbon\Carbon::parse($penilaian->created_at)->format('d M Y, H:i') }}</span>
                     </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <strong>Skor Rata-rata:</strong>
-                        <span class="badge bg-primary fs-6">{{ $penilaian->avg_score }} / 5.0</span>
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-3 bg-light rounded mt-2">
+                        <strong class="text-dark">Skor Rata-rata</strong>
+                        <span class="badge bg-primary fs-6 rounded-pill px-3">{{ $penilaian->avg_score }} / 5.0</span>
                     </li>
                 </ul>
-            </div>
-        </div>
 
-        <div class="card-custom">
-            <div class="card-header"><i class="bi bi-chat-quote-fill"></i> Komentar Penilai</div>
-            <div class="card-body">
-                <p class="fst-italic">"{{ $penilaian->komentar ?? '-' }}"</p>
+                <div class="mt-4">
+                    <div class="d-flex align-items-center mb-2 text-muted">
+                        <i class="bi bi-chat-quote-fill me-2"></i> 
+                        <span class="fw-bold small text-uppercase">Komentar Penilai</span>
+                    </div>
+                    <div class="p-3 bg-light rounded border">
+                        {{-- text-break: Mencegah layout rusak jika komentar sangat panjang tanpa spasi --}}
+                        <p class="fst-italic mb-0 text-break text-secondary">
+                            "{{ $penilaian->komentar ?? 'Tidak ada komentar tambahan.' }}"
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Kolom Kanan: Rincian Skor -->
-    <div class="col-md-7">
-        <div class="card-custom">
-            <div class="card-header"><i class="bi bi-list-stars"></i> Rincian Skor per Indikator</div>
-            <div class="card-body">
+    <div class="col-12 col-lg-7">
+        <div class="card card-custom shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">
+                <i class="bi bi-list-stars me-2"></i> Rincian Skor per Indikator
+            </div>
+            <div class="card-body p-0 p-md-3">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
+                    <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Indikator Penilaian</th>
-                                <th class="text-center">Skor</th>
+                                <th class="ps-3">Indikator Penilaian</th>
+                                <th class="text-center" style="width: 100px;">Skor</th>
                             </tr>
                         </thead>
                         <tbody>
                            @foreach ($details as $detail)
                               <tr>
-                                 <td>{{ $detail->indikator->name }}</td>
-                                 <td class="text-center"><span class="badge bg-success">{{ $detail->score }}.0</span></td>
+                                 <td class="ps-3 py-3">
+                                     {{ $detail->indikator->name }}
+                                 </td>
+                                 <td class="text-center py-3">
+                                     @if($detail->score >= 4)
+                                        <span class="badge bg-success fs-6 rounded-pill w-75">{{ $detail->score }}.0</span>
+                                     @elseif($detail->score >= 3)
+                                        <span class="badge bg-primary fs-6 rounded-pill w-75">{{ $detail->score }}.0</span>
+                                     @elseif($detail->score >= 2)
+                                        <span class="badge bg-warning text-dark fs-6 rounded-pill w-75">{{ $detail->score }}.0</span>
+                                     @else
+                                        <span class="badge bg-danger fs-6 rounded-pill w-75">{{ $detail->score }}.0</span>
+                                     @endif
+                                 </td>
                               </tr>
                            @endforeach
                         </tbody>

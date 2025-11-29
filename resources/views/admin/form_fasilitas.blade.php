@@ -13,7 +13,7 @@
     <div class="card-header">
         <i class="bi bi-plus-circle-fill"></i> Tambah Fasilitas Baru
     </div>
-    <div class="card-body">
+    <div class="card-body p-3">
          @if (isset($editing))
             <form action="{{ route('admin.fasilitas.update', $editing->id) }}" method="POST">
          @else

@@ -59,7 +59,7 @@
                 </ul>
                 <div class="tab-content pt-3" id="profileTabContent">
                     <!-- Account Info Tab -->
-                    <div class="tab-pane fade show active" id="info" role="tabpanel">
+                    <div class="tab-pane fade show active p-3" id="info" role="tabpanel">
                         <form action="{{ route('admin.updateProfile') }}" method="POST">
                            @csrf
                             <div class="mb-3">
@@ -84,7 +84,7 @@
                         </form>
                     </div>
                     <!-- Change Password Tab -->
-                    <div class="tab-pane fade" id="password" role="tabpanel">
+                    <div class="tab-pane fade p-3" id="password" role="tabpanel">
                         <form method="POST" action="{{ route('admin.changePassword') }}">
                             @csrf
                             <div class="mb-3">

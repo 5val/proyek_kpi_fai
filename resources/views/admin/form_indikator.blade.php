@@ -13,7 +13,7 @@
     <div class="card-header">
         <i class="bi bi-plus-circle-fill"></i> Tambah Indikator untuk Kategori: <strong>Kinerja Dosen</strong>
     </div>
-    <div class="card-body">
+    <div class="card-body p-3">
          @if (isset($indikator))
             <form action="{{ route('admin.indikator.update', [$kategori_id, $indikator->id]) }}" method="POST">
          @else

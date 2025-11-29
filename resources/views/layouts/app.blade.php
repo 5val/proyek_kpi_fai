@@ -4,22 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title') - Sistem KPI Kampus</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    
     <style>
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
             --sidebar-width: 260px;
+            --header-height: 70px;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f6fa;
-            overflow-x: hidden;
+            overflow-x: hidden; /* Mencegah scroll horizontal body */
         }
 
         /* === LAYOUT SYSTEM === */
@@ -27,10 +30,10 @@
             display: flex;
             width: 100%;
             align-items: stretch;
-            overflow-x: hidden; /* Mencegah scroll horizontal saat transisi */
+            transition: all 0.3s;
         }
 
-        /* Sidebar Styling */
+        /* === SIDEBAR STYLING === */
         #sidebar {
             min-width: var(--sidebar-width);
             max-width: var(--sidebar-width);
@@ -38,7 +41,7 @@
             color: #fff;
             transition: all 0.3s;
             min-height: 100vh;
-            z-index: 1040;
+            z-index: 1050; /* Pastikan di atas overlay */
         }
 
         /* Sidebar Link */
@@ -49,13 +52,15 @@
             border-radius: 8px;
             display: flex;
             align-items: center;
-            white-space: nowrap; /* Mencegah teks turun baris saat sidebar mengecil (jika ada animasi width) */
+            white-space: nowrap;
+            font-size: 0.95rem;
         }
 
         #sidebar .nav-link:hover, #sidebar .nav-link.active {
             color: #fff;
             background: rgba(255,255,255,0.15);
             transform: translateX(5px);
+            transition: all 0.2s;
         }
 
         #sidebar .nav-link i {
@@ -65,74 +70,96 @@
             text-align: center;
         }
 
-        /* Logo Area */
+        /* Sidebar Header */
         .sidebar-header {
-            padding: 25px 20px;
+            padding: 20px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             text-align: center;
         }
 
-        /* Content Area Fix */
+        /* === CONTENT AREA === */
         #content {
-            /* Hapus width: 100% yang menyebabkan overflow */
-            flex: 1; /* Mengisi sisa ruang yang ada */
-            min-width: 0; /* Penting untuk nested elements seperti DataTables agar responsif */
+            width: 100%;
             min-height: 100vh;
-            transition: all 0.3s;
             display: flex;
             flex-direction: column;
+            min-width: 0; /* PENTING: Agar flex item tidak overflow screen */
         }
 
         /* Navbar Top */
         .navbar-top {
-            padding: 15px 25px;
+            padding: 10px 25px;
             background: #fff;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             margin-bottom: 25px;
+            min-height: var(--header-height);
+            display: flex;
+            align-items: center;
         }
 
         .content-padding {
             padding: 0 25px 25px 25px;
+            flex: 1;
         }
 
         /* === RESPONSIVE LOGIC === */
         
-        /* Desktop: Sidebar Collapse Mode */
+        /* Desktop Mode (Layar Besar) */
         @media (min-width: 992px) {
             #sidebar.collapsed {
                 margin-left: calc(var(--sidebar-width) * -1);
             }
-            /* Sembunyikan tombol close sidebar di desktop */
             .btn-close-sidebar { display: none; }
         }
 
-        /* Mobile: Offcanvas Mode */
+        /* Mobile Mode (Layar Kecil/Tablet) */
         @media (max-width: 991.98px) {
             #sidebar {
                 margin-left: calc(var(--sidebar-width) * -1);
-                position: fixed;
+                position: fixed; /* Sidebar melayang di mobile */
+                top: 0;
+                left: 0;
                 height: 100vh;
-                overflow-y: auto;
+                overflow-y: auto; /* Scroll jika menu panjang */
+                box-shadow: 4px 0 10px rgba(0,0,0,0.1);
             }
+            
             #sidebar.active {
-                margin-left: 0;
+                margin-left: 0; /* Slide in */
             }
-            /* Overlay Gelap saat sidebar aktif di mobile */
+
+            /* Overlay Gelap */
             #overlay {
                 display: none;
                 position: fixed;
                 width: 100vw;
                 height: 100vh;
                 background: rgba(0,0,0,0.5);
-                z-index: 1030;
+                z-index: 1040; /* Di bawah sidebar, di atas content */
                 top: 0; left: 0;
+                opacity: 0;
+                transition: all 0.5s ease-in-out;
             }
+            
             #overlay.active {
                 display: block;
+                opacity: 1;
+            }
+
+            /* Adjust Content Padding Mobile */
+            .navbar-top { padding: 10px 15px; }
+            .content-padding { padding: 0 15px 15px 15px; }
+            
+            /* Text Truncate di Navbar Mobile */
+            .navbar-title-wrapper {
+                max-width: 200px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
 
-        /* Utility Classes */
+        /* === UTILITY === */
         .card-custom {
             border: none;
             border-radius: 12px;
@@ -147,6 +174,8 @@
             padding: 15px 20px;
             font-weight: 600;
         }
+        
+        /* Avatar */
         .user-avatar {
             width: 40px; height: 40px;
             border-radius: 50%;
@@ -154,9 +183,19 @@
             color: white;
             display: flex; align-items: center; justify-content: center;
             font-weight: bold;
+            overflow: hidden;
+        }
+        .user-avatar img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        /* Fix DataTables Responsive Scroll */
+        .table-responsive-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         
-        /* Scrollbar Sidebar */
+        /* Custom Scrollbar */
         #sidebar::-webkit-scrollbar { width: 5px; }
         #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
     </style>
@@ -165,7 +204,6 @@
 <body>
 
     <div id="wrapper">
-        <!-- Sidebar -->
         <nav id="sidebar">
             <div class="sidebar-header">
                 <div class="d-flex justify-content-between align-items-center">
@@ -173,7 +211,6 @@
                         <i class="bi bi-graph-up-arrow fs-1"></i>
                         <h5 class="mt-2 fw-bold mb-0">KPI Kampus</h5>
                     </div>
-                    <!-- Tombol Tutup (Hanya Mobile) -->
                     <button type="button" id="dismiss" class="btn btn-close-sidebar text-white bg-transparent border-0 d-lg-none">
                         <i class="bi bi-x-lg fs-4"></i>
                     </button>
@@ -207,7 +244,6 @@
                     {{-- ================= MENU DOSEN ================= --}}
                     @elseif(Auth::user()->role == 'dosen')
                         <a class="nav-link {{ request()->routeIs('dosen.dashboard') ? 'active' : '' }}" href="{{ route('dosen.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                        <!-- <a class="nav-link {{ request()->routeIs('dosen.profile*') ? 'active' : '' }}" href="{{ route('dosen.profile') }}"><i class="bi bi-person-badge"></i> Profil Saya</a> -->
                         <a class="nav-link {{ request()->routeIs('dosen.kpi*') ? 'active' : '' }}" href="{{ route('dosen.kpi') }}"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
                         <a class="nav-link {{ request()->routeIs('dosen.kelas*') ? 'active' : '' }}" href="{{ route('dosen.kelas') }}"><i class="bi bi-book-fill"></i> Kelas</a>
                         <a class="nav-link {{ request()->routeIs('dosen.penilaian_mahasiswa*') ? 'active' : '' }}" href="{{ route('dosen.penilaian_mahasiswa') }}"><i class="bi bi-people"></i> Penilaian Mahasiswa</a>
@@ -219,7 +255,6 @@
                     {{-- ================= MENU MAHASISWA ================= --}}
                     @elseif(Auth::user()->role == 'mahasiswa')
                         <a class="nav-link {{ request()->routeIs('mahasiswa.dashboard') ? 'active' : '' }}" href="{{ route('mahasiswa.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                        <!-- <a class="nav-link {{ request()->routeIs('mahasiswa.profile*') ? 'active' : '' }}" href="{{ route('mahasiswa.profile') }}"><i class="bi bi-person-badge"></i> Profil Saya</a> -->
                         <a class="nav-link {{ request()->routeIs('mahasiswa.kpi*') ? 'active' : '' }}" href="{{ route('mahasiswa.kpi') }}"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
                         <a class="nav-link {{ request()->routeIs('mahasiswa.penilaian_dosen*') ? 'active' : '' }}" href="{{ route('mahasiswa.penilaian_dosen') }}"><i class="bi bi-star"></i> Penilaian Dosen</a>
                         <a class="nav-link {{ request()->routeIs('mahasiswa.penilaian_fasilitas*') ? 'active' : '' }}" href="{{ route('mahasiswa.penilaian_fasilitas') }}"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
@@ -241,18 +276,16 @@
             </div>
         </nav>
 
-        <!-- Page Content -->
         <div id="content">
-            <!-- Top Navbar -->
             <nav class="navbar navbar-top">
-                <div class="container-fluid">
+                <div class="container-fluid px-0">
                     <div class="d-flex align-items-center">
                         <button type="button" id="sidebarCollapse" class="btn btn-light border shadow-sm me-3">
                             <i class="bi bi-list fs-5"></i>
                         </button>
-                        <div>
-                            <h5 class="mb-0 text-dark fw-bold">@yield('page-title')</h5>
-                            <small class="text-muted">@yield('page-subtitle')</small>
+                        <div class="navbar-title-wrapper">
+                            <h5 class="mb-0 text-dark fw-bold text-truncate">@yield('page-title')</h5>
+                            <small class="text-muted d-none d-sm-block">@yield('page-subtitle')</small>
                         </div>
                     </div>
 
@@ -267,18 +300,21 @@
                         </div>
                         <div class="dropdown">
                             <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
-                                <div class="user-avatar">
-                                    <!-- {{ substr(Auth::user()->name ?? 'U', 0, 1) }} -->
-                                      <img src="{{ Auth::user()->photo_profile ? Storage::url(Auth::user()->photo_profile) : asset('images/default-user.png') }}" class="rounded-circle" width="45" alt="Profile Picture" height="45">
+                                <div class="user-avatar shadow-sm border">
+                                    <img src="{{ Auth::user()->photo_profile ? Storage::url(Auth::user()->photo_profile) : asset('images/default-user.png') }}" class="rounded-circle" width="45" alt="Profile" height="45">
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end border-0 shadow ms-2">
-                                <li><a class="dropdown-item" href="/profiles"><i class="bi bi-person me-2"></i> Profil</a></li>
+                                <li class="d-block d-md-none px-3 py-2 text-center border-bottom bg-light">
+                                    <div class="fw-bold text-truncate">{{ Auth::user()->name ?? 'Guest' }}</div>
+                                    <small class="text-muted">{{ ucfirst(Auth::user()->role ?? '') }}</small>
+                                </li>
+                                <li><a class="dropdown-item py-2" href="/profiles"><i class="bi bi-person me-2"></i> Profil</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
-                                        <button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i> Logout</button>
+                                        <button class="dropdown-item text-danger py-2"><i class="bi bi-box-arrow-right me-2"></i> Logout</button>
                                     </form>
                                 </li>
                             </ul>
@@ -287,38 +323,58 @@
                 </div>
             </nav>
 
-            <!-- Main Content -->
             <div class="content-padding">
                 @yield('content')
             </div>
         </div>
     </div>
 
-    <!-- Overlay for Mobile -->
     <div id="overlay"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
       $(document).ready(function () {
-         if ($.fn.DataTable) {
-             $('.data-table').DataTable({
-                "order": []
-             });
-         }
+          // DataTables Config
+          if ($.fn.DataTable) {
+              var table = $('.data-table').DataTable({
+                  "order": [],
+                  "language": {
+                      "search": "Cari:",
+                      "lengthMenu": "Tampilkan _MENU_ data",
+                      "paginate": { "next": ">>", "previous": "<<" }
+                  }
+              });
+              
+              // === FITUR KUNCI: Membuat Tabel Responsive Scroll ===
+              // Membungkus tabel dengan div scrollable agar tidak merusak layout HP
+              $('.data-table').wrap('<div class="table-responsive-wrapper"></div>');
+          }
 
-         // Sidebar Collapse/Expand Logic
-         $('#sidebarCollapse').on('click', function () {
-             $('#sidebar').toggleClass('active'); // Mobile
-             $('#sidebar').toggleClass('collapsed'); // Desktop
-             $('#overlay').toggleClass('active'); // Overlay Mobile
-         });
+          // Sidebar Toggle Logic
+          $('#sidebarCollapse').on('click', function () {
+              $('#sidebar').toggleClass('active'); // Slide In (Mobile)
+              $('#sidebar').toggleClass('collapsed'); // Slide Out (Desktop)
+              
+              // Tampilkan Overlay hanya di layar kecil
+              if ($(window).width() <= 992) {
+                  $('#overlay').toggleClass('active');
+              }
+          });
 
-         // Close sidebar via Close Button (Mobile)
-         $('#dismiss, #overlay').on('click', function () {
-             $('#sidebar').removeClass('active');
-             $('#overlay').removeClass('active');
-         });
+          // Tutup sidebar saat klik tombol X atau Overlay (Mobile)
+          $('#dismiss, #overlay').on('click', function () {
+              $('#sidebar').removeClass('active');
+              $('#overlay').removeClass('active');
+          });
+
+          // Reset saat resize layar
+          $(window).resize(function() {
+              if ($(window).width() > 992) {
+                  $('#overlay').removeClass('active');
+                  $('#sidebar').removeClass('active');
+              }
+          });
       });
    </script>
     @stack('scripts')

@@ -11,7 +11,7 @@
 @section('content')
 <div class="card-custom">
     <div class="card-header"><i class="bi bi-pencil-square"></i> Form Kelas</div>
-    <div class="card-body">
+    <div class="card-body p-3">
         @if (isset($kelas))
             <form action="{{ route('admin.kelas.update', $kelas->id) }}" method="POST">
          @else

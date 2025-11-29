@@ -891,8 +891,9 @@ class AdminController extends Controller
    }
 
    public function list_indikator($id) {
+      $kategori = Kategori::findOrFail($id);
       $indikator = Indikator::where('kategori_id', $id)->get();
-      return view('admin.list_indikator', ['indikator' => $indikator, 'kategori_id' => $id]);
+      return view('admin.list_indikator', ['indikator' => $indikator, 'kategori' => $kategori]);
    }
 
    public function form_indikator($id) {

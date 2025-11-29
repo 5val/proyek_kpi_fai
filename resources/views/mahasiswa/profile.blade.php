@@ -63,7 +63,7 @@
                 </ul>
                 <div class="tab-content pt-3" id="profileTabContent">
                     <!-- Account Info Tab -->
-                    <div class="tab-pane fade show active" id="info" role="tabpanel">
+                    <div class="tab-pane fade show active p-3" id="info" role="tabpanel">
                         <form>
                             <div class="mb-3">
                                 <label for="namaLengkap" class="form-label">Nama Lengkap</label>
@@ -79,13 +79,13 @@
                             </div>
                              <div class="mb-3">
                                 <label for="prodi" class="form-label">Program Studi</label>
-                                <input type="text" class="form-control" id="prodi" value="{{ $mahasiswa->program_studi }}" readonly>
+                                <input type="text" class="form-control" id="prodi" value="{{ $mahasiswa->program_studi->name }}" readonly>
                             </div>
                             <button type="submit" class="btn btn-primary btn-custom"><i class="bi bi-save"></i> Simpan Perubahan</button>
                         </form>
                     </div>
                     <!-- Change Password Tab -->
-                    <div class="tab-pane fade" id="password" role="tabpanel">
+                    <div class="tab-pane fade p-3" id="password" role="tabpanel">
                         <form method="POST" action="{{ route('mahasiswa.changePassword', Auth::id()) }}">
                             @csrf
                             <div class="mb-3">
