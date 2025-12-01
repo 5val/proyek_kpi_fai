@@ -55,7 +55,7 @@
                 @csrf
                 <div class="mb-3">
                     <label for="file" class="form-label fw-medium">Pilih Foto (JPG/PNG - Max 5MB)</label>
-                    <input type="file" name="file" id="file" required class="form-control">
+                    <input type="file" name="file" id="file" class="form-control">
                 </div>
                 <button class="btn btn-sm btn-outline-primary" type="submit" style="width: 700px;margin:0 auto">
                     <i class="bi bi-upload"></i> Ubah Foto Profil

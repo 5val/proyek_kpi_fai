@@ -64,11 +64,11 @@
                     </button>
                     
                     {{-- Opsi 2: Atau tombol Edit jika ingin mengubah nilai --}}
-                    {{-- 
+                    
                     <a href="{{ route('penilaian.form', ['tipe' => 'fasilitas', 'id' => $f->id]) }}" class="btn btn-warning btn-sm">
                         <i class="bi bi-pencil-square"></i> Edit Nilai
                     </a> 
-                    --}}
+                   
                 @else
                     {{-- Tombol Nilai jika belum --}}
                     <a href="{{ route('penilaian.form', ['tipe' => 'fasilitas', 'id' => $f->id]) }}" 

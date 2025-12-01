@@ -4,9 +4,9 @@
 
 @section('page-title', 'Penilaian Unit Layanan')
 @section('page-subtitle', 'Beri penilaian terhadap kualitas unit layanan kampus')
-@section('user-name', 'Dr. Budi Hartono, M.Kom.')
-@section('user-role', 'Dosen - Teknik Informatika')
-@section('user-initial', 'BH')
+
+{{-- @section('user-name', $user->name) --}}
+{{-- @section('user-role', $user->role) --}}
 
 @section('content')
 <div class="card-custom">
@@ -26,20 +26,34 @@
                 </thead>
                 <tbody>
 
-                    {{-- SUDAH DINILAI --}}
                     @foreach ($units as $u)
                     <tr>
                         <td>{{ $u->name }}</td>
+
                         <td>
-                            <span class="badge bg-success">Sudah Dinilai</span>
+                            @if ($u->sudah_dinilai)
+                                <span class="badge bg-success">Sudah Dinilai</span>
+                            @else
+                                <span class="badge bg-warning text-dark">Belum Dinilai</span>
+                            @endif
                         </td>
+
                         <td>
-                            <button class="btn btn-secondary btn-sm" disabled>
-                                <i class="bi bi-check-circle"></i> Nilai
-                            </button>
+                            @if ($u->sudah_dinilai)
+                                <button class="btn btn-secondary btn-sm" disabled>
+                                    <i class="bi bi-check-circle"></i> Sudah Dinilai
+                                </button>
+                            @else
+                                <a href="{{ route('penilaian.form', ['tipe' => 'unit', 'id' => $u->id]) }}" 
+                                   class="btn btn-primary btn-sm">
+                                    <i class="bi bi-pencil-square"></i> Nilai
+                                </a>
+                            @endif
                         </td>
+
                     </tr>
                     @endforeach
+
                 </tbody>
             </table>
         </div>

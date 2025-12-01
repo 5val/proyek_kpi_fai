@@ -53,7 +53,7 @@
                 <div class="p-4 mb-4 rounded border" style="background:#f8f9fa;">
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                            <h4 class="mb-2 text-dark">{{ $dosen->name }}</h4>
+                            <h4 class="mb-2 text-dark">Name: {{ $user->name }}</h4>
                             <div class="d-flex flex-column flex-md-row gap-md-4 text-muted">
                                 <p class="mb-1"><i class="bi bi-card-heading me-1"></i> <strong>NIDN:</strong> {{ $dosen->nidn }}</p>
                                 <p class="mb-0"><i class="bi bi-award me-1"></i> <strong>Sertifikasi:</strong> 
