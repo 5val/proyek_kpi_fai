@@ -4,8 +4,8 @@
 
 @section('page-title', 'Dashboard Mahasiswa')
 @section('page-subtitle', 'Monitoring & Penilaian KPI')
-@section('user-name', 'Andi Pratama')
-@section('user-role', 'Mahasiswa - Teknik Informatika')
+@section('user-name', ucfirst($mahasiswa->user->name))
+@section('user-role', 'Mahasiswa - '. ucfirst($mahasiswa->program_studi->name))
 @section('user-initial', 'AP')
 
 @section('content')
@@ -18,26 +18,23 @@
                         
                         {{-- Avatar --}}
                         <div class="mb-3 mb-md-0 me-md-4">
-                            <div class="bg-white rounded-circle d-flex align-items-center justify-content-center text-primary fw-bold shadow-sm" 
-                                 style="width: 100px; height: 100px; font-size: 2.5rem; color: #667eea;">
-                                AP
-                            </div>
+                             <img src="{{ $mahasiswa->user->photo_profile ? Storage::url($mahasiswa->user->photo_profile) : asset('images/default-user.png') }}"
+                                class="rounded-circle mb-3" width="150" alt="Profile Picture" height="150">
                         </div>
                         
                         {{-- Info Mahasiswa --}}
                         <div class="flex-grow-1 mb-3 mb-md-0">
-                            <h3 class="fw-bold mb-2">Andi Pratama</h3>
+                            <h3 class="fw-bold mb-2">{{ $mahasiswa->user->name }}</h3>
                             <div class="d-flex flex-column gap-1 opacity-75">
-                                <span><i class="bi bi-card-text me-2"></i> NIM: 2021010001</span>
-                                <span><i class="bi bi-book me-2"></i> Teknik Informatika</span>
-                                <span><i class="bi bi-calendar-check me-2"></i> Sem 7 (Gasal 2024/2025)</span>
+                                <span><i class="bi bi-card-text me-2"></i> NRP: {{ $mahasiswa->nrp }}</span>
+                                <span><i class="bi bi-book me-2"></i>{{ $mahasiswa->program_studi->name }}</span>
                             </div>
                         </div>
                         
                         {{-- IPK Badge --}}
                         <div class="bg-white bg-opacity-10 p-3 rounded-3 text-center" style="min-width: 140px;">
-                            <h1 class="display-5 fw-bold mb-0">3.75</h1>
-                            <small class="text-uppercase text-white-50 fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">IPK Kumulatif</small>
+                            <h1 class="display-5 fw-bold mb-0">{{ $mahasiswa->ipk }}</h1>
+                            <small class="text-uppercase text-white-50 fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">IP Kumulatif</small>
                             <div class="mt-2">
                                 <span class="badge bg-white text-primary rounded-pill px-3">Aktif</span>
                             </div>
@@ -55,9 +52,9 @@
                     <div class="icon text-success mb-2 fs-1">
                         <i class="bi bi-trophy-fill"></i>
                     </div>
-                    <h3 class="fw-bold mb-0">4.2</h3>
+                    <h3 class="fw-bold mb-0">{{ $kpiSaya }}</h3>
                     <p class="text-muted small text-uppercase fw-bold mb-1">Skor KPI</p>
-                    <small class="text-success fw-bold"><i class="bi bi-arrow-up"></i> Excellent</small>
+                    <small class="text-success fw-bold"></small>
                 </div>
             </div>
         </div>
@@ -79,7 +76,7 @@
                     <div class="icon text-warning mb-2 fs-1">
                         <i class="bi bi-star-fill"></i>
                     </div>
-                    <h3 class="fw-bold mb-0">8</h3>
+                    <h3 class="fw-bold mb-0">{{ $dosenBelum + $fasilitasBelum + $unitBelum + $praktikumBelum }}</h3>
                     <p class="text-muted small text-uppercase fw-bold mb-1">Pending</p>
                     <small class="text-danger fw-bold">Perlu diisi</small>
                 </div>
@@ -111,37 +108,41 @@
                     <div class="mb-4">
                         <div class="d-flex justify-content-between mb-1">
                             <span class="small fw-bold">Penilaian Dosen</span>
-                            <span class="badge bg-success rounded-pill">5/5</span>
+                            <span class="badge bg-success rounded-pill">{{ $dosenSudah }} / {{ $dosenBelum }}</span>
                         </div>
                         <div class="progress" style="height: 8px;">
-                            <div class="progress-bar bg-success" style="width: 100%"></div>
+                            <div class="progress-bar bg-success" style="width: 0%"></div>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <div class="d-flex justify-content-between mb-1">
                             <span class="small fw-bold">Penilaian Fasilitas</span>
-                            <span class="badge bg-warning text-dark rounded-pill">6/10</span>
+                            <span class="badge bg-warning text-dark rounded-pill">{{ $fasilitasSudah }} / {{ $fasilitasBelum }}</span>
                         </div>
                         <div class="progress" style="height: 8px;">
-                            <div class="progress-bar bg-warning" style="width: 60%"></div>
+                            <div class="progress-bar bg-warning" style="width: 00%"></div>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <div class="d-flex justify-content-between mb-1">
                             <span class="small fw-bold">Penilaian Unit</span>
-                            <span class="badge bg-danger rounded-pill">2/6</span>
+                            <span class="badge bg-danger rounded-pill">{{ $unitSudah }} / {{ $unitBelum }}</span>
                         </div>
                         <div class="progress" style="height: 8px;">
-                            <div class="progress-bar bg-danger" style="width: 33%"></div>
+                            <div class="progress-bar bg-danger" style="width: 0%"></div>
                         </div>
                     </div>
 
-                    <div class="mt-auto">
-                        <button class="btn btn-primary w-100 shadow-sm">
-                            <i class="bi bi-pencil-square me-2"></i> Lanjutkan Penilaian
-                        </button>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="small fw-bold">Penilaian Praktikum</span>
+                            <span class="badge bg-info rounded-pill">{{ $praktikumSudah }} / {{ $praktikumBelum }}</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-danger" style="width: 0%"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -157,52 +158,28 @@
                 <div class="card-body p-0 p-md-3">
                     <div class="table-responsive">
                         {{-- text-nowrap: Agar tabel rapi horizontal scroll di HP --}}
-                        <table class="table table-hover align-middle w-100 text-nowrap mb-0">
+                        <table class="table table-bordered table-hover align-middle w-100 text-nowrap">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Indikator</th>
-                                    <th>Target</th>
-                                    <th>Capaian</th>
-                                    <th>Skor</th>
-                                    <th class="text-center">Status</th>
+                                    <th>Indikator Kinerja</th>
+                                    <th class="text-center" width="100">Skor Saya</th>
+                                    <th class="text-center" width="100">Rata - Rata</th>
+                                    <th class="text-center" width="150">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><i class="bi bi-book text-primary me-2"></i> IPK Semester</td>
-                                    <td class="text-muted">≥ 3.50</td>
-                                    <td class="fw-bold text-dark">3.75</td>
-                                    <td><span class="badge bg-light text-dark border">3.5 / 4</span></td>
-                                    <td class="text-center"><span class="badge bg-success rounded-pill">Excellent</span></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-calendar-check text-info me-2"></i> Kehadiran</td>
-                                    <td class="text-muted">≥ 80%</td>
-                                    <td class="fw-bold text-dark">94%</td>
-                                    <td><span class="badge bg-light text-dark border">4.0 / 4</span></td>
-                                    <td class="text-center"><span class="badge bg-success rounded-pill">Excellent</span></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-trophy text-warning me-2"></i> Prestasi</td>
-                                    <td class="text-muted">≥ 2 item</td>
-                                    <td class="fw-bold text-dark">3 item</td>
-                                    <td><span class="badge bg-light text-dark border">3.8 / 4</span></td>
-                                    <td class="text-center"><span class="badge bg-success rounded-pill">Excellent</span></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-people text-success me-2"></i> Organisasi</td>
-                                    <td class="text-muted">Min 1</td>
-                                    <td class="fw-bold text-dark">2 Org</td>
-                                    <td><span class="badge bg-light text-dark border">3.0 / 4</span></td>
-                                    <td class="text-center"><span class="badge bg-primary rounded-pill">Good</span></td>
-                                </tr>
-                                <tr class="table-danger bg-opacity-10">
-                                    <td><i class="bi bi-laptop text-danger me-2"></i> Tugas & Prak</td>
-                                    <td class="text-muted">≥ 85%</td>
-                                    <td class="fw-bold text-danger">72%</td>
-                                    <td><span class="badge bg-white text-danger border border-danger">2.9 / 4</span></td>
-                                    <td class="text-center"><span class="badge bg-warning text-dark rounded-pill">Improve</span></td>
-                                </tr>
+                                @forelse ($hasilIndikator as $h)
+                                    <tr>
+                                        <td>{{ ucfirst( $h['indikator']) }}</td>
+                                        <td class="text-center fw-bold">{{ number_format($h['nilai_saya'], 2) }}</td>
+                                        <td class="text-center fw-bold">{{ number_format($h['rata_semua'], 2) }}</td>
+                                        <td class="text-center fw-bold">{{ $h['status'] }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-4">Tidak ada data indikator.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -220,34 +197,77 @@
                     <i class="bi bi-exclamation-circle me-2"></i> Penilaian Belum Diisi
                 </div>
                 <div class="card-body p-0">
-                    <div class="list-group list-group-flush">
-                        {{-- Item 1 --}}
-                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                            <div class="me-3 overflow-hidden">
-                                <strong class="text-truncate d-block">Perpustakaan Pusat</strong>
-                                <small class="text-muted"><i class="bi bi-building me-1"></i> Fasilitas</small>
-                            </div>
-                            <a href="#" class="btn btn-sm btn-outline-primary rounded-pill px-3">Isi</a>
-                        </div>
-                        
-                        {{-- Item 2 --}}
-                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                            <div class="me-3 overflow-hidden">
-                                <strong class="text-truncate d-block">Lab Komputer Dasar</strong>
-                                <small class="text-muted"><i class="bi bi-pc-display me-1"></i> Fasilitas</small>
-                            </div>
-                            <a href="#" class="btn btn-sm btn-outline-primary rounded-pill px-3">Isi</a>
-                        </div>
+                   <div class="list-group list-group-flush">
+                        @if($dosenBelumList->count())
+                            @foreach ($dosenBelumList as $dosen)
+                                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div class="me-3 overflow-hidden">
+                                        <strong class="text-truncate d-block">{{ $dosen->name }}</strong>
+                                        <small class="text-muted">
+                                            <i class="bi bi-person-vcard me-1"></i> Dosen
+                                        </small>
+                                    </div>
+                                    <a href="{{ route('mahasiswa.penilaian_dosen') }}" 
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        Isi
+                                    </a>
+                                </div>
+                            @endforeach
+                        @endif
 
-                        {{-- Item 3 --}}
-                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                            <div class="me-3 overflow-hidden">
-                                <strong class="text-truncate d-block">Biro Administrasi Akademik</strong>
-                                <small class="text-muted"><i class="bi bi-bank2 me-1"></i> Unit Layanan</small>
-                            </div>
-                            <a href="#" class="btn btn-sm btn-outline-primary rounded-pill px-3">Isi</a>
-                        </div>
+                        @if($praktikumBelumList->count())
+                            @foreach ($praktikumBelumList as $p)
+                                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div class="me-3 overflow-hidden">
+                                        <strong class="text-truncate d-block">{{ $p->mataKuliah->name ?? 'Praktikum' }}</strong>
+                                        <small class="text-muted">
+                                            <i class="bi bi-pc-display me-1"></i> Praktikum
+                                        </small>
+                                    </div>
+                                    <a href="{{ route('mahasiswa.penilaian_praktikum') }}" 
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        Isi
+                                    </a>
+                                </div>
+                            @endforeach
+                        @endif
+
+                        @if($fasilitasBelumList->count())
+                            @foreach ($fasilitasBelumList as $f)
+                                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div class="me-3 overflow-hidden">
+                                        <strong class="text-truncate d-block">{{ $f->name }}</strong>
+                                        <small class="text-muted">
+                                            <i class="bi bi-building me-1"></i> Fasilitas
+                                        </small>
+                                    </div>
+                                    <a href="{{ route('mahasiswa.penilaian_fasilitas') }}" 
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        Isi
+                                    </a>
+                                </div>
+                            @endforeach
+                        @endif
+
+                        @if($unitBelumList->count())
+                            @foreach ($unitBelumList as $u)
+                                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                    <div class="me-3 overflow-hidden">
+                                        <strong class="text-truncate d-block">{{ $u->name }}</strong>
+                                        <small class="text-muted">
+                                            <i class="bi bi-bank2 me-1"></i> Unit Layanan
+                                        </small>
+                                    </div>
+                                    <a href="{{ route('mahasiswa.penilaian_unit') }}" 
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        Isi
+                                    </a>
+                                </div>
+                            @endforeach
+                        @endif
+
                     </div>
+
                 </div>
             </div>
         </div>
@@ -307,7 +327,7 @@
             labels: ['IPK', 'Kehadiran', 'Prestasi', 'Organisasi', 'Tugas'],
             datasets: [{
                 label: 'Skor Saya',
-                data: [4.5, 5.0, 4.8, 4.0, 3.2],
+                data: [0, 0, 0, 0, 0],
                 backgroundColor: 'rgba(52, 152, 219, 0.2)',
                 borderColor: '#3498db',
                 pointBackgroundColor: '#3498db',

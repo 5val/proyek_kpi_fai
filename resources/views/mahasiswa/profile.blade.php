@@ -4,8 +4,8 @@
 
 @section('page-title', 'Profil Saya')
 @section('page-subtitle', 'Kelola informasi akun dan password Anda')
-@section('user-name', 'Andi Pratama')
-@section('user-role', 'Mahasiswa - Teknik Informatika')
+@section('user-name', ucfirst($mahasiswa->user->name))
+@section('user-role', 'Mahasiswa - '. ucfirst($mahasiswa->program_studi->name))
 @section('user-initial', 'AP')
 
 @section('content')

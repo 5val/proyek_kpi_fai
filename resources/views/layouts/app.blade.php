@@ -255,7 +255,6 @@
                     {{-- ================= MENU MAHASISWA ================= --}}
                     @elseif(Auth::user()->role == 'mahasiswa')
                         <a class="nav-link {{ request()->routeIs('mahasiswa.dashboard') ? 'active' : '' }}" href="{{ route('mahasiswa.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                        <a class="nav-link {{ request()->routeIs('mahasiswa.kpi*') ? 'active' : '' }}" href="{{ route('mahasiswa.kpi') }}"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
                         <a class="nav-link {{ request()->routeIs('mahasiswa.penilaian_dosen*') ? 'active' : '' }}" href="{{ route('mahasiswa.penilaian_dosen') }}"><i class="bi bi-star"></i> Penilaian Dosen</a>
                         <a class="nav-link {{ request()->routeIs('mahasiswa.penilaian_fasilitas*') ? 'active' : '' }}" href="{{ route('mahasiswa.penilaian_fasilitas') }}"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
                         <a class="nav-link {{ request()->routeIs('mahasiswa.penilaian_unit*') ? 'active' : '' }}" href="{{ route('mahasiswa.penilaian_unit') }}"><i class="bi bi-bank2"></i> Penilaian Unit</a>

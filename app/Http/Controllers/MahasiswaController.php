@@ -10,6 +10,7 @@ use App\Models\Enrollment;
 use App\Models\Mahasiswa;
 use App\Models\Unit;
 use App\Models\Indikator;
+use App\Models\Kelas;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,11 +29,156 @@ use Dompdf\Dompdf;
 
 class MahasiswaController extends Controller
 {
-   public function dashboard()
+  public function dashboard()
    {
-      $mahasiswa = Mahasiswa::where('user_id', Auth::id())->first();
-      return view('mahasiswa.dashboard', compact('mahasiswa'));
+      $userId = Auth::id();
+      $periodeAktif = Periode::max('id');
+
+      // Data Mahasiswa
+      $mahasiswa = Mahasiswa::where('user_id', $userId)->firstOrFail();
+
+      // Kelas sesuai prodi dan periode aktif
+      $kelasSaya = Kelas::where('program_studi_id', $mahasiswa->program_studi_id)
+         ->where('periode_id', $periodeAktif)
+         ->get();
+
+      $dosenIds = $kelasSaya->pluck('dosen_nidn')->unique();
+      $totalDosen = $dosenIds->count();
+
+      $dosenSudah = Penilaian::where('kategori_id', 1)
+         ->where('penilai_id', $userId)
+         ->whereIn('dinilai_id', $dosenIds)
+         ->count();
+
+      $dosenBelum = max(0, $totalDosen - $dosenSudah);
+
+      $praktikumIds = $kelasSaya->where('has_praktikum', 1)->pluck('id');
+      $totalPraktikum = $praktikumIds->count();
+
+      $praktikumSudah = Penilaian::where('kategori_id', 4)
+         ->where('penilai_id', $userId)
+         ->whereIn('dinilai_id', $praktikumIds)
+         ->count();
+
+      $praktikumBelum = max(0, $totalPraktikum - $praktikumSudah);
+
+      $totalUnit = Unit::count();
+
+      $unitSudah = Penilaian::where('kategori_id', 5)
+         ->where('penilai_id', $userId)
+         ->count();
+
+      $unitBelum = max(0, $totalUnit - $unitSudah);
+
+      $totalFasilitas = Fasilitas::count();
+
+      $fasilitasSudah = Penilaian::where('kategori_id', 6)
+         ->where('penilai_id', $userId)
+         ->count();
+
+      $fasilitasBelum = max(0, $totalFasilitas - $fasilitasSudah);
+
+      $penilaianSaya = Penilaian::where('kategori_id', 2)
+         ->where('dinilai_id', $userId)
+         ->where('periode_id', $periodeAktif)
+         ->pluck('id');
+
+      $penilaianSemua = Penilaian::where('kategori_id', 2)
+         ->where('periode_id', $periodeAktif)
+         ->pluck('id');
+
+      $indikatorList = Indikator::where('kategori_id', 2)->get();
+
+      $hasilIndikator = [];
+      $totalSaya = 0;
+      $jumlahIndikator = count($indikatorList);
+
+      // Feedback (dikeluarkan dari loop!)
+      $feedback = Feedback::where('kategori_id', 2)
+         ->where('target_id', $userId)
+         ->with('pengirim')
+         ->get();
+
+      foreach ($indikatorList as $indikator) {
+
+         $nilaiSaya = DetailPenilaian::whereIn('penilaian_id', $penilaianSaya)
+               ->where('indikator_id', $indikator->id)
+               ->avg('score');
+
+         $rataSemua = DetailPenilaian::whereIn('penilaian_id', $penilaianSemua)
+               ->where('indikator_id', $indikator->id)
+               ->avg('score');
+
+         if ($nilaiSaya === null) {
+               $status = 'Belum dinilai';
+         } elseif ($nilaiSaya > $rataSemua) {
+               $status = 'Sangat Baik';
+         } elseif ($nilaiSaya == $rataSemua) {
+               $status = 'Cukup';
+         } else {
+               $status = 'Perlu Ditingkatkan';
+         }
+
+         $totalSaya += ($nilaiSaya ?? 0);
+
+         $hasilIndikator[] = [
+               'indikator' => $indikator->name,
+               'nilai_saya' => $nilaiSaya ? round($nilaiSaya, 2) : 0,
+               'rata_semua' => $rataSemua ? round($rataSemua, 2) : 0,
+               'status' => $status
+         ];
+      }
+
+      $kpiSaya = $jumlahIndikator > 0 ? round($totalSaya / $jumlahIndikator, 2) : 0;
+
+      $dosenBelumList = User::whereHas('dosen', function($q) use ($dosenIds){
+            $q->whereIn('nidn', $dosenIds);
+         })
+         ->whereNotIn('id', Penilaian::where('kategori_id', 1)
+            ->where('penilai_id', $userId)
+            ->pluck('dinilai_id')
+         )
+         ->limit(1)
+         ->get();
+
+      // 2. Praktikum belum dinilai
+      $praktikumBelumList = Kelas::whereIn('id', $praktikumIds)
+         ->whereNotIn('id', Penilaian::where('kategori_id', 4)
+            ->where('penilai_id', $userId)
+            ->pluck('dinilai_id')
+         )
+         ->limit(1)
+         ->get();
+
+      // 3. Unit belum dinilai
+      $unitBelumList = Unit::whereNotIn('id', Penilaian::where('kategori_id', 5)
+            ->where('penilai_id', $userId)
+            ->pluck('dinilai_id')
+         )
+         ->limit(1)
+         ->get();
+
+      // 4. Fasilitas belum dinilai
+      $fasilitasBelumList = Fasilitas::whereNotIn('id', Penilaian::where('kategori_id', 6)
+            ->where('penilai_id', $userId)
+            ->pluck('dinilai_id')
+         )
+         ->limit(1)
+         ->get();
+
+      return view('mahasiswa.dashboard', compact(
+         'periodeAktif',
+
+         'totalDosen', 'dosenSudah', 'dosenBelum',
+         'totalPraktikum', 'praktikumSudah', 'praktikumBelum',
+         'totalUnit', 'unitSudah', 'unitBelum',
+         'totalFasilitas', 'fasilitasSudah', 'fasilitasBelum',
+
+         'hasilIndikator', 'kpiSaya', 'feedback', 'mahasiswa', 'dosenBelumList', 'fasilitasBelumList', 'praktikumBelumList', 'unitBelumList'
+      ));
    }
+
+
 
    public function profile(){
       $mahasiswa = Mahasiswa::with('program_studi')->where('user_id', Auth::id())->firstOrFail();
