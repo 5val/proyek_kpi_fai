@@ -9,12 +9,20 @@ use App\Models\Kategori;
 use App\Models\Enrollment;
 use App\Models\Mahasiswa;
 use App\Models\Unit;
+use App\Models\Indikator;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use App\Models\Periode;
+use App\Models\Penilaian;
+use App\Models\DetailPenilaian;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+// PDF Export (Dompdf)
+use Dompdf\Dompdf;
 
 
 
@@ -111,9 +119,69 @@ class MahasiswaController extends Controller
       return view('mahasiswa.penilaian_praktikum', compact('praktikumList'));
    }
 
-   public function laporan() {
-      return view('mahasiswa.laporan');
+  public function laporan(Request $request)
+   {
+      $userId = Auth::id();
+      $mahasiswa = Mahasiswa::with('program_studi')
+         ->where('user_id', $userId)
+         ->firstOrFail();
+      $all_periode = Periode::orderBy('id', 'desc')->get();
+      $periode_id = $request->periode_id ?? Periode::max('id');
+      $penilaianSaya = Penilaian::where('kategori_id', 2)
+         ->where('dinilai_id', $userId)
+         ->where('periode_id', $periode_id)
+         ->pluck('id');
+      $penilaianSemua = Penilaian::where('kategori_id', 2)
+         ->where('periode_id', $periode_id)
+         ->pluck('id');
+      $indikatorList = Indikator::where('kategori_id', 2)->get();
+      $hasilIndikator = [];
+      foreach ($indikatorList as $indikator) {
+         $nilaiSaya = DetailPenilaian::whereIn('penilaian_id', $penilaianSaya)
+               ->where('indikator_id', $indikator->id)
+               ->avg('score');
+
+         // Rata-rata seluruh mahasiswa kategori_id 2
+         $rataSemua = DetailPenilaian::whereIn('penilaian_id', $penilaianSemua)
+               ->where('indikator_id', $indikator->id)
+               ->avg('score');
+
+         // Tentukan status
+         if ($nilaiSaya === null) {
+               $status = 'Belum dinilai';
+         } elseif ($nilaiSaya > $rataSemua) {
+               $status = 'Sangat Baik';
+         } elseif ($nilaiSaya == $rataSemua) {
+               $status = 'Cukup';
+         } else {
+               $status = 'Perlu Ditingkatkan';
+         }
+         $feedback = Feedback::where('kategori_id', 2)
+         ->where('target_id', $userId)
+         ->with('pengirim') // ambil data nama penilai
+         ->get();
+         $hasilIndikator[] = [
+               'indikator' => $indikator->name,
+               'nilai_saya' => $nilaiSaya ? round($nilaiSaya, 2) : 0,
+               'rata_semua' => $rataSemua ? round($rataSemua, 2) : 0,
+               'status' => $status
+         ];
+      }
+
+      /*
+      |--------------------------------------------------------------------------
+      | Return ke View
+      |--------------------------------------------------------------------------
+      */
+      return view('mahasiswa.laporan', [
+         'all_periode' => $all_periode,
+         'periode_id' => $periode_id,
+         'mahasiswa' => $mahasiswa,
+         'hasilIndikator' => $hasilIndikator,
+         'feedback' => $feedback
+      ]);
    }
+
 
    public function feedback() {
       $kategori = Kategori::where('id', '!=', 2)->where('id', '!=', 5)->get();
