@@ -315,44 +315,26 @@ class DosenController extends Controller
 
     // PENILAIAN MAHASISWA 
 
-    // public function penilaianMahasiswa()
-    // {
-    //     $user = Auth::user();
+    public function penilaianMahasiswa()
+    {
+        $user = Auth::user();
 
-    //     $dosen = Dosen::where('user_id', $user->id)->first();
-    //     if (!$dosen) {
-    //         return redirect()->back()->with('error', 'Data dosen tidak ditemukan.');
-    //     }
+        $dosen = Dosen::where('user_id', $user->id)->first();
+        if (!$dosen) {
+            return redirect()->back()->with('error', 'Data dosen tidak ditemukan.');
+        }
 
-    //         // eager-load user dan penilaian
-    //         $mahasiswaList = Mahasiswa::with(['user', 'enrollment', 'kelas', 'mahasiswa'])
-    //             ->get();
+        // eager-load user dan penilaian
+        $mahasiswaList = Mahasiswa::with(['user', 'penilaian'])
+            ->get();
 
-    //         return view('dosen.penilaian_mahasiswa', [
-    //             'user' => $user,
-    //             'dosen' => $dosen,
-    //             'mahasiswaList' => $mahasiswaList,
-    //         ]);
-    // }
+        return view('dosen.penilaian_mahasiswa', [
+            'user' => $user,
+            'dosen' => $dosen,
+            'mahasiswaList' => $mahasiswaList,
+        ]);
+    }
 
-public function penilaianMahasiswa()
-{
-    $user = Auth::user();
-    $dosen = Dosen::where('user_id', $user->id)->first();
-
-    // Ambil mahasiswa melalui relasi: Dosen → Kelas → Enrollment → Mahasiswa → User
-    $mahasiswaList = Mahasiswa::whereHas('enrollments.kelas', function ($q) use ($dosen) {
-        $q->where('dosen_nidn', $dosen->nidn);
-    })
-    ->with(['user', 'enrollments.kelas'])
-    ->get();
-
-    return view('dosen.penilaian_mahasiswa', [
-        'user' => $user,
-        'dosen' => $dosen,
-        'mahasiswaList' => $mahasiswaList,
-    ]);
-}
     // PENILAIAN FASILITAS
 
        public function penilaianFasilitas() {
@@ -362,24 +344,8 @@ public function penilaianMahasiswa()
 
     // PENILAIAN UNIT 
        public function penilaianUnit() {
-        $user = Auth::user();
-
-        $dosen = Dosen::where('user_id', $user->id)->first();
-
-        $kategoriUnit = Kategori::where('name', 'unit layanan')->first();
-
-    // Ambil unit
-    $units = Unit::all();
-
-    foreach ($units as $u) {
-        $u->sudah_dinilai = Penilaian::where('kategori_id', $kategoriUnit->id)
-            ->where('penilai_id', $dosen->nidn)
-            ->where('dinilai_id', $u->id)
-            ->where('dinilai_type', Unit::class)  
-            ->exists();
-    }
-      return view('dosen.penilaian_unit', ['units' => $units, 'user' => $user,
-            'dosen' => $dosen]);
+      $units = Unit::with('penanggungJawab')->paginate(10);
+      return view('dosen.penilaian_unit', ['units' => $units]);
    }
 
     // LAPORAN KERJA 
