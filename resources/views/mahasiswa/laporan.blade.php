@@ -64,12 +64,8 @@
                             <div class="text-muted">
                                 <p class="mb-1"><i class="bi bi-card-text me-2"></i>{{ $mahasiswa->nrp }}</p>
                                 <p class="mb-0"><i class="bi bi-mortarboard me-2"></i>{{ $mahasiswa->program_studi->name ?? '-' }}</p>
+                                <p class="mb-0">IPK: {{ $mahasiswa->ipk ?? '-' }}</p>
                             </div>
-                        </div>
-
-                        <div class="col-12 col-md-4 text-center text-md-end border-top border-md-top-0 pt-3 pt-md-0 mt-2 mt-md-0">
-                            <h6 class="text-uppercase text-muted small fw-bold mb-1">Skor Akhir KPI</h6>
-                           
                         </div>
 
                     </div>
@@ -90,29 +86,31 @@
         <div class="card card-custom shadow-sm border-0 h-100">
             <div class="card-body p-4">
 
-                <h5 class="fw-bold text-dark mb-3">Rincian Capaian Indikator</h5>
+                <h5 class="fw-bold text-dark mb-3">Rincian Kehadiran</h5>
 
                 <div class="table-responsive mb-5">
-                    <table class="table table-bordered table-hover align-middle w-100 text-nowrap">
+                    <table class="table table-bordered table-striped align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th>Indikator Kinerja</th>
-                                <th class="text-center" width="100">Skor Saya</th>
-                                <th class="text-center" width="100">Rata - Rata</th>
-                                <th class="text-center" width="150">Status</th>
+                                <th>Mata Kuliah</th>
+                                <th>Dosen</th>
+                                <th class="text-center">SKS</th>
+                                <th class="text-center">Kehadiran (%)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($hasilIndikator as $h)
+                            @forelse ($hasil as $h)
                                 <tr>
-                                    <td>{{ ucfirst( $h['indikator']) }}</td>
-                                    <td class="text-center fw-bold">{{ number_format($h['nilai_saya'], 2) }}</td>
-                                    <td class="text-center fw-bold">{{ number_format($h['rata_semua'], 2) }}</td>
-                                    <td class="text-center fw-bold">{{ $h['status'] }}</td>
+                                    <td>{{ $h['kelas'] }}</td>
+                                    <td>{{ $h['dosen'] }}</td>
+                                    <td class="text-center">{{ $h['sks'] }}</td>
+                                    <td class="text-center fw-bold">{{ $h['kehadiran'] }}%</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">Tidak ada data indikator.</td>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        Tidak ada data kelas untuk periode ini.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -135,7 +133,7 @@
     <div class="col-12 col-lg-5">
         <div class="card card-custom h-100 shadow-sm border-0">
             <div class="card-header bg-white py-3 fw-bold">
-                <i class="bi bi-chat-quote-fill me-2"></i> Komentar Dosen
+                <i class="bi bi-chat-quote-fill me-2"></i> Keluhan Dosen
             </div>
 
             <div class="card-body p-0">
@@ -153,7 +151,7 @@
                         </div>
                     @empty
                         <div class="list-group-item p-4 text-center text-muted">
-                            Belum ada komentar.
+                            Tidak ada keluhan dari dosen.
                         </div>
                     @endforelse
 
@@ -176,14 +174,14 @@
     Chart.defaults.font.size = 11;
 
     // My KPI Chart
-    const myKpiCtx = document.getElementById('myKpiChart').getContext('2d');
-    new Chart(myKpiCtx, {
-        type: 'radar',
+    const reportChart = document.getElementById('reportChart');
+    new Chart(reportChart, {
+        type: 'line',
         data: {
-            labels: ['IPK', 'Kehadiran', 'Prestasi', 'Organisasi', 'Tugas'],
+            labels: ['Kehadiran'],
             datasets: [{
                 label: 'Skor Saya',
-                data: [4.5, 5.0, 4.8, 4.0, 3.2],
+                data: [5.0],
                 backgroundColor: 'rgba(52, 152, 219, 0.2)',
                 borderColor: '#3498db',
                 pointBackgroundColor: '#3498db',
@@ -191,7 +189,7 @@
                 borderWidth: 2
             }, {
                 label: 'Target Minimum',
-                data: [3.5, 4.0, 3.5, 3.0, 3.5],
+                data: [3.5],
                 backgroundColor: 'rgba(231, 76, 60, 0.1)',
                 borderColor: '#e74c3c',
                 pointBackgroundColor: '#e74c3c',

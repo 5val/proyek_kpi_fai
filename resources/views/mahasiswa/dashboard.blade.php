@@ -46,18 +46,7 @@
     </div>
     
     <div class="row g-3 mb-4">
-        <div class="col-12 col-md-4">
-            <div class="card card-custom h-100 border-0 shadow-sm">
-                <div class="card-body text-center p-4">
-                    <div class="icon text-success mb-2 fs-1">
-                        <i class="bi bi-trophy-fill"></i>
-                    </div>
-                    <h3 class="fw-bold mb-0">{{ $kpiSaya }}</h3>
-                    <p class="text-muted small text-uppercase fw-bold mb-1">Skor KPI</p>
-                    <small class="text-success fw-bold"></small>
-                </div>
-            </div>
-        </div>
+       
         <div class="col-12 col-md-4">
             <div class="card card-custom h-100 border-0 shadow-sm">
                 <div class="card-body text-center p-4">
@@ -76,7 +65,7 @@
                     <div class="icon text-warning mb-2 fs-1">
                         <i class="bi bi-star-fill"></i>
                     </div>
-                    <h3 class="fw-bold mb-0">{{ $dosenBelum + $fasilitasBelum + $unitBelum + $praktikumBelum }}</h3>
+                    <h3 class="fw-bold mb-0">{{ $dosenBelum }}</h3>
                     <p class="text-muted small text-uppercase fw-bold mb-1">Pending</p>
                     <small class="text-danger fw-bold">Perlu diisi</small>
                 </div>
@@ -153,7 +142,7 @@
         <div class="col-12">
             <div class="card card-custom shadow-sm border-0">
                 <div class="card-header bg-white py-3 fw-bold">
-                    <i class="bi bi-clipboard-data me-2"></i> Detail Indikator KPI Saya
+                    <i class="bi bi-clipboard-data me-2"></i> Kelas yang Saya Ikuti
                 </div>
                 <div class="card-body p-0 p-md-3">
                     <div class="table-responsive">
@@ -161,23 +150,19 @@
                         <table class="table table-bordered table-hover align-middle w-100 text-nowrap">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Indikator Kinerja</th>
-                                    <th class="text-center" width="100">Skor Saya</th>
-                                    <th class="text-center" width="100">Rata - Rata</th>
-                                    <th class="text-center" width="150">Status</th>
+                                    <th class="text-center" width="100">Nama Kelas</th>
+                                    <th class="text-center" width="150">Dosen Pengajar</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($hasilIndikator as $h)
+                                @forelse ($kelasSaya as $h)
                                     <tr>
-                                        <td>{{ ucfirst( $h['indikator']) }}</td>
-                                        <td class="text-center fw-bold">{{ number_format($h['nilai_saya'], 2) }}</td>
-                                        <td class="text-center fw-bold">{{ number_format($h['rata_semua'], 2) }}</td>
-                                        <td class="text-center fw-bold">{{ $h['status'] }}</td>
+                                        <td class="text-center fw-bold">{{ number_format($h->mata_kuliah->name, 2) }}</td>
+                                        <td class="text-center fw-bold">{{ number_format($h->dosen->user->name, 2) }}</td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="text-center text-muted py-4">Tidak ada data indikator.</td>
+                                        <td colspan="4" class="text-center text-muted py-4">Tidak ada kelas yang saya ikuti.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -213,57 +198,8 @@
                                     </a>
                                 </div>
                             @endforeach
-                        @endif
-
-                        @if($praktikumBelumList->count())
-                            @foreach ($praktikumBelumList as $p)
-                                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                    <div class="me-3 overflow-hidden">
-                                        <strong class="text-truncate d-block">{{ $p->mataKuliah->name ?? 'Praktikum' }}</strong>
-                                        <small class="text-muted">
-                                            <i class="bi bi-pc-display me-1"></i> Praktikum
-                                        </small>
-                                    </div>
-                                    <a href="{{ route('mahasiswa.penilaian_praktikum') }}" 
-                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                        Isi
-                                    </a>
-                                </div>
-                            @endforeach
-                        @endif
-
-                        @if($fasilitasBelumList->count())
-                            @foreach ($fasilitasBelumList as $f)
-                                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                    <div class="me-3 overflow-hidden">
-                                        <strong class="text-truncate d-block">{{ $f->name }}</strong>
-                                        <small class="text-muted">
-                                            <i class="bi bi-building me-1"></i> Fasilitas
-                                        </small>
-                                    </div>
-                                    <a href="{{ route('mahasiswa.penilaian_fasilitas') }}" 
-                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                        Isi
-                                    </a>
-                                </div>
-                            @endforeach
-                        @endif
-
-                        @if($unitBelumList->count())
-                            @foreach ($unitBelumList as $u)
-                                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                    <div class="me-3 overflow-hidden">
-                                        <strong class="text-truncate d-block">{{ $u->name }}</strong>
-                                        <small class="text-muted">
-                                            <i class="bi bi-bank2 me-1"></i> Unit Layanan
-                                        </small>
-                                    </div>
-                                    <a href="{{ route('mahasiswa.penilaian_unit') }}" 
-                                    class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                        Isi
-                                    </a>
-                                </div>
-                            @endforeach
+                        @else
+                            <div style="display:flex;justify-content:center; align-items: center;">Semua penilaian sudah saya isi</div>
                         @endif
 
                     </div>
@@ -322,9 +258,9 @@
     // My KPI Chart
     const myKpiCtx = document.getElementById('myKpiChart').getContext('2d');
     new Chart(myKpiCtx, {
-        type: 'radar',
+        type: 'line',
         data: {
-            labels: ['IPK', 'Kehadiran', 'Prestasi', 'Organisasi', 'Tugas'],
+            labels: ['Kehadiran'],
             datasets: [{
                 label: 'Skor Saya',
                 data: [0, 0, 0, 0, 0],

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Dosen;
 use App\Models\Fasilitas;
 use App\Models\Feedback;
+use App\Models\Kehadiran;
 use App\Models\Kategori;
 use App\Models\Enrollment;
 use App\Models\Mahasiswa;
@@ -33,6 +34,7 @@ class MahasiswaController extends Controller
    {
       $userId = Auth::id();
       $periodeAktif = Periode::max('id');
+   
 
       // Data Mahasiswa
       $mahasiswa = Mahasiswa::where('user_id', $userId)->firstOrFail();
@@ -174,7 +176,7 @@ class MahasiswaController extends Controller
          'totalUnit', 'unitSudah', 'unitBelum',
          'totalFasilitas', 'fasilitasSudah', 'fasilitasBelum',
 
-         'hasilIndikator', 'kpiSaya', 'feedback', 'mahasiswa', 'dosenBelumList', 'fasilitasBelumList', 'praktikumBelumList', 'unitBelumList'
+         'hasilIndikator', 'kpiSaya', 'feedback', 'mahasiswa', 'dosenBelumList', 'fasilitasBelumList', 'praktikumBelumList', 'unitBelumList', 'kelasSaya'
       ));
    }
 
@@ -265,69 +267,66 @@ class MahasiswaController extends Controller
       return view('mahasiswa.penilaian_praktikum', compact('praktikumList'));
    }
 
-  public function laporan(Request $request)
-   {
-      $userId = Auth::id();
-      $mahasiswa = Mahasiswa::with('program_studi')
-         ->where('user_id', $userId)
-         ->firstOrFail();
-      $all_periode = Periode::orderBy('id', 'desc')->get();
-      $periode_id = $request->periode_id ?? Periode::max('id');
-      $penilaianSaya = Penilaian::where('kategori_id', 2)
-         ->where('dinilai_id', $userId)
-         ->where('periode_id', $periode_id)
-         ->pluck('id');
-      $penilaianSemua = Penilaian::where('kategori_id', 2)
-         ->where('periode_id', $periode_id)
-         ->pluck('id');
-      $indikatorList = Indikator::where('kategori_id', 2)->get();
-      $hasilIndikator = [];
-      foreach ($indikatorList as $indikator) {
-         $nilaiSaya = DetailPenilaian::whereIn('penilaian_id', $penilaianSaya)
-               ->where('indikator_id', $indikator->id)
-               ->avg('score');
+public function laporan(Request $request)
+{
+    $userId = auth()->id();
 
-         // Rata-rata seluruh mahasiswa kategori_id 2
-         $rataSemua = DetailPenilaian::whereIn('penilaian_id', $penilaianSemua)
-               ->where('indikator_id', $indikator->id)
-               ->avg('score');
+    // Ambil data mahasiswa
+    $mahasiswa = Mahasiswa::with('user', 'program_studi')
+        ->where('user_id', $userId)
+        ->firstOrFail();
 
-         // Tentukan status
-         if ($nilaiSaya === null) {
-               $status = 'Belum dinilai';
-         } elseif ($nilaiSaya > $rataSemua) {
-               $status = 'Sangat Baik';
-         } elseif ($nilaiSaya == $rataSemua) {
-               $status = 'Cukup';
-         } else {
-               $status = 'Perlu Ditingkatkan';
-         }
-         $feedback = Feedback::where('kategori_id', 2)
-         ->where('target_id', $userId)
-         ->with('pengirim') // ambil data nama penilai
-         ->get();
-         $hasilIndikator[] = [
-               'indikator' => $indikator->name,
-               'nilai_saya' => $nilaiSaya ? round($nilaiSaya, 2) : 0,
-               'rata_semua' => $rataSemua ? round($rataSemua, 2) : 0,
-               'status' => $status
-         ];
-      }
+    // Semua periode
+    $all_periode = Periode::orderBy('id', 'desc')->get();
+    $periode_id = $request->periode_id ?? Periode::max('id');
 
-      /*
-      |--------------------------------------------------------------------------
-      | Return ke View
-      |--------------------------------------------------------------------------
-      */
-      return view('mahasiswa.laporan', [
-         'all_periode' => $all_periode,
-         'periode_id' => $periode_id,
-         'mahasiswa' => $mahasiswa,
-         'hasilIndikator' => $hasilIndikator,
-         'feedback' => $feedback
-      ]);
-   }
+    // Ambil kelas yang diikuti mahasiswa pada periode tersebut
+    $kelasDiambil = Kelas::with(['mata_kuliah', 'dosen'])
+        ->where('periode_id', $periode_id)
+        ->whereHas('enrollment.mahasiswa', function ($q) use ($mahasiswa) {
+            $q->where('mahasiswa_nrp', $mahasiswa->id);
+        })
+        ->get();
 
+    $hasil = [];
+
+    foreach ($kelasDiambil as $k) {
+
+        // Total Pertemuan
+        $totalPertemuan = Kehadiran::where('kelas_id', $k->id)->count();
+
+        // Kehadiran mahasiswa
+        $hadir = Kehadiran::where('kelas_id', $k->id)
+            ->where('mahasiswa_nrp', $mahasiswa->id)
+            ->where('status', 'hadir')
+            ->count();
+
+        $persenHadir = $totalPertemuan > 0
+            ? round(($hadir / $totalPertemuan) * 100, 2)
+            : 0;
+
+        $hasil[] = [
+            'kelas'      => $k->mata_kuliah->nama,
+            'dosen'      => $k->dosen->name,
+            'sks'        => $k->sks ?? 0,
+            'kehadiran'  => $persenHadir
+        ];
+    }
+
+    // Ambil feedback dosen
+    $feedback = Feedback::where('kategori_id', 2)
+        ->where('target_id', $userId)
+        ->with('pengirim')
+        ->get();
+
+    return view('mahasiswa.laporan', [
+        'all_periode' => $all_periode,
+        'periode_id' => $periode_id,
+        'mahasiswa' => $mahasiswa,
+        'hasil' => $hasil,
+        'feedback' => $feedback
+    ]);
+}
 
    public function feedback() {
       $kategori = Kategori::where('id', '!=', 2)->where('id', '!=', 5)->get();
