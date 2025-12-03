@@ -68,9 +68,15 @@
                                 <td class="text-center">{{ $p->id }}</td>
                                 
                                 {{-- Batasi lebar nama agar tidak terlalu panjang --}}
-                                <td style="max-width: 250px;" class="text-truncate" title="{{ $p->dinilai_user->name ?? $p->dinilai->name }}">
-                                    <span class="fw-bold">{{ $p->dinilai_user->name ?? $p->dinilai->name }}</span>
-                                </td>
+                                @if ($p->dinilai_type == 'App\Models\Kampus')
+                                 <td style="max-width: 250px;" class="text-truncate" title="Manajemen Kampus">
+                                       <span class="fw-bold">Manajemen Kampus</span>
+                                 </td>
+                                @else
+                                 <td style="max-width: 250px;" class="text-truncate" title="{{ $p->dinilai_user->name ?? $p->dinilai->name }}">
+                                       <span class="fw-bold">{{ $p->dinilai_user->name ?? $p->dinilai->name }}</span>
+                                 </td>
+                                @endif
                                 
                                 <td><span class="badge bg-light text-dark border">{{ $p->kategori->name }}</span></td>
                                 <td>{{ $p->periode->nama_periode }}</td>

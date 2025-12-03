@@ -34,17 +34,6 @@
     </div>
 
     <div class="col-6 col-md-4 col-xl">
-      <a href="{{ route('admin.dashboard.detail.card', 'belum_dinilai_mahasiswa') }}" class="text-decoration-none">
-        <div class="card card-custom bg-warning text-dark h-100 shadow-sm border-0">
-            <div class="card-body text-center p-3">
-                <h2 class="fw-bold mb-0">{{ $belum_dinilai_count['mahasiswa'] }}</h2>
-                <small>Mahasiswa</small>
-            </div>
-        </div>
-      </a>
-    </div>
-
-    <div class="col-6 col-md-4 col-xl">
       <a href="{{ route('admin.dashboard.detail.card', 'belum_dinilai_fasilitas') }}" class="text-decoration-none">
         <div class="card card-custom bg-secondary text-white h-100 shadow-sm border-0">
             <div class="card-body text-center p-3">
@@ -131,35 +120,6 @@
                     <li class="list-group-item text-center py-5 text-muted">
                         <i class="bi bi-emoji-smile fs-1 d-block mb-2 opacity-25"></i>
                         <small>Semua kinerja dosen baik</small>
-                    </li>
-                    @endforelse
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 col-md-6 col-xl-4">
-        <div class="card card-custom h-100 shadow-sm">
-            <div class="card-header bg-white py-3 fw-bold">
-                <i class="bi bi-people-fill me-2"></i> Mahasiswa (Bottom 3)
-            </div>
-            <div class="card-body p-0">
-                <ul class="list-group list-group-flush">
-                    @forelse($low_kpi['mahasiswa'] as $mahasiswa)
-                    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                        <div class="me-2 overflow-hidden">
-                            <div class="text-truncate fw-bold">{{ $mahasiswa->user->name }}</div>
-                            <small class="text-muted">{{ $mahasiswa->nrp }}</small>
-                        </div>
-                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                            <span class="badge bg-danger">{{ number_format($mahasiswa->avg_kpi, 1) }}</span>
-                            <a href="{{ route('admin.dashboard.detail.list', ['mahasiswa', $mahasiswa->user->id]) }}" class="btn btn-sm btn-light border"><i class="bi bi-eye"></i></a>
-                        </div>
-                    </li>
-                    @empty
-                    <li class="list-group-item text-center py-5 text-muted">
-                        <i class="bi bi-emoji-smile fs-1 d-block mb-2 opacity-25"></i>
-                        <small>Semua kinerja mahasiswa baik</small>
                     </li>
                     @endforelse
                 </ul>

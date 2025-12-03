@@ -335,6 +335,10 @@ class DosenController extends Controller
     //         ]);
     // }
 
+    public function penilaianManajemen() {
+      return redirect()->route('penilaian.form', ['tipe' => 'manajemen', 'id' => 1]);
+    }
+
 public function penilaianMahasiswa()
 {
     $user = Auth::user();

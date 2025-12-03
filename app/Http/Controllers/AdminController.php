@@ -45,9 +45,6 @@ class AdminController extends Controller
          'dosen' => Dosen::whereDoesntHave('penilaian', function($q) use ($periode) {
             $q->where('periode_id', $periode->id);
          })->count(),
-         'mahasiswa' => Mahasiswa::whereDoesntHave('penilaian', function($q) use ($periode) {
-            $q->where('periode_id', $periode->id);
-         })->count(),
          'fasilitas' => Fasilitas::whereDoesntHave('penilaian', function($q) use ($periode) {
             $q->where('periode_id', $periode->id);
          })->count(),
@@ -92,11 +89,6 @@ class AdminController extends Controller
 
       $low_kpi = [
          'dosen' => Dosen::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))
-               ->withAvg(['penilaian' => fn($q) => $q->where('periode_id', $periode->id)], 'avg_score')
-               ->orderBy('penilaian_avg_avg_score', 'asc')
-               ->with('user')
-               ->take(3)->get()->map(function($item) { $item->avg_kpi = $item->penilaian_avg_avg_score; return $item; }),
-         'mahasiswa' => Mahasiswa::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))
                ->withAvg(['penilaian' => fn($q) => $q->where('periode_id', $periode->id)], 'avg_score')
                ->orderBy('penilaian_avg_avg_score', 'asc')
                ->with('user')
@@ -167,6 +159,9 @@ class AdminController extends Controller
          ];
       });
 
+      // dd($chart_bulan);
+      // dd($chart_kategori);
+
       return view('admin.dashboard', [
          'belum_dinilai_count' => $belum_dinilai_count,
          'feedbacks' => $feedbacks,
@@ -190,22 +185,6 @@ class AdminController extends Controller
                         'id' => $dosen->id,
                         'name' => $dosen->user->name ?? 'User Tidak Ditemukan', // Ambil nama dari user
                         'nidn' => $dosen->nidn,
-                    ];
-                })
-         ];
-      } elseif($type == 'belum_dinilai_mahasiswa') {
-         $data = [
-            'pageTitle' => 'Mahasiswa Belum Dinilai',
-            'pageSubtitle' => 'Daftar mahasiswa yang belum memiliki data penilaian masuk',
-            'tableTitle' => 'List Mahasiswa',
-            'headers' => ['Nama Mahasiswa', 'NRP', 'Program Studi'],
-            'keys' => ['name', 'nrp', 'program_studi'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Mahasiswa::whereDoesntHave('penilaian', fn($q) => $q->where('periode_id', $periode->id))->with('user', 'program_studi')->get()->map(function($mhs) {
-                    return [
-                        'id' => $mhs->id,
-                        'name' => $mhs->user->name ?? 'User Tidak Ditemukan',
-                        'nrp' => $mhs->nrp, // Sesuaikan dengan nama kolom di DB (misal nrp/nim)
-                        'program_studi' => $mhs->program_studi->name ?? '-',
                     ];
                 })
          ];
@@ -258,16 +237,6 @@ class AdminController extends Controller
             'items' => Penilaian::where('dinilai_type', 'App\Models\Dosen')->where('dinilai_id', $id)->where('periode_id', $periode->id)->orderBy('avg_score', 'asc')->get(), 
             'actionType' => 'detail'
          ];
-      } elseif($type == 'mahasiswa') {
-         $data = [
-            'pageTitle' => 'Mahasiswa Performa Rendah',
-            'pageSubtitle' => 'Daftar penilaian mahasiswa dengan skor rata-rata KPI rendah',
-            'tableTitle' => 'List Penilaian',
-            'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar'],
-            'keys' => ['created_at', 'avg_score', 'komentar', 'Aksi'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Penilaian::where('dinilai_type', 'App\Models\Mahasiswa')->where('dinilai_id', $id)->where('periode_id', $periode->id)->orderBy('avg_score', 'asc')->get(), 
-            'actionType' => 'detail'
-         ];
       } elseif($type == 'fasilitas') {
          $data = [
             'pageTitle' => 'Fasilitas Performa Rendah',
@@ -295,7 +264,7 @@ class AdminController extends Controller
             'tableTitle' => 'List Penilaian',
             'headers' => ['Tanggal', 'Skor Rata-rata', 'Komentar', 'Aksi'],
             'keys' => ['created_at', 'avg_score', 'komentar'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Penilaian::where('dinilai_type', 'App\Models\Praktikum')->where('dinilai_id', $id)->where('periode_id', $periode->id)->orderBy('avg_score', 'asc')->get(), 
+            'items' => Penilaian::where('dinilai_type', 'App\Models\Praktikum')->where('dinilai_id', operator: $id)->where('periode_id', $periode->id)->orderBy('avg_score', 'asc')->get(), 
             'actionType' => 'detail'
          ];
       }

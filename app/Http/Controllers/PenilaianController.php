@@ -2,8 +2,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Indikator;
+use App\Models\Kampus;
 use App\Models\Penilaian;
 use App\Models\DetailPenilaian;
+use App\Models\Periode;
 use Illuminate\Http\Request;
 use App\Models\Dosen;
 use App\Models\Fasilitas;
@@ -37,6 +39,10 @@ class PenilaianController extends Controller
         } elseif ($tipe === 'praktikum') {
             $kategoriIds = [5];
             $target = Praktikum::findOrFail($id);
+            $targetName = '';
+        } elseif ($tipe === 'manajemen') {
+            $kategoriIds = [6];
+            $target = Kampus::findOrFail($id);
             $targetName = '';
         } else {
             abort(404);
@@ -80,16 +86,22 @@ class PenilaianController extends Controller
             $target = Praktikum::where('id', $id)->firstOrFail();
             $targetId = $target->id;
             $dinilaiType = 'App\Models\Praktikum';
+        } elseif ($tipe === 'manajemen') {
+            $kategoriIds = [6];
+            $target = Kampus::first();
+            $targetId = $target->id;
+            $dinilaiType = 'App\Models\Kampus';
         } else {
             abort(404, 'Tipe penilaian tidak valid.');
         }
+        $periode = Periode::latest()->first();
         $kategoriUtama = $kategoriIds[0];
         $penilaian = Penilaian::create([
             'kategori_id' => $kategoriUtama,
             'penilai_id'  => auth()->id() ?? 1,
             'dinilai_id'  => $targetId,
             'dinilai_type' => $dinilaiType, 
-            'periode_id'  => 1,
+            'periode_id'  => $periode->id,
             'komentar'    => $request->feedback,
             'avg_score'   => collect($request->rating)->avg(),
         ]);

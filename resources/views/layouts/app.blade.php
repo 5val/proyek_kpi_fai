@@ -192,6 +192,8 @@
         /* Fix DataTables Responsive Scroll */
         .table-responsive-wrapper {
             overflow-x: auto;
+            width: 100%;
+            display: block;
             -webkit-overflow-scrolling: touch;
         }
         
@@ -239,18 +241,17 @@
                         <a class="nav-link {{ request()->routeIs('admin.kategori_kpi*') ? 'active' : '' }}" href="{{ route('admin.kategori_kpi') }}"><i class="bi bi-tags-fill"></i> Kategori KPI</a>
                         <a class="nav-link {{ request()->routeIs('admin.penilaian*') ? 'active' : '' }}" href="{{ route('admin.penilaian') }}"><i class="bi bi-star-fill"></i> Penilaian</a>
                         <a class="nav-link {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}" href="{{ route('admin.laporan') }}"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</a>
-                        <a class="nav-link {{ request()->routeIs('admin.feedback*') ? 'active' : '' }}" href="{{ route('admin.feedback') }}"><i class="bi bi-chat-left-text-fill"></i> Feedback</a>
+                        <a class="nav-link {{ request()->routeIs('admin.feedback*') ? 'active' : '' }}" href="{{ route('admin.feedback') }}"><i class="bi bi-chat-left-text-fill"></i> Keluhan</a>
 
                     {{-- ================= MENU DOSEN ================= --}}
                     @elseif(Auth::user()->role == 'dosen')
                         <a class="nav-link {{ request()->routeIs('dosen.dashboard') ? 'active' : '' }}" href="{{ route('dosen.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
                         <a class="nav-link {{ request()->routeIs('dosen.kpi*') ? 'active' : '' }}" href="{{ route('dosen.kpi') }}"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
                         <a class="nav-link {{ request()->routeIs('dosen.kelas*') ? 'active' : '' }}" href="{{ route('dosen.kelas') }}"><i class="bi bi-book-fill"></i> Kelas</a>
-                        <a class="nav-link {{ request()->routeIs('dosen.penilaian_mahasiswa*') ? 'active' : '' }}" href="{{ route('dosen.penilaian_mahasiswa') }}"><i class="bi bi-people"></i> Penilaian Mahasiswa</a>
+                        <a class="nav-link {{ request()->routeIs('dosen.penilaian_manajemen') ? 'active' : '' }}" href="{{ route('dosen.penilaian_manajemen') }}"><i class="bi bi-bank2"></i> Penilaian Manajemen</a>
                         <a class="nav-link {{ request()->routeIs('dosen.penilaian_fasilitas*') ? 'active' : '' }}" href="{{ route('dosen.penilaian_fasilitas') }}"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
-                        <a class="nav-link {{ request()->routeIs('dosen.penilaian_unit*') ? 'active' : '' }}" href="{{ route('dosen.penilaian_unit') }}"><i class="bi bi-bank2"></i> Penilaian Unit</a>
                         <a class="nav-link {{ request()->routeIs('dosen.laporan*') ? 'active' : '' }}" href="{{ route('dosen.laporan') }}"><i class="bi bi-file-earmark-bar-graph"></i> Laporan Kinerja</a>
-                        <a class="nav-link {{ request()->routeIs('dosen.feedback*') ? 'active' : '' }}" href="{{ route('dosen.feedback') }}"><i class="bi bi-chat-left-text"></i> Feedback</a>
+                        <a class="nav-link {{ request()->routeIs('dosen.feedback*') ? 'active' : '' }}" href="{{ route('dosen.feedback') }}"><i class="bi bi-chat-left-text"></i> Keluhan</a>
 
                     {{-- ================= MENU MAHASISWA ================= --}}
                     @elseif(Auth::user()->role == 'mahasiswa')
@@ -260,7 +261,7 @@
                         <a class="nav-link {{ request()->routeIs('mahasiswa.penilaian_unit*') ? 'active' : '' }}" href="{{ route('mahasiswa.penilaian_unit') }}"><i class="bi bi-bank2"></i> Penilaian Unit</a>
                         <a class="nav-link {{ request()->routeIs('mahasiswa.penilaian_praktikum*') ? 'active' : '' }}" href="{{ route('mahasiswa.penilaian_praktikum') }}"><i class="bi bi-person-workspace"></i> Penilaian Praktikum</a>
                         <a class="nav-link {{ request()->routeIs('mahasiswa.laporan*') ? 'active' : '' }}" href="{{ route('mahasiswa.laporan') }}"><i class="bi bi-bar-chart"></i> Laporan KPI</a>
-                        <a class="nav-link {{ request()->routeIs('mahasiswa.feedback*') ? 'active' : '' }}" href="{{ route('mahasiswa.feedback') }}"><i class="bi bi-chat-left-text"></i> Feedback</a>
+                        <a class="nav-link {{ request()->routeIs('mahasiswa.feedback*') ? 'active' : '' }}" href="{{ route('mahasiswa.feedback') }}"><i class="bi bi-chat-left-text"></i> Keluhan</a>
                     @endif
                 @endauth
 
@@ -344,9 +345,7 @@
                       "paginate": { "next": ">>", "previous": "<<" }
                   }
               });
-              
-              // === FITUR KUNCI: Membuat Tabel Responsive Scroll ===
-              // Membungkus tabel dengan div scrollable agar tidak merusak layout HP
+
               $('.data-table').wrap('<div class="table-responsive-wrapper"></div>');
           }
 
