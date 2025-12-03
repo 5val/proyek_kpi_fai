@@ -335,31 +335,28 @@ class DosenController extends Controller
         ]);
     }
 
-<<<<<<< HEAD
     public function penilaianManajemen() {
       return redirect()->route('penilaian.form', ['tipe' => 'manajemen', 'id' => 1]);
     }
 
-public function penilaianMahasiswa()
-{
-    $user = Auth::user();
-    $dosen = Dosen::where('user_id', $user->id)->first();
+// public function penilaianMahasiswa()
+// {
+//     $user = Auth::user();
+//     $dosen = Dosen::where('user_id', $user->id)->first();
 
-    // Ambil mahasiswa melalui relasi: Dosen → Kelas → Enrollment → Mahasiswa → User
-    $mahasiswaList = Mahasiswa::whereHas('enrollments.kelas', function ($q) use ($dosen) {
-        $q->where('dosen_nidn', $dosen->nidn);
-    })
-    ->with(['user', 'enrollments.kelas'])
-    ->get();
+//     // Ambil mahasiswa melalui relasi: Dosen → Kelas → Enrollment → Mahasiswa → User
+//     $mahasiswaList = Mahasiswa::whereHas('enrollments.kelas', function ($q) use ($dosen) {
+//         $q->where('dosen_nidn', $dosen->nidn);
+//     })
+//     ->with(['user', 'enrollments.kelas'])
+//     ->get();
 
-    return view('dosen.penilaian_mahasiswa', [
-        'user' => $user,
-        'dosen' => $dosen,
-        'mahasiswaList' => $mahasiswaList,
-    ]);
-}
-=======
->>>>>>> d3c5ca073c427c2d4e788b1ee1336354366ed5ea
+//     return view('dosen.penilaian_mahasiswa', [
+//         'user' => $user,
+//         'dosen' => $dosen,
+//         'mahasiswaList' => $mahasiswaList,
+//     ]);
+// }
     // PENILAIAN FASILITAS
 
        public function penilaianFasilitas() {
