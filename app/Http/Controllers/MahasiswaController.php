@@ -329,7 +329,7 @@ public function laporan(Request $request)
 }
 
    public function feedback() {
-      $kategori = Kategori::where('id', '!=', 2)->where('id', '!=', 5)->get();
+      $kategori = Kategori::all();
       return view('mahasiswa.feedback', ['kategori' => $kategori]);
    }
 

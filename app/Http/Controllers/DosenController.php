@@ -415,4 +415,9 @@ class DosenController extends Controller
         $indikator = Indikator::where('kategori_id', 1)->get();
         return view('dosen.laporan', compact('user', 'dosen', 'indikator'));
     }
+
+    public function feedback() {
+      $kategori = Kategori::where('id', '!=', 1)->get();
+      return view('dosen.feedback', ['kategori' => $kategori]);
+    }
 }

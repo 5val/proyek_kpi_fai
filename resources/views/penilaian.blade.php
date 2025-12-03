@@ -78,7 +78,7 @@
 
                 <div class="mt-4">
                     <label for="feedback" class="form-label fw-bold">Laporan / Masukan (Opsional)</label>
-                    <textarea class="form-control" name="feedback" id="feedback" rows="4" placeholder="Tuliskan kritik, saran, atau laporan kerusakan di sini..."></textarea>
+                    <textarea class="form-control" name="feedback" id="feedback" rows="4" placeholder="Tuliskan kritik, saran, atau komentar di sini..."></textarea>
                 </div>
 
                 <hr class="my-4">

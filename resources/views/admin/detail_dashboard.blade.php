@@ -11,7 +11,7 @@
         <div class="card-custom shadow-sm border-0">
             {{-- Header Responsif: flex-wrap agar tombol turun ke bawah jika layar sempit --}}
             <div class="card-header bg-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <div class="fw-bold fs-5 text-primary">
+                <div class="fw-bold fs-5">
                     <i class="bi bi-list-ul me-1"></i> {{ $data['tableTitle'] ?? 'Data List' }}
                 </div>
                 

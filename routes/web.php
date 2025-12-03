@@ -104,7 +104,7 @@ Route::prefix('dosen')
             ->name('laporan');    
 
         // Route::get('/laporan', fn() => view('dosen.laporan'))->name('laporan');
-        Route::get('/feedback', fn() => view('dosen.feedback'))->name('feedback');
+        Route::get('/feedback', [DosenController::class, 'feedback'])->name('feedback');
     });
 
 
