@@ -17,7 +17,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('loginData')->midd
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/', [AuthController::class, 'redirectPathFor']);
-Route::get('/profiles', [AuthController::class, 'redirectProfiles'])->middleware('auth');
+Route::get('/profiles', [AuthController::class, 'redirectProfiles'])->middleware(['auth', 'active']);
 
 
 /*
@@ -42,7 +42,7 @@ Route::get('/profiles', [AuthController::class, 'redirectProfiles'])->middleware
 
 Route::prefix('mahasiswa')
     ->name('mahasiswa.')
-    // ->middleware(['login', 'role:mahasiswa'])
+    // ->middleware(['login', 'role:mahasiswa', 'active'])
     ->group(function () {
         Route::get('/', [MahasiswaController::class, 'dashboard'])->name('dashboard');
         Route::get('/profile', [MahasiswaController::class, 'profile'])->name('profile');
@@ -67,7 +67,7 @@ Route::prefix('mahasiswa')
 */
 Route::prefix('dosen')
     ->name('dosen.')
-    ->middleware(['auth', 'role:dosen'])
+    ->middleware(['auth', 'role:dosen', 'active'])
     ->group(function () {
         Route::get('/', [DosenController::class, 'dashboard'])->name('dashboard');
 
@@ -115,7 +115,7 @@ Route::prefix('dosen')
 */
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth', 'role:admin'])
+    ->middleware(['auth', 'role:admin', 'active'])
     ->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/dashboard/detail/{type}', [AdminController::class, 'detail_dashboard_card'])->name('dashboard.detail.card');

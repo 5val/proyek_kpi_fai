@@ -43,6 +43,16 @@
                                 @endforeach
                             </select>
                         </div>
+                        
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-light"><i class="bi bi-calendar-event"></i></span>
+                            <select class="form-select border-secondary-subtle" name="prodi_id" id="prodiFilter" onchange="this.form.submit()">
+                                <option value='' @if (request('prodi_id') == null) selected @endif>Tanpa Jurusan</option>
+                                @foreach ($all_prodi as $p)
+                                    <option value={{ $p->id }} {{ request('prodi_id') == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -79,7 +89,7 @@
                                 @endif
                                 
                                 <td><span class="badge bg-light text-dark border">{{ $p->kategori->name }}</span></td>
-                                <td>{{ $p->periode->nama_periode }}</td>
+                                <td>{{ $p->periode->nama_periode ?? '-' }}</td>
                                 
                                 <td class="text-center">
                                     {{-- Warna badge berdasarkan skor --}}

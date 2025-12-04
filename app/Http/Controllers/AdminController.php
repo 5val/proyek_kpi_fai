@@ -45,12 +45,8 @@ class AdminController extends Controller
          'dosen' => Dosen::whereDoesntHave('penilaian', function($q) use ($periode) {
             $q->where('periode_id', $periode->id);
          })->count(),
-         'fasilitas' => Fasilitas::whereDoesntHave('penilaian', function($q) use ($periode) {
-            $q->where('periode_id', $periode->id);
-         })->count(),
-         'unit' => Unit::whereDoesntHave('penilaian', function($q) use ($periode) {
-            $q->where('periode_id', $periode->id);
-         })->count(),
+         'fasilitas' => Fasilitas::whereDoesntHave('penilaian')->count(),
+         'unit' => Unit::whereDoesntHave('penilaian')->count(),
          'praktikum' => Praktikum::whereDoesntHave('penilaian', function($q) use ($periode) {
             $q->where('periode_id', $periode->id);
          })->count(),
@@ -78,14 +74,6 @@ class AdminController extends Controller
                   'target_id' => $item->target_id
                ];
          });
-      
-      //    $low_kpi = [
-      //       'dosen' => Dosen::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))->orderBy('avg_kpi', 'asc')->with('user')->take(3)->get(),
-      //       'mahasiswa' => Mahasiswa::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))->orderBy('avg_kpi', 'asc')->with('user')->take(3)->get(),
-      //       'fasilitas' => Fasilitas::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))->orderBy('avg_kpi', 'asc')->take(3)->get(),
-      //       'unit' => Unit::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))->orderBy('avg_kpi', 'asc')->take(3)->get(),
-      //       'praktikum' => Praktikum::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))->orderBy('avg_kpi', 'asc')->with('kelas.mataKuliah', 'kelas.program_studi')->take(3)->get(),
-      //   ];
 
       $low_kpi = [
          'dosen' => Dosen::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))
@@ -93,12 +81,12 @@ class AdminController extends Controller
                ->orderBy('penilaian_avg_avg_score', 'asc')
                ->with('user')
                ->take(3)->get()->map(function($item) { $item->avg_kpi = $item->penilaian_avg_avg_score; return $item; }),
-         'fasilitas' => Fasilitas::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))
-               ->withAvg(['penilaian' => fn($q) => $q->where('periode_id', $periode->id)], 'avg_score')
+         'fasilitas' => Fasilitas::whereHas('penilaian')
+               ->withAvg('penilaian', 'avg_score')
                ->orderBy('penilaian_avg_avg_score', 'asc')
                ->take(3)->get()->map(function($item) { $item->avg_kpi = $item->penilaian_avg_avg_score; return $item; }),
-         'unit' => Unit::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))
-               ->withAvg(['penilaian' => fn($q) => $q->where('periode_id', $periode->id)], 'avg_score')
+         'unit' => Unit::whereHas('penilaian')
+               ->withAvg('penilaian', 'avg_score')
                ->orderBy('penilaian_avg_avg_score', 'asc')
                ->take(3)->get()->map(function($item) { $item->avg_kpi = $item->penilaian_avg_avg_score; return $item; }),
          'praktikum' => Praktikum::whereHas('penilaian', fn($q) => $q->where('periode_id', $periode->id))
@@ -142,13 +130,23 @@ class AdminController extends Controller
 
       // 2. Ambil rata-rata skor per kategori
       $kategoriData = Penilaian::select(
-            'kategori_id',
-            DB::raw('AVG(avg_score) as rata_rata_skor')
-         )
-         ->where('periode_id', $periode->id)
-         ->groupBy('kategori_id')
-         ->get()
-         ->keyBy('kategori_id');
+        'kategori_id',
+        DB::raw('AVG(avg_score) as rata_rata_skor')
+    )
+    ->where(function ($q) use ($periode) {
+         $q->whereNotIn('dinilai_type', [
+               'App\Models\Fasilitas',
+               'App\Models\Unit'
+         ])->where('periode_id', $periode->id);
+
+      })
+      ->orWhereIn('dinilai_type', [
+         'App\Models\Fasilitas',
+         'App\Models\Unit'
+      ])
+      ->groupBy('kategori_id')
+      ->get()
+      ->keyBy('kategori_id');
 
       // 3. Merge untuk fill missing 0
       $chart_kategori = $allKategori->map(function($kategori) use ($kategoriData) {
@@ -914,15 +912,33 @@ class AdminController extends Controller
    public function penilaian(Request $request) {
       $all_kategori = Kategori::all();
       $all_periode = Periode::orderBy('id', 'desc')->get();
+      $all_prodi = ProgramStudi::all();
       $penilaian = Penilaian::with('penilai', 'kategori', 'periode', 'dinilai');
       if($request->kategori_id) {
          $penilaian = $penilaian->where('kategori_id', $request->kategori_id);
       }
       if($request->periode_id) {
-         $penilaian = $penilaian->where('periode_id', $request->periode_id);
+         $penilaian = $penilaian
+         ->where(function ($q) use ($request) {
+               $q->whereNotIn('dinilai_type', [
+                  'App\Models\Fasilitas',
+                  'App\Models\Unit'
+               ])->where('periode_id', $request->periode_id);
+         })
+         ->orWhereIn('dinilai_type', [
+               'App\Models\Fasilitas',
+               'App\Models\Unit'
+         ]);
+      }
+      if($request->prodi_id) {
+         $penilaian->whereHas('penilai', function($query) use ($request) {
+            $query->whereHas('mahasiswa', function($qMhs) use ($request) {
+               $qMhs->where('program_studi_id', $request->prodi_id);
+            });
+         });
       }
       $penilaian = $penilaian->get();
-      return view('admin.penilaian', ['all_kategori' => $all_kategori, 'all_periode' => $all_periode, 'penilaian' => $penilaian]);
+      return view('admin.penilaian', ['all_kategori' => $all_kategori, 'all_periode' => $all_periode, 'all_prodi' => $all_prodi, 'penilaian' => $penilaian]);
    }
 
    public function detail_penilaian($id) {
@@ -932,40 +948,6 @@ class AdminController extends Controller
    }
 
    public function laporan(Request $request) {
-      // $all_kategori = Kategori::all();
-      // $all_periode = Periode::orderBy('id', 'desc')->get();
-      // if($request->kategori_id) {
-      //    $curKategori = Kategori::findOrFail($request->kategori_id);
-      //    if($request->kategori_id == 1) {
-      //       $penilaian = Dosen::with('user', 'penilaian');
-      //    } else if($request->kategori_id == 2) {
-      //       $penilaian = Mahasiswa::with('user', 'penilaian');
-      //    } else if($request->kategori_id == 3) {
-      //       $penilaian = Fasilitas::with('penilaian');
-      //    } else if($request->kategori_id == 4) {
-      //       $penilaian = Unit::with('penilaian');
-      //    } else {
-      //       $penilaian = Praktikum::with('kelas.mataKuliah', 'penilaian');
-      //    }
-      // } else {
-      //    $curKategori = Kategori::findOrFail(1);
-      //    $penilaian = Dosen::with('user', 'penilaian');
-      // }
-      // if($request->periode_id) {
-      //    $periode_id = $request->periode_id;
-      //    $penilaian = $penilaian->withAvg(['penilaian' => function($query) use ($periode_id) {
-      //       $query->where('periode_id', $periode_id);
-      //    }], 'avg_score');
-      // } else {
-      //    $last = Periode::max('id');
-      //    $penilaian = $penilaian->withAvg(['penilaian' => function($query) use ($last) {
-      //       $query->where('periode_id', $last);
-      //    }], 'avg_score');
-
-      // }
-      // $penilaian = $penilaian->withCount('penilaian')->get();
-      // return view('admin.laporan', ['all_kategori' => $all_kategori, 'all_periode' => $all_periode, 'penilaian' => $penilaian, 'curKategori' => $curKategori]);
-
       $all_kategori = Kategori::all();
       $all_periode = Periode::orderBy('id', 'desc')->get();
 
@@ -1139,7 +1121,6 @@ class AdminController extends Controller
       // Mapping kategori to models
       $kategoriModels = [
          1 => Dosen::class,
-         2 => Mahasiswa::class,
          3 => Fasilitas::class,
          4 => Unit::class,
          5 => Praktikum::class
@@ -1148,7 +1129,7 @@ class AdminController extends Controller
       $modelClass = $kategoriModels[$kategori_id] ?? Dosen::class;
       $penilaian = $modelClass::with('penilaian');
 
-      if (in_array($kategori_id, [1,2])) {
+      if ($kategori_id == 1) {
          $penilaian = $penilaian->with('user');
       }
 
@@ -1156,10 +1137,13 @@ class AdminController extends Controller
          $penilaian = $penilaian->with('kelas.mataKuliah');
       }
 
-      
-      $penilaian = $penilaian->withAvg(['penilaian' => function($query) use ($periode_id) {
-         $query->where('periode_id', $periode_id);
-      }], 'avg_score');
+      if (!in_array($kategori_id, [3, 4])) {
+         $penilaian->withAvg(['penilaian' => function ($q) use ($periode_id) {
+            $q->where('periode_id', $periode_id);
+         }], 'avg_score');
+      } else {
+         $penilaian->withAvg('penilaian', 'avg_score');
+      }
 
       $penilaian = $penilaian->withCount('penilaian')->get();
 
