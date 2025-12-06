@@ -15,18 +15,6 @@
             <div class="card-body p-0 p-md-3">
                 
                 {{-- Tabs Navigation --}}
-                <ul class="nav nav-tabs nav-fill" id="assessmentTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active py-3 fw-bold" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
-                            Belum Dinilai <span class="badge bg-danger ms-1 rounded-pill">{{ count($units) }}</span>
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link py-3 fw-bold" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">
-                            Sudah Dinilai <span class="badge bg-success ms-1 rounded-pill">2</span>
-                        </button>
-                    </li>
-                </ul>
 
                 <div class="tab-content" id="assessmentTabContent">
                     

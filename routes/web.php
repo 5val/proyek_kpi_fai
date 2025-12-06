@@ -57,6 +57,9 @@ Route::prefix('mahasiswa')
         Route::get('/feedback/get_targets', [MahasiswaController::class, 'get_targets'])->name('feedback.get_targets');
         Route::post('/feedback', [MahasiswaController::class, 'insertFeedback'])->name('insertFeedback');
         Route::get('/laporan', [MahasiswaController::class, 'laporan'])->name('laporan');
+        Route::get('/laporan/{periode_id}/export-excel', [MahasiswaController::class, 'laporan_export_excel'])->name('laporan.excel');
+        Route::get('/laporan/{periode_id}/export-pdf', [MahasiswaController::class, 'laporan_export_pdf'])->name('laporan.pdf');
+
     });
 
 

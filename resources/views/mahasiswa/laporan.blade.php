@@ -34,9 +34,7 @@
                         </div>
 
                         <div class="col-12 col-md-7 d-flex flex-column flex-md-row gap-2">
-                            <button class="btn btn-primary shadow-sm">
-                                <i class="bi bi-filter me-2"></i> Tampilkan
-                            </button>
+                           
                         </div>
                     </div>
                 </form>
