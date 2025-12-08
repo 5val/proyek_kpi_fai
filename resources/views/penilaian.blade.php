@@ -3,9 +3,6 @@
 @section('title', 'Formulir Penilaian - ' . ucfirst($tipe))
 @section('page-title', 'Penilaian - ' . ucfirst($tipe))
 @section('page-subtitle', 'Beri penilaian untuk: ' . $targetName)
-@section('user-name', 'Andi Pratama')
-@section('user-role', 'Mahasiswa - Teknik Informatika')
-@section('user-initial', 'AP')
 
 @section('content')
 <div class="container-fluid px-0"> @if (session('success'))

@@ -20,7 +20,6 @@
                 <thead class="table-light">
                     <tr>
                         <th>Nama Unit</th>
-                        <th>Status Penilaian</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -29,15 +28,6 @@
                     @foreach ($units as $u)
                     <tr>
                         <td>{{ $u->name }}</td>
-
-                        <td>
-                            @if ($u->sudah_dinilai)
-                                <span class="badge bg-success">Sudah Dinilai</span>
-                            @else
-                                <span class="badge bg-warning text-dark">Belum Dinilai</span>
-                            @endif
-                        </td>
-
                         <td>
                             @if ($u->sudah_dinilai)
                                 <button class="btn btn-secondary btn-sm" disabled>

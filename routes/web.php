@@ -72,12 +72,12 @@ Route::prefix('dosen')
     ->name('dosen.')
     ->middleware(['auth', 'role:dosen', 'active'])
     ->group(function () {
-        Route::get('/', [DosenController::class, 'dashboard'])->name('dashboard');
+        Route::get('/', [DosenController::class, 'index'])->name('dashboard');
 
         Route::get('/profile', [DosenController::class, 'profile'])->name('profile');
         Route::put('/profile/update', [DosenController::class, 'updateProfile'])->name('updateProfile');
         Route::post('/profile/password', [DosenController::class, 'changePassword'])->name('changePassword');
-        Route::post('/profile/{id}/upload', [DosenController::class, 'uploadProfpic'])->name('uploadProfpicDosen');
+        Route::post('/profile/{id}/upload', [DosenController::class, 'uploadProfpicDosen'])->name('uploadProfpic');
         
         // Route::get('/kpi', fn() => view('dosen.kpi'))->name('kpi');
         Route::get('/kpi',[DosenController::class, 'kpi'])->name('kpi');
@@ -93,21 +93,17 @@ Route::prefix('dosen')
         Route::get('/penilaian_mahasiswa', [DosenController::class, 'penilaianMahasiswa'])->name('penilaian_mahasiswa');
         Route::get('/penilaian_mahasiswa/{id}/nilai', [DosenController::class, 'formNilaiMahasiswa'])->name('nilai_mahasiswa');
 
-        // Route::get('/penilaian_mahasiswa', fn() => view('dosen.penilaian_mahasiswa'))->name('penilaian_mahasiswa');
-
-        // Route::get('/penilaian_fasilitas', fn() => view('dosen.penilaian_fasilitas'))->name('penilaian_fasilitas');
-        Route::get('/penilaian_fasilitas', [DosenController::class, 'penilaianFasilitas'])
-            ->name('penilaian_fasilitas');
+        Route::get('/penilaian_fasilitas', [DosenController::class, 'penilaianFasilitas'])->name('penilaian_fasilitas');
             
-        Route::get('/penilaian_unit', [DosenController::class, 'penilaianUnit'])
-            ->name('penilaian_unit');
+        Route::get('/penilaian_unit', [DosenController::class, 'penilaianUnit'])->name('penilaian_unit');
 
+        Route::get('/laporan', [DosenController::class, 'laporanKinerja'])->name('laporan');
+        Route::get('/laporan/{periode_id}/export-excel', [DosenController::class, 'laporan_export_excel'])->name('laporan.excel');
+        Route::get('/laporan/{periode_id}/export-pdf', [DosenController::class, 'laporan_export_pdf'])->name('laporan.pdf');    
 
-        Route::get('/laporan', [DosenController::class, 'laporanKinerja'])
-            ->name('laporan');    
-
-        // Route::get('/laporan', fn() => view('dosen.laporan'))->name('laporan');
         Route::get('/feedback', [DosenController::class, 'feedback'])->name('feedback');
+        Route::get('/feedback/get_targets', [DosenController::class, 'get_targets'])->name('feedback.get_targets');
+        Route::post('/feedback', [DosenController::class, 'insertFeedback'])->name('insertFeedback');
     });
 
 

@@ -4,9 +4,6 @@
 @section('page-title', 'Mata Kuliah')
 @section('page-subtitle', 'Daftar mata kuliah yang Anda ampu')
 
-@section('user-name', $user->name)
-@section('user-role', $user->role)
-
 @section('content')
 @if(session('success'))
    <div class="alert alert-success">{{ session('success') }}</div>
@@ -14,19 +11,27 @@
 <!-- Filter Section -->
 <div class="row mb-4">
     <div class="col-md-12">
-        <div class="card-custom">
+        <div class="card card-custom"> {{-- Pastikan class card-custom ada CSS-nya atau pakai 'card' bawaan bootstrap --}}
             <div class="card-body">
                 <div class="row align-items-end">
                     <div class="col-md-5">
-                        <label for="periode" class="form-label">Pilih Periode</label>
-                        <select class="form-select" id="periode">
-                            <option selected>Semester Gasal 2024/2025</option>
-                            <option>Semester Genap 2023/2024</option>
-                            <option>Semester Gasal 2023/2024</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <button class="btn btn-primary"><i class="bi bi-filter"></i> Tampilkan</button>
+                        <form method="GET" action="{{ route('dosen.kelas') }}">
+                            <label for="periode" class="form-label fw-bold text-secondary small text-uppercase">
+                                <i class="bi bi-funnel me-1"></i> Pilih Periode Laporan
+                            </label>
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-white border-end-0 text-muted">
+                                    <i class="bi bi-calendar-range"></i>
+                                </span>
+                                <select id="periode" class="form-select border-start-0 ps-0 bg-light" name="periode_id" onchange="this.form.submit()" style="cursor: pointer;">
+                                    @foreach ($all_periode as $p)
+                                        <option value="{{ $p->id }}" {{ $periode_id == $p->id ? 'selected' : '' }}>
+                                            {{ $p->nama_periode }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -36,7 +41,6 @@
 
 <!-- Main Content -->
 <div class="card-custom">
-    <div class="card-header"><i class="bi bi-book-fill"></i> Mata Kuliah yang Diampu (Gasal 2024/2025)</div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-hover">
@@ -46,7 +50,7 @@
                         <th>Nama Mata Kuliah</th>
                         <th>Program Studi</th>
                         <th>SKS</th>
-                        <th>Jml Mhs</th>
+                        <th>Jumlah Mhs</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>

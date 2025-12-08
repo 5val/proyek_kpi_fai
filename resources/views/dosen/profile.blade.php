@@ -51,7 +51,7 @@
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
                         </div>
-                        <form action="{{ route('mahasiswa.uploadProfpic', Auth::id()) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('dosen.uploadProfpic', Auth::id()) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                     <label for="file" class="form-label fw-medium">Pilih Foto (JPG/PNG - Max 5MB)</label>

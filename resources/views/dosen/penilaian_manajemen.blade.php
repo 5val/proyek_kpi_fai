@@ -5,9 +5,6 @@
 @section('page-title', 'Penilaian Fasilitas')
 @section('page-subtitle', 'Beri penilaian terhadap kualitas Fasilitas kampus')
 
-{{-- @section('user-name', $user->name) --}}
-{{-- @section('user-role', $user->role) --}}
-{{--  --}}
 @section('content')
 <div class="card-custom">
     <div class="card-header">
@@ -66,16 +63,6 @@
         </tr>
     @endforeach
 </tbody>
-
-                    {{-- Jika tidak ada data --}}
-                    {{-- @if ($pending->isEmpty() && $completed->isEmpty())
-                        <tr>
-                            <td colspan="4" class="text-center text-muted">
-                                Tidak ada fasilitas terdaftar.
-                            </td>
-                        </tr>
-                    @endif --}} 
-
                 </tbody>
             </table>
         </div>

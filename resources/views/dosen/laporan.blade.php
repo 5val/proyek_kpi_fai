@@ -6,30 +6,70 @@
 @section('page-subtitle', 'Rangkuman dan arsip performa Anda')
 
 @section('content')
-<!-- Filter -->
+
+<style>
+    .card-modern {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        transition: all 0.3s ease;
+    }
+    .card-modern:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    .section-title {
+        font-weight: 700;
+        color: #2c3e50;
+        letter-spacing: -0.5px;
+    }
+    .bg-soft-primary {
+        background-color: #eef2ff;
+        color: #4e73df;
+    }
+    .table-modern thead th {
+        background-color: #f8f9fa;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        border-bottom: 2px solid #eaecf4;
+    }
+</style>
+
 <div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card-custom">
-            <div class="card-body">
-                <div class="row align-items-end">
+    <div class="col-12">
+        <div class="card card-modern">
+            <div class="card-body p-4">
+                <div class="row align-items-end justify-content-between g-3">
                     <div class="col-md-5">
-                        <label class="form-label">Pilih Periode Laporan</label>
-                        <select class="form-select">
-                            <option selected>Semester Gasal 2024/2025</option>
-                            <option>Semester Genap 2023/2024</option>
-                            <option>Semester Gasal 2023/2024</option>
-                        </select>
+                        <form method="GET" action="{{ route('dosen.laporan') }}">
+                            <label for="periode" class="form-label fw-bold text-secondary small text-uppercase">
+                                <i class="bi bi-funnel me-1"></i> Pilih Periode Laporan
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 text-muted">
+                                    <i class="bi bi-calendar-range"></i>
+                                </span>
+                                <select id="periode" class="form-select border-start-0 ps-0 bg-light" name="periode_id" onchange="this.form.submit()" style="cursor: pointer;">
+                                    @foreach ($all_periode as $p)
+                                        <option value="{{ $p->id }}" {{ $periode_id == $p->id ? 'selected' : '' }}>
+                                            {{ $p->nama_periode }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </form>
                     </div>
-                    <div class="col-md-7 d-flex align-items-end mt-3 mt-md-0">
-                        <button class="btn btn-primary me-2">
-                            <i class="bi bi-filter"></i> Tampilkan Laporan
-                        </button>
-                        <button class="btn btn-success me-2">
-                            <i class="bi bi-file-earmark-excel"></i> Export Excel
-                        </button>
-                        <button class="btn btn-danger">
-                            <i class="bi bi-file-earmark-pdf"></i> Export PDF
-                        </button>
+
+                    <div class="col-md-7 text-md-end">
+                        <div class="d-inline-flex gap-2">
+                            <button class="btn btn-success text-white shadow-sm px-4">
+                                <i class="bi bi-file-earmark-excel me-2"></i> Export Excel
+                            </button>
+                            <button class="btn btn-danger text-white shadow-sm px-4">
+                                <i class="bi bi-file-earmark-pdf me-2"></i> Export PDF
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -37,87 +77,107 @@
     </div>
 </div>
 
-<!-- Report -->
 <div class="row">
     <div class="col-md-12">
-        <div class="card-custom">
-            <div class="card-header bg-white border-bottom">
-                <h5 class="mb-0">
-                    <i class="bi bi-file-earmark-text me-2 text-primary"></i> Hasil Laporan Kinerja
-                </h5>
+        <div class="card card-modern">
+            
+            <div class="card-header bg-white py-3 border-bottom-0">
+                <div class="d-flex align-items-center">
+                    <div class="bg-soft-primary p-2 rounded me-3">
+                        <i class="bi bi-file-earmark-bar-graph fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 section-title">Hasil Laporan Kinerja</h5>
+                        <small class="text-muted">Ringkasan performa akademik Anda</small>
+                    </div>
+                </div>
             </div>
 
-            <div class="card-body">
+            <div class="card-body p-4">
 
-                <!-- Summary -->
-                <div class="p-4 mb-4 rounded border" style="background:#f8f9fa;">
+                <div class="p-4 mb-5 rounded-3 border border-light" style="background: linear-gradient(to right, #f8f9fa, #ffffff);">
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                            <h4 class="mb-2 text-dark">Name: {{ $user->name }}</h4>
-                            <div class="d-flex flex-column flex-md-row gap-md-4 text-muted">
-                                <p class="mb-1"><i class="bi bi-card-heading me-1"></i> <strong>NIDN:</strong> {{ $dosen->nidn }}</p>
-                                <p class="mb-0"><i class="bi bi-award me-1"></i> <strong>Sertifikasi:</strong> 
+                            <h3 class="fw-bold text-dark mb-2">{{ $user->name }}</h3>
+                            <div class="d-flex flex-wrap gap-3 text-muted mt-2">
+                                <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fw-normal">
+                                    <i class="bi bi-card-heading me-1 text-primary"></i> NIDN: <strong>{{ $dosen->nidn }}</strong>
+                                </span>
+                                <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fw-normal">
+                                    <i class="bi bi-award me-1 text-primary"></i> Status: 
                                     @if($dosen->is_certified)
                                         <span class="text-success fw-bold">Tersertifikasi</span>
                                     @else
-                                        <span class="text-secondary">Belum Tersertifikasi</span>
+                                        <span class="text-secondary fw-bold">Belum Tersertifikasi</span>
                                     @endif
-                                </p>
+                                </span>
                             </div>
                         </div>
 
                         <div class="col-md-4 text-md-end mt-3 mt-md-0 border-start-md ps-md-4">
-                            <h6 class="text-muted mb-1">Skor Akhir KPI</h6>
-
-                            {{-- <h1 class="display-4 fw-bold mb-0 
-                                {{ $skorAkhir >= 3.5 ? 'text-success' : ($skorAkhir >= 3 ? 'text-primary' : 'text-danger') }}">
+                            {{-- Uncomment logic ini jika data sudah siap --}}
+                            {{-- 
+                            <h6 class="text-uppercase text-muted small fw-bold ls-1">Skor Akhir KPI</h6>
+                            <h2 class="display-5 fw-bold mb-0 {{ $skorAkhir >= 3.5 ? 'text-success' : 'text-primary' }}">
                                 {{ number_format($skorAkhir, 2) }}
-                            </h1>
-
-                            <span class="badge rounded-pill mt-2 px-3 py-2 
-                                {{ $skorAkhir >= 3.5 ? 'bg-success' : ($skorAkhir >= 3 ? 'bg-primary' : 'bg-danger') }}">
-                                {{ $kategori }}
-                            </span> --}}
+                            </h2>
+                            --}}
                         </div>
                     </div>
                 </div>
 
-                <!-- Table -->
-                <h5 class="mt-5 mb-3">Rincian Capaian Indikator</h5>
+                <div class="mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="section-title mb-0">Rincian Capaian Indikator</h5>
+                    </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="py-3 ps-3">Indikator Kinerja</th>
-                                <th class="py-3 text-center" style="width: 150px;">Skor Capaian</th>
-                                <th class="py-3 text-center" style="width: 200px;">Status</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
+                    <div class="table-responsive rounded-3 border">
+                        <table class="table table-hover table-modern align-middle mb-0">
+                            <thead>
                                 <tr>
-                                    @foreach ($indikator as $i)
-                                        
-                                    <td class="ps-3 fw-medium">{{ $i->name }}</td>
-                                    
-                                    {{-- <td class="text-center fw-bold fs-5">{{ number_format($skor, 2) }}</td> --}}
-                                    
-                                    {{-- <td class="text-center">
-                                        <span class="badge rounded-pill {{ $badgeClass }} px-3">
-                                            {{ $status }}
-                                        </span>
-                                    </td> --}}
+                                    <th class="py-3 ps-4">Indikator Kinerja</th>
+                                    <th class="py-3 text-center" style="width: 150px;">Skor Capaian</th>
+                                    <th class="py-3 text-center" style="width: 150px;">Status</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @forelse ($indikator as $i)
+                                <tr>
+                                    <td class="ps-4 py-3 fw-medium text-dark">
+                                        {{ $i->name }}
+                                    </td>
+                                    
+                                    <td class="text-center fw-bold text-secondary">
+                                        {{ isset($nilai[$i->id]) ? number_format($nilai[$i->id]->skor, 2) : '-' }}
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                        <span class="badge bg-light text-secondary border rounded-pill px-3">
+                                            -
+                                        </span>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="3" class="text-center py-4 text-muted fst-italic">
+                                        Tidak ada data indikator.
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <!-- Chart -->
-                <h5 class="mt-5 mb-3">Grafik Performa Semester Ini</h5>
-                <div class="border rounded p-3">
-                    <canvas id="reportChart" style="max-height: 400px;"></canvas>
+                <div>
+                    <h5 class="section-title mb-3">Grafik Performa Semester Ini</h5>
+                    <div class="card border-0 shadow-sm bg-light">
+                        <div class="card-body">
+                            <div style="height: 400px; position: relative;">
+                                <canvas id="reportChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -134,6 +194,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         // Data dari PHP ke JS
         const labels = {!! json_encode($indikator->pluck('name')->toArray()) !!};
+        // Pastikan logic pengambilan data nilainya aman dari null
         const dataValues = {!! json_encode($indikator->map(fn($i) => $nilai[$i->id]->skor ?? 0)->toArray()) !!};
 
         const ctx = document.getElementById('reportChart').getContext('2d');
@@ -146,11 +207,11 @@
                     label: 'Skor Capaian (Skala 0-5)',
                     data: dataValues,
                     backgroundColor: [
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 99, 132, 0.6)'
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 99, 132, 0.7)'
                     ],
                     borderColor: [
                         'rgba(75, 192, 192, 1)',
@@ -160,23 +221,43 @@
                         'rgba(255, 99, 132, 1)'
                     ],
                     borderWidth: 1,
-                    borderRadius: 5
+                    borderRadius: 4, // Sedikit radius pada bar chart
+                    barPercentage: 0.6 // Membuat bar tidak terlalu gemuk
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 8
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        padding: 12,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw;
+                            }
+                        }
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
                         max: 5,
                         grid: {
-                            color: '#f0f0f0'
+                            color: '#f0f0f0',
+                            borderDash: [5, 5]
                         },
                         ticks: {
-                            font: {
-                                size: 12
-                            }
+                            font: { size: 12 }
                         }
                     },
                     x: {
@@ -185,21 +266,8 @@
                         },
                         ticks: {
                             autoSkip: false,
-                            maxRotation: 45,
+                            maxRotation: 25, // Sedikit dimiringkan agar rapi
                             minRotation: 0
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.raw;
-                            }
                         }
                     }
                 }

@@ -1,79 +1,193 @@
 @extends('layouts.app')
 
-@section('title', 'Feedback Dosen')
+@section('title', 'Feedback')
 
 @section('page-title', 'Feedback')
 @section('page-subtitle', 'Kirim feedback atau keluhan Anda')
-@section('user-name', 'Dr. Citra Lestari')
-@section('user-role', 'Dosen - Teknik Informatika')
-@section('user-initial', 'CL')
 
 @section('content')
-<div class="row">
-    <div class="col-md-8">
-        <div class="card-custom">
-            <div class="card-header"><i class="bi bi-chat-left-text-fill"></i> Kirim Feedback atau Laporan</div>
-            <div class="card-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="subjek" class="form-label">Subjek</label>
-                        <input type="text" class="form-control" id="subjek" placeholder="Contoh: Proyektor di Ruang Dosen sering bermasalah">
-                    </div>
+
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i> {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+<div class="row g-4"> <div class="col-12 col-lg-8">
+        <div class="card card-custom shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 fw-bold">
+                <i class="bi bi-chat-left-text-fill me-2"></i> Kirim Feedback atau Laporan
+            </div>
+            <div class="card-body p-4">
+                <form action="{{ route('dosen.insertFeedback') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
                     
-                    <div class="mb-3">
-                        <label for="kategori" class="form-label">Kategori</label>
-                        <select class="form-select" id="kategori">
-                            <option selected>Pilih kategori feedback...</option>
-                            <option value="fasilitas_dosen">Fasilitas Dosen</option>
-                            <option value="layanan_sdm">Layanan SDM (HR)</option>
-                            <option value_laporan="layanan_keuangan">Layanan Keuangan (BAU)</option>
-                            <option value="akademik">Akademik</option>
-                            <option value="lainnya">Lainnya</option>
-                        </select>
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label for="kategori" class="form-label fw-bold">Kategori</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-tags"></i></span>
+                                <select class="form-select" id="kategori" name="kategori" required>
+                                    <option selected value="">Pilih kategori feedback...</option>
+                                    @foreach($kategori as $c)
+                                        <option value="{{ $c->id }}">{{ $c->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="target" class="form-label fw-bold d-flex justify-content-between">
+                                <span>Target / Objek</span>
+                                <span id="loading-target" class="text-primary small" style="display:none;">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...
+                                </span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-bullseye"></i></span>
+                                <select class="form-select" id="target" name="target" disabled required>
+                                    <option selected value="">Pilih kategori dulu...</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="deskripsi" class="form-label">Deskripsi / Isi Feedback</label>
-                        <textarea class="form-control" id="deskripsi" rows="6" placeholder="Tuliskan rincian feedback, laporan, atau keluhan Anda di sini..."></textarea>
+                        <label for="deskripsi" class="form-label fw-bold">Deskripsi / Isi Feedback</label>
+                        <textarea class="form-control" id="deskripsi" name="deskripsi" rows="6" placeholder="Jelaskan secara rinci feedback atau keluhan Anda..." required></textarea>
                     </div>
 
-                    <!-- Input Foto Bukti -->
-                    <div class="mb-3">
-                        <label for="bukti" class="form-label">Lampiran Bukti (Foto)</label>
-                        <input class="form-control" type="file" id="bukti" accept="image/*">
-                        <small class="text-muted">Opsional. Unggah foto sebagai bukti jika diperlukan.</small>
-                    </div>
-                    <!-- Selesai Input Foto Bukti -->
-
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" value="" id="anonim">
-                        <label class="form-check-label" for="anonim">
-                            Kirim sebagai anonim
-                        </label>
+                    <div class="mb-4">
+                        <label for="bukti" class="form-label fw-bold">Lampiran Bukti (Foto)</label>
+                        <input class="form-control" type="file" id="bukti" name="file" accept="image/*">
+                        <div class="form-text text-muted"><i class="bi bi-info-circle"></i> Opsional. Format: JPG, PNG. Max: 5MB.</div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-send-fill"></i> Kirim Feedback</button>
+                    <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded mb-4 border">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input" type="checkbox" id="anonim" name="anonim" value="1" style="transform: scale(1.2);">
+                            <label class="form-check-label fw-bold ms-1" for="anonim">
+                                Kirim sebagai anonim
+                            </label>
+                        </div>
+                        <small class="text-muted d-none d-sm-block">Identitas Anda akan disembunyikan.</small>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary py-2 fw-bold shadow-sm">
+                            <i class="bi bi-send-fill me-2"></i> Kirim Feedback
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
     
-    <div class="col-md-4">
-        <div class="card-custom">
-            <div class="card-header"><i class="bi bi-clock-history"></i> Riwayat Feedback Saya</div>
-            <div class="card-body" style="max-height: 500px; overflow-y: auto;">
-                <div class="list-group list-group-flush">
-                    <div class="list-group-item">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h6 class="mb-1">Proyektor di Ruang Dosen</h6>
-                            <small>5 hari lalu</small>
-                        </div>
-                        <p class="mb-1 small">Kategori: Fasilitas Dosen</p>
-                        <span class="badge bg-warning text-dark">Belum Ditanggapi</span>
+    <div class="col-12 col-lg-4">
+        <div class="card card-custom shadow-sm border-0 h-100">
+    <div class="card-header bg-white py-3 fw-bold">
+        <i class="bi bi-clock-history me-2"></i> Riwayat Feedback Saya
+    </div>
+    <div class="card-body p-0">
+        <div class="list-group list-group-flush overflow-auto" style="max-height: 500px;">
+            
+            @forelse($riwayat as $item)
+                <div class="list-group-item p-3 {{ $loop->last ? '' : 'border-bottom-0' }}">
+                    <div class="d-flex w-100 justify-content-between align-items-start mb-1">
+                        {{-- Isi Feedback (Dipotong jika terlalu panjang) --}}
+                        <h6 class="mb-0 fw-bold text-truncate" style="max-width: 65%;">
+                            {{ Str::limit($item->isi, 40) }}
+                        </h6>
+                        
+                        {{-- Waktu (Created At) --}}
+                        <small class="text-muted text-nowrap" style="font-size: 0.75rem;">
+                            {{ $item->created_at->diffForHumans() }}
+                        </small>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <small class="text-muted">
+                            <i class="bi bi-tag me-1"></i> {{ $item->kategori->name ?? 'Umum' }}
+                        </small>
+                        
+                        {{-- Badge Status (Menggunakan Accessor Model) --}}
+                        <span class="badge bg-{{ $item->status_color }} rounded-pill px-2" style="font-size: 0.7rem;">
+                            {{ $item->status_label }}
+                        </span>
                     </div>
                 </div>
-            </div>
+
+                @unless($loop->last)
+                    <hr class="my-0 mx-3 opacity-25">
+                @endunless
+
+            @empty
+                {{-- Empty State --}}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
+                    <small>Belum ada riwayat feedback.</small>
+                </div>
+            @endforelse
+
         </div>
     </div>
 </div>
+    </div>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#kategori').on('change', function() {
+            var kategoriId = $(this).val();
+            var targetDropdown = $('#target');
+            var loading = $('#loading-target');
+
+            // Reset dropdown target
+            targetDropdown.html('<option selected value="">Pilih objek feedback...</option>');
+            
+            if (kategoriId) {
+                // Disable dropdown & Show loading
+                targetDropdown.prop('disabled', true);
+                loading.fadeIn();
+
+                $.ajax({
+                    url: "{{ route('mahasiswa.feedback.get_targets') }}", 
+                    type: "GET",
+                    data: { kategori_id: kategoriId },
+                    dataType: "json",
+                    success: function(data) {
+                        loading.hide();
+                        targetDropdown.prop('disabled', false);
+
+                        if (data.length > 0) {
+                            $.each(data, function(key, value) {
+                                targetDropdown.append('<option value="' + value.id + '">' + value.name + '</option>');
+                            });
+                        } else {
+                            targetDropdown.append('<option value="">Tidak ada data target ditemukan</option>');
+                        }
+                    },
+                    error: function() {
+                        loading.hide();
+                        alert('Gagal memuat data target. Silakan periksa koneksi internet Anda.');
+                        targetDropdown.prop('disabled', true);
+                    }
+                });
+            } else {
+                targetDropdown.prop('disabled', true);
+                loading.hide();
+            }
+        });
+    });
+</script>
+@endpush

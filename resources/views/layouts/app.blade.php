@@ -246,7 +246,7 @@
                     {{-- ================= MENU DOSEN ================= --}}
                     @elseif(Auth::user()->role == 'dosen')
                         <a class="nav-link {{ request()->routeIs('dosen.dashboard') ? 'active' : '' }}" href="{{ route('dosen.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-                        <a class="nav-link {{ request()->routeIs('dosen.kpi*') ? 'active' : '' }}" href="{{ route('dosen.kpi') }}"><i class="bi bi-clipboard-check"></i> KPI Saya</a>
+                        {{-- <a class="nav-link {{ request()->routeIs('dosen.kpi*') ? 'active' : '' }}" href="{{ route('dosen.kpi') }}"><i class="bi bi-clipboard-check"></i> KPI Saya</a> --}}
                         <a class="nav-link {{ request()->routeIs('dosen.kelas*') ? 'active' : '' }}" href="{{ route('dosen.kelas') }}"><i class="bi bi-book-fill"></i> Kelas</a>
                         <a class="nav-link {{ request()->routeIs('dosen.penilaian_manajemen') ? 'active' : '' }}" href="{{ route('dosen.penilaian_manajemen') }}"><i class="bi bi-bank2"></i> Penilaian Manajemen</a>
                         <a class="nav-link {{ request()->routeIs('dosen.penilaian_fasilitas*') ? 'active' : '' }}" href="{{ route('dosen.penilaian_fasilitas') }}"><i class="bi bi-building"></i> Penilaian Fasilitas</a>
