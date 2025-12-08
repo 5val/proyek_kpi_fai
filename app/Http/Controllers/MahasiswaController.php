@@ -30,155 +30,162 @@ use Dompdf\Dompdf;
 
 class MahasiswaController extends Controller
 {
-  public function dashboard()
-   {
-      $userId = Auth::id();
-      $periodeAktif = Periode::max('id');
+public function dashboard()
+{
+    $userId = Auth::id();
+    $periodeAktif = Periode::max('id');
+
+    // Ambil data mahasiswa
+    $mahasiswa = Mahasiswa::where('user_id', $userId)->firstOrFail();
    
+    // 1. KELAS YANG DIAMBIL MAHASISWA
+    $enrollment = Enrollment::with('kelas.dosen.user')
+        ->where('mahasiswa_nrp', $mahasiswa->nrp)
+        ->get();
 
-      // Data Mahasiswa
-      $mahasiswa = Mahasiswa::where('user_id', $userId)->firstOrFail();
+    $kelasSaya = $enrollment->pluck('kelas');
 
-      // Kelas sesuai prodi dan periode aktif
-      $kelasSaya = Kelas::where('program_studi_id', $mahasiswa->program_studi_id)
-         ->where('periode_id', $periodeAktif)
-         ->get();
+    // *** TANDAKAN MAHASISWA BARU ***
+    $isBaru = $kelasSaya->count() === 0;
 
-      $dosenIds = $kelasSaya->pluck('dosen_nidn')->unique();
-      $totalDosen = $dosenIds->count();
 
-      $dosenSudah = Penilaian::where('kategori_id', 1)
-         ->where('penilai_id', $userId)
-         ->whereIn('dinilai_id', $dosenIds)
-         ->count();
+    // 2. DOSEN PENGAJAR
+    $dosenUsers = $kelasSaya
+        ->pluck('dosen.user')
+        ->filter()
+        ->unique('id')
+        ->values();
 
-      $dosenBelum = max(0, $totalDosen - $dosenSudah);
+    $dosenIds = $dosenUsers->pluck('id');
+    $totalDosen = $dosenIds->count();
 
-      $praktikumIds = $kelasSaya->where('has_praktikum', 1)->pluck('id');
-      $totalPraktikum = $praktikumIds->count();
+    $dosenSudah = Penilaian::where('kategori_id', 1)
+        ->where('penilai_id', $userId)
+        ->whereIn('dinilai_id', $dosenIds)
+        ->count();
 
-      $praktikumSudah = Penilaian::where('kategori_id', 4)
-         ->where('penilai_id', $userId)
-         ->whereIn('dinilai_id', $praktikumIds)
-         ->count();
+    $dosenBelum = max(0, $totalDosen - $dosenSudah);
 
-      $praktikumBelum = max(0, $totalPraktikum - $praktikumSudah);
 
-      $totalUnit = Unit::count();
+    // 3. PRAKTIKUM
+    $praktikumIds = $kelasSaya
+        ->where('has_praktikum', 1)
+        ->pluck('id');
 
-      $unitSudah = Penilaian::where('kategori_id', 5)
-         ->where('penilai_id', $userId)
-         ->count();
+    $totalPraktikum = $praktikumIds->count();
 
-      $unitBelum = max(0, $totalUnit - $unitSudah);
+    $praktikumSudah = Penilaian::where('kategori_id', 4)
+        ->where('penilai_id', $userId)
+        ->whereIn('dinilai_id', $praktikumIds)
+        ->count();
 
-      $totalFasilitas = Fasilitas::count();
+    $praktikumBelum = max(0, $totalPraktikum - $praktikumSudah);
 
-      $fasilitasSudah = Penilaian::where('kategori_id', 6)
-         ->where('penilai_id', $userId)
-         ->count();
 
-      $fasilitasBelum = max(0, $totalFasilitas - $fasilitasSudah);
+    // 4. UNIT & FASILITAS
+    $totalUnit = Unit::count();
+    $unitSudah = Penilaian::where('kategori_id', 5)
+        ->where('penilai_id', $userId)
+        ->count();
+    $unitBelum = max(0, $totalUnit - $unitSudah);
 
-      $penilaianSaya = Penilaian::where('kategori_id', 2)
-         ->where('dinilai_id', $userId)
-         ->where('periode_id', $periodeAktif)
-         ->pluck('id');
+    $totalFasilitas = Fasilitas::count();
+    $fasilitasSudah = Penilaian::where('kategori_id', 6)
+        ->where('penilai_id', $userId)
+        ->count();
+    $fasilitasBelum = max(0, $totalFasilitas - $fasilitasSudah);
 
-      $penilaianSemua = Penilaian::where('kategori_id', 2)
-         ->where('periode_id', $periodeAktif)
-         ->pluck('id');
 
-      $indikatorList = Indikator::where('kategori_id', 2)->get();
+    // 5. GRAFIK KEHADIRAN
+    $all_periode = Periode::orderBy('id')->get();
 
-      $hasilIndikator = [];
-      $totalSaya = 0;
-      $jumlahIndikator = count($indikatorList);
+    $grafik_labels = [];
+    $grafik_values = [];
 
-      // Feedback (dikeluarkan dari loop!)
-      $feedback = Feedback::where('kategori_id', 2)
-         ->where('target_id', $userId)
-         ->with('pengirim')
-         ->get();
+    foreach ($all_periode as $p) {
 
-      foreach ($indikatorList as $indikator) {
+        $kelasPerPeriode = Enrollment::with('kelas')
+            ->where('mahasiswa_nrp', $mahasiswa->nrp)
+            ->whereHas('kelas', function($q) use ($p) {
+                $q->where('periode_id', $p->id);
+            })
+            ->get()
+            ->pluck('kelas');
 
-         $nilaiSaya = DetailPenilaian::whereIn('penilaian_id', $penilaianSaya)
-               ->where('indikator_id', $indikator->id)
-               ->avg('score');
+        if ($kelasPerPeriode->count() == 0) continue;
 
-         $rataSemua = DetailPenilaian::whereIn('penilaian_id', $penilaianSemua)
-               ->where('indikator_id', $indikator->id)
-               ->avg('score');
+        $total = 0;
+        $count = 0;
 
-         if ($nilaiSaya === null) {
-               $status = 'Belum dinilai';
-         } elseif ($nilaiSaya > $rataSemua) {
-               $status = 'Sangat Baik';
-         } elseif ($nilaiSaya == $rataSemua) {
-               $status = 'Cukup';
-         } else {
-               $status = 'Perlu Ditingkatkan';
-         }
+        foreach ($kelasPerPeriode as $k) {
 
-         $totalSaya += ($nilaiSaya ?? 0);
+            $totalPertemuan = Kehadiran::where('kelas_id', $k->id)->count();
 
-         $hasilIndikator[] = [
-               'indikator' => $indikator->name,
-               'nilai_saya' => $nilaiSaya ? round($nilaiSaya, 2) : 0,
-               'rata_semua' => $rataSemua ? round($rataSemua, 2) : 0,
-               'status' => $status
-         ];
-      }
+            $hadir = Kehadiran::where('kelas_id', $k->id)
+                ->where('mahasiswa_nrp', $mahasiswa->nrp)
+                ->where('is_present', 1)
+                ->count();
 
-     
+            $persen = ($totalPertemuan > 0) 
+                ? round(($hadir / $totalPertemuan) * 100, 1)
+                : 0;
 
-      $dosenBelumList = User::whereHas('dosen', function($q) use ($dosenIds){
-            $q->whereIn('nidn', $dosenIds);
-         })
-         ->whereNotIn('id', Penilaian::where('kategori_id', 1)
+            $total += $persen;
+            $count++;
+        }
+
+        $grafik_labels[] = $p->nama_periode;
+        $grafik_values[] = $count > 0 ? round($total / $count, 1) : 0;
+    }
+
+
+    // 6. LIST BELUM DINILAI
+    $dosenBelumList = $dosenUsers->filter(function($d) use ($userId) {
+        return !Penilaian::where('kategori_id', 1)
+            ->where('penilai_id', $userId)
+            ->where('dinilai_id', $d->id)
+            ->exists();
+    })->take(1);
+
+    $praktikumBelumList = $kelasSaya
+        ->where('has_praktikum', 1)
+        ->filter(function($k) use ($userId) {
+            return !Penilaian::where('kategori_id', 4)
+                ->where('penilai_id', $userId)
+                ->where('dinilai_id', $k->id)
+                ->exists();
+        })
+        ->take(1);
+
+    $unitBelumList = Unit::whereNotIn('id',
+        Penilaian::where('kategori_id', 5)
             ->where('penilai_id', $userId)
             ->pluck('dinilai_id')
-         )
-         ->limit(1)
-         ->get();
+    )->limit(1)->get();
 
-      // 2. Praktikum belum dinilai
-      $praktikumBelumList = Kelas::whereIn('id', $praktikumIds)
-         ->whereNotIn('id', Penilaian::where('kategori_id', 4)
+    $fasilitasBelumList = Fasilitas::whereNotIn('id',
+        Penilaian::where('kategori_id', 6)
             ->where('penilai_id', $userId)
             ->pluck('dinilai_id')
-         )
-         ->limit(1)
-         ->get();
+    )->limit(1)->get();
 
-      // 3. Unit belum dinilai
-      $unitBelumList = Unit::whereNotIn('id', Penilaian::where('kategori_id', 5)
-            ->where('penilai_id', $userId)
-            ->pluck('dinilai_id')
-         )
-         ->limit(1)
-         ->get();
 
-      // 4. Fasilitas belum dinilai
-      $fasilitasBelumList = Fasilitas::whereNotIn('id', Penilaian::where('kategori_id', 6)
-            ->where('penilai_id', $userId)
-            ->pluck('dinilai_id')
-         )
-         ->limit(1)
-         ->get();
+    // RETURN VIEW
+    return view('mahasiswa.dashboard', compact(
+        'mahasiswa',
+        'isBaru',
+        'dosenSudah','dosenBelum',
+        'praktikumSudah','praktikumBelum',
+        'unitSudah','unitBelum',
+        'fasilitasSudah','fasilitasBelum',
+        'dosenBelumList','praktikumBelumList','unitBelumList','fasilitasBelumList',
+        'kelasSaya',
+        'grafik_labels','grafik_values'
+    ));
+}
 
-      return view('mahasiswa.dashboard', compact(
-         'periodeAktif',
 
-         'totalDosen', 'dosenSudah', 'dosenBelum',
-         'totalPraktikum', 'praktikumSudah', 'praktikumBelum',
-         'totalUnit', 'unitSudah', 'unitBelum',
-         'totalFasilitas', 'fasilitasSudah', 'fasilitasBelum',
 
-         'hasilIndikator', 'feedback', 'mahasiswa', 'dosenBelumList', 'fasilitasBelumList', 'praktikumBelumList', 'unitBelumList', 'kelasSaya'
-      ));
-   }
 
 
 
@@ -320,29 +327,47 @@ public function laporan(Request $request)
         ->where('user_id', $userId)
         ->firstOrFail();
 
+    // Cek apakah mahasiswa baru (belum punya enrollment)
+    $isBaru = Enrollment::where('mahasiswa_nrp', $mahasiswa->nrp)->count() == 0;
+
     // Semua periode
     $all_periode = Periode::orderBy('id', 'desc')->get();
     $periode_id = $request->periode_id ?? Periode::max('id');
 
-    // Ambil kelas yang diikuti mahasiswa pada periode tersebut
-    $kelasDiambil = Kelas::with(['mata_kuliah', 'dosen'])
+    // Jika mahasiswa baru → langsung kirim view (tidak hitung apa-apa)
+    if ($isBaru) {
+        return view('mahasiswa.laporan', [
+            'isBaru'        => true,
+            'all_periode'   => $all_periode,
+            'periode_id'    => $periode_id,
+            'mahasiswa'     => $mahasiswa,
+            'hasil'         => [],
+            'feedback'      => [],
+            'grafik_labels' => [],
+            'grafik_values' => []
+        ]);
+    }
+
+    // ===========================
+    // MAHASISWA LAMA (ADA DATA)
+    // ===========================
+
+    // Ambil kelas yang diikuti
+    $kelasDiambil = Kelas::with(['mataKuliah', 'dosen'])
         ->where('periode_id', $periode_id)
-        ->whereHas('enrollment.mahasiswa', function ($q) use ($mahasiswa) {
-            $q->where('mahasiswa_nrp', $mahasiswa->id);
+        ->whereHas('enrollment', function ($q) use ($mahasiswa) {
+            $q->where('mahasiswa_nrp', $mahasiswa->nrp);
         })
         ->get();
 
     $hasil = [];
 
     foreach ($kelasDiambil as $k) {
-
-        // Total Pertemuan
         $totalPertemuan = Kehadiran::where('kelas_id', $k->id)->count();
 
-        // Kehadiran mahasiswa
         $hadir = Kehadiran::where('kelas_id', $k->id)
-            ->where('mahasiswa_nrp', $mahasiswa->id)
-            ->where('status', 'hadir')
+            ->where('mahasiswa_nrp', $mahasiswa->nrp)
+            ->where('is_present', 1)
             ->count();
 
         $persenHadir = $totalPertemuan > 0
@@ -350,161 +375,189 @@ public function laporan(Request $request)
             : 0;
 
         $hasil[] = [
-            'kelas'      => $k->mata_kuliah->nama,
-            'dosen'      => $k->dosen->name,
-            'sks'        => $k->sks ?? 0,
-            'kehadiran'  => $persenHadir
+            'kelas'     => $k->mataKuliah->name ?? '-',
+            'dosen'     => $k->dosen->user->name ?? '-',
+            'sks'       => $k->sks ?? 0,
+            'kehadiran' => $persenHadir
         ];
     }
 
-    // Ambil feedback dosen
+    // Feedback dosen
     $feedback = Feedback::where('kategori_id', 2)
         ->where('target_id', $userId)
         ->with('pengirim')
         ->get();
 
+    // =============================
+    // GRAFIK RATA-RATA PER PERIODE
+    // =============================
+    $grafik_labels = [];
+    $grafik_values = [];
+
+    foreach ($all_periode as $p) {
+
+        $kelas = Kelas::where('periode_id', $p->id)
+            ->whereHas('enrollment', function ($q) use ($mahasiswa) {
+                $q->where('mahasiswa_nrp', $mahasiswa->nrp);
+            })
+            ->get();
+
+        if ($kelas->count() == 0) continue;
+
+        $total = 0;
+        $count = 0;
+
+        foreach ($kelas as $k) {
+            $totalPertemuan = Kehadiran::where('kelas_id', $k->id)->count();
+
+            $hadir = Kehadiran::where('kelas_id', $k->id)
+                ->where('mahasiswa_nrp', $mahasiswa->nrp)
+                ->where('is_present', 1)
+                ->count();
+
+            $persen = $totalPertemuan > 0 ? ($hadir / $totalPertemuan) * 100 : 0;
+
+            $total += $persen;
+            $count++;
+        }
+
+        $grafik_labels[] = $p->nama_periode;
+        $grafik_values[] = round($total / $count, 1);
+    }
+
     return view('mahasiswa.laporan', [
-        'all_periode' => $all_periode,
-        'periode_id' => $periode_id,
-        'mahasiswa' => $mahasiswa,
-        'hasil' => $hasil,
-        'feedback' => $feedback
+        'isBaru'        => false,
+        'all_periode'   => $all_periode,
+        'periode_id'    => $periode_id,
+        'mahasiswa'     => $mahasiswa,
+        'hasil'         => $hasil,
+        'feedback'      => $feedback,
+        'grafik_labels' => $grafik_labels,
+        'grafik_values' => $grafik_values
     ]);
 }
 
-   public function laporan_export_excel(Request $request)
-   {
-      $userId = auth()->id();
+    public function laporan_export_excel(Request $request)
+    {
+        $userId = auth()->id();
+        $mahasiswa = Mahasiswa::where('user_id', $userId)->firstOrFail();
 
-      // Ambil data mahasiswa
-      $mahasiswa = Mahasiswa::where('user_id', $userId)->firstOrFail();
+        $periode_id = $request->periode_id ?? Periode::max('id');
 
-      // Periode
-      $periode_id = $request->periode_id ?? Periode::max('id');
+        $kelasDiambil = Kelas::with(['mata_kuliah', 'dosen'])
+            ->where('periode_id', $periode_id)
+            ->whereHas('enrollment', function ($q) use ($mahasiswa) {
+                $q->where('mahasiswa_nrp', $mahasiswa->nrp);
+            })
+            ->get();
 
-      // Ambil kelas
-      $kelasDiambil = Kelas::with(['mata_kuliah', 'dosen'])
-         ->where('periode_id', $periode_id)
-         ->whereHas('enrollment', function ($q) use ($mahasiswa) {
-               $q->where('mahasiswa_nrp', $mahasiswa->nrp);
-         })
-         ->get();
+        $hasil = [];
 
-      // Hitung kehadiran
-      $hasil = [];
+        foreach ($kelasDiambil as $k) {
 
-      foreach ($kelasDiambil as $k) {
+            $totalPertemuan = Kehadiran::where('kelas_id', $k->id)->count();
 
-         $totalPertemuan = Kehadiran::where('kelas_id', $k->id)->count();
+            $hadir = Kehadiran::where('kelas_id', $k->id)
+                ->where('mahasiswa_nrp', $mahasiswa->nrp)
+                ->where('status', 'hadir')
+                ->count();
 
-         $hadir = Kehadiran::where('kelas_id', $k->id)
-               ->where('mahasiswa_nrp', $mahasiswa->nrp)
-               ->where('status', 'hadir')
-               ->count();
+            $persenHadir = $totalPertemuan > 0
+                ? round(($hadir / $totalPertemuan) * 100, 2)
+                : 0;
 
-         $persenHadir = $totalPertemuan > 0
-               ? round(($hadir / $totalPertemuan) * 100, 2)
-               : 0;
+            $hasil[] = [
+                'matkul' => $k->mata_kuliah->nama ?? '-',
+                'dosen'  => $k->dosen->user->name ?? '-',
+                'sks'    => $k->sks ?? '-',
+                'hadir'  => $persenHadir
+            ];
+        }
 
-         $hasil[] = [
-               'matkul' => $k->mata_kuliah->nama,
-               'dosen'  => $k->dosen->name,
-               'sks'    => $k->sks,
-               'hadir'  => $persenHadir
-         ];
-      }
+        // EXCEL
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-      // =====================================================
-      // EXPORT EXCEL
-      // =====================================================
+        // Header
+        $sheet->setCellValue('A1', 'Mata Kuliah');
+        $sheet->setCellValue('B1', 'Dosen');
+        $sheet->setCellValue('C1', 'SKS');
+        $sheet->setCellValue('D1', 'Kehadiran (%)');
 
-      $spreadsheet = new Spreadsheet();
-      $sheet = $spreadsheet->getActiveSheet();
+        $row = 2;
+        foreach ($hasil as $h) {
+            $sheet->setCellValue("A{$row}", $h['matkul']);
+            $sheet->setCellValue("B{$row}", $h['dosen']);
+            $sheet->setCellValue("C{$row}", $h['sks']);
+            $sheet->setCellValue("D{$row}", $h['hadir']);
+            $row++;
+        }
 
-      // Header
-      $sheet->setCellValue('A1', 'Mata Kuliah');
-      $sheet->setCellValue('B1', 'Dosen');
-      $sheet->setCellValue('C1', 'SKS');
-      $sheet->setCellValue('D1', 'Kehadiran (%)');
+        $filename = "laporan_mahasiswa_kehadiran.xlsx";
+        $writer = new Xlsx($spreadsheet);
 
-      $row = 2;
-      foreach ($hasil as $h) {
-         $sheet->setCellValue("A{$row}", $h['matkul']);
-         $sheet->setCellValue("B{$row}", $h['dosen']);
-         $sheet->setCellValue("C{$row}", $h['sks']);
-         $sheet->setCellValue("D{$row}", $h['hadir']);
-         $row++;
-      }
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename);
+    }
 
-      $filename = "laporan_mahasiswa_kehadiran.xlsx";
+  public function laporan_export_pdf(Request $request)
+    {
+        $userId = auth()->id();
+        $mahasiswa = Mahasiswa::where('user_id', $userId)->firstOrFail();
 
-      $writer = new Xlsx($spreadsheet);
+        $periode_id = $request->periode_id ?? Periode::max('id');
 
-      return response()->streamDownload(function () use ($writer) {
-         $writer->save('php://output');
-      }, $filename);
-   }
+        $kelasDiambil = Kelas::with(['mata_kuliah', 'dosen'])
+            ->where('periode_id', $periode_id)
+            ->whereHas('enrollment', function ($q) use ($mahasiswa) {
+                $q->where('mahasiswa_nrp', $mahasiswa->nrp);
+            })
+            ->get();
 
-   public function laporan_export_pdf(Request $request)
-   {
-      $userId = auth()->id();
+        $hasil = [];
 
-      // Ambil data mahasiswa
-      $mahasiswa = Mahasiswa::where('user_id', $userId)->firstOrFail();
+        foreach ($kelasDiambil as $k) {
 
-      $periode_id = $request->periode_id ?? Periode::max('id');
+            $totalPertemuan = Kehadiran::where('kelas_id', $k->id)->count();
 
-      // Ambil kelas & hitung kehadiran
-      $kelasDiambil = Kelas::with(['mataKuliah', 'dosen'])
-         ->where('periode_id', $periode_id)
-         ->whereHas('enrollment', function ($q) use ($mahasiswa) {
-               $q->where('mahasiswa_nrp', $mahasiswa->nrp);
-         })
-         ->get();
+            $hadir = Kehadiran::where('kelas_id', $k->id)
+                ->where('mahasiswa_nrp', $mahasiswa->nrp)
+                ->where('status', 'hadir')
+                ->count();
 
-      $hasil = [];
+            $persenHadir = $totalPertemuan > 0
+                ? round(($hadir / $totalPertemuan) * 100, 2)
+                : 0;
 
-      foreach ($kelasDiambil as $k) {
+            $hasil[] = [
+                'matkul' => $k->mata_kuliah->nama ?? '-',
+                'dosen'  => $k->dosen->name ?? '-',
+                'sks'    => $k->sks ?? '-',
+                'hadir'  => $persenHadir
+            ];
+        }
 
-         $totalPertemuan = Kehadiran::where('kelas_id', $k->id)->count();
+        $feedback = Feedback::where('kategori_id', 2)
+            ->where('target_id', $userId)
+            ->with('pengirim')
+            ->get();
 
-         $hadir = Kehadiran::where('kelas_id', $k->id)
-               ->where('mahasiswa_nrp', $mahasiswa->nrp)
-               ->where('is_present', '1')
-               ->count();
+        // Render HTML
+        $html = view('mahasiswa.laporan_pdf', [
+            'hasil' => $hasil,
+            'feedback' => $feedback,
+            'mahasiswa' => $mahasiswa
+        ])->render();
 
-         $persenHadir = $totalPertemuan > 0
-               ? round(($hadir / $totalPertemuan) * 100, 2)
-               : 0;
+        // PDF
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
 
-         $hasil[] = [
-               'matkul' => $k->mata_kuliah->name ?? '-',
-               'dosen'  => $k->dosen->name ?? '-',
-               'sks'    => $k->sks ?? '-',
-               'hadir'  => $persenHadir
-         ];
-      }
-
-      // FEEDBACK
-      $feedback = Feedback::where('kategori_id', 2)
-         ->where('target_id', $userId)
-         ->with('pengirim')
-         ->get();
-
-      // HTML utk PDF
-      $html = view('mahasiswa.laporan_pdf', [
-         'hasil' => $hasil,
-         'feedback' => $feedback,
-         'mahasiswa' => $mahasiswa
-      ])->render();
-
-      $dompdf = new Dompdf();
-      $dompdf->loadHtml($html);
-      $dompdf->setPaper('A4', 'portrait');
-      $dompdf->render();
-
-      return $dompdf->stream("laporan_mahasiswa.pdf");
-   }
+        return $dompdf->stream("laporan_mahasiswa.pdf");
+    }
 
    public function feedback() {
       $kategori = Kategori::all();

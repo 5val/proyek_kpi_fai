@@ -11,6 +11,30 @@
 @section('content')
 
 {{-- ===========================
+    MAHASISWA BARU
+=========================== --}}
+@if($isBaru)
+    <div class="alert alert-info p-4 text-center fw-bold">
+        <i class="bi bi-info-circle me-2"></i>
+        Mahasiswa baru — belum ada laporan yang bisa ditampilkan.
+    </div>
+
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-body p-5 text-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/4076/4076500.png" 
+                 width="120" class="mb-4 opacity-75">
+
+            <h4 class="fw-bold text-muted">Belum Ada Data</h4>
+            <p class="text-secondary mb-0">
+                Sistem akan menampilkan grafik dan laporan setelah Anda mengikuti kelas & presensi.
+            </p>
+        </div>
+    </div>
+    @endif
+
+@if(!$isBaru)
+
+{{-- ===========================
     FILTER PERIODE
 =========================== --}}
 <div class="row mb-4">
@@ -19,13 +43,19 @@
             <div class="card-body p-4">
                 <form method="GET" action="{{ route('mahasiswa.laporan') }}">
                     <div class="row g-3 align-items-end">
+
                         <div class="col-12 col-md-5">
-                            <label for="periode" class="form-label fw-bold text-muted small text-uppercase">Pilih Periode Laporan</label>
+                            <label for="periode" class="form-label fw-bold text-muted small text-uppercase">
+                                Pilih Periode Laporan
+                            </label>
                             <div class="input-group">
-                                <span class="input-group-text bg-light"><i class="bi bi-calendar-event"></i></span>
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-calendar-event"></i>
+                                </span>
                                 <select id="periode" class="form-select" name="periode_id">
                                     @foreach ($all_periode as $p)
-                                        <option value="{{ $p->id }}" {{ $periode_id == $p->id ? 'selected' : '' }}>
+                                        <option value="{{ $p->id }}" 
+                                                {{ $periode_id == $p->id ? 'selected' : '' }}>
                                             {{ $p->nama_periode }}
                                         </option>
                                     @endforeach
@@ -33,9 +63,8 @@
                             </div>
                         </div>
 
-                        <div class="col-12 col-md-7 d-flex flex-column flex-md-row gap-2">
-                           
-                        </div>
+                        <div class="col-12 col-md-7 d-flex flex-column flex-md-row gap-2"></div>
+
                     </div>
                 </form>
             </div>
@@ -58,10 +87,12 @@
                     <div class="row align-items-center text-center text-md-start">
 
                         <div class="col-12 col-md-8 mb-3 mb-md-0">
-                            <h4 class="fw-bold text-dark mb-2">{{ ucfirst($mahasiswa->user->name) }}</h4>
+                            <h4 class="fw-bold text-dark mb-2">
+                                {{ ucfirst($mahasiswa->user->name) }}
+                            </h4>
                             <div class="text-muted">
                                 <p class="mb-1"><i class="bi bi-card-text me-2"></i>{{ $mahasiswa->nrp }}</p>
-                                <p class="mb-0"><i class="bi bi-mortarboard me-2"></i>{{ $mahasiswa->program_studi->name ?? '-' }}</p>
+                                <p class="mb-0"><i class="bi bi-mortarboard me-2"></i>{{ $mahasiswa->program_studi->name }}</p>
                                 <p class="mb-0">IPK: {{ $mahasiswa->ipk ?? '-' }}</p>
                             </div>
                         </div>
@@ -75,11 +106,11 @@
 </div>
 
 {{-- ===========================
-    DETAIL INDIKATOR + KOMENTAR
+    DETAIL LAPORAN
 =========================== --}}
 <div class="row g-4">
 
-    {{-- ================== INDICATOR TABLE ================== --}}
+    {{-- ================== TABEL KEHADIRAN ================== --}}
     <div class="col-12 col-lg-7">
         <div class="card card-custom shadow-sm border-0 h-100">
             <div class="card-body p-4">
@@ -127,7 +158,7 @@
         </div>
     </div>
 
-    {{-- ================== FEEDBACK KOMENTAR ================== --}}
+    {{-- ================== FEEDBACK DOSEN ================== --}}
     <div class="col-12 col-lg-5">
         <div class="card card-custom h-100 shadow-sm border-0">
             <div class="card-header bg-white py-3 fw-bold">
@@ -159,58 +190,55 @@
     </div>
 
 </div>
+
+@endif
+
 @endsection
 
 {{-- ===========================
-    CHART.JS
+    CHART SCRIPT
 =========================== --}}
-@push('scripts') 
+@push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    // Konfigurasi Font Responsif
-    Chart.defaults.font.family = "'Segoe UI', 'Helvetica', 'Arial', sans-serif";
-    Chart.defaults.font.size = 11;
 
-    // My KPI Chart
-    const reportChart = document.getElementById('reportChart');
-    new Chart(reportChart, {
+<script>
+    const grafikLabels = @json($grafik_labels);
+    const grafikValues = @json($grafik_values);
+
+    const ctx = document.getElementById('reportChart').getContext('2d');
+
+    new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Kehadiran'],
-            datasets: [{
-                label: 'Skor Saya',
-                data: [5.0],
-                backgroundColor: 'rgba(52, 152, 219, 0.2)',
-                borderColor: '#3498db',
-                pointBackgroundColor: '#3498db',
-                pointBorderColor: '#fff',
-                borderWidth: 2
-            }, {
-                label: 'Target Minimum',
-                data: [3.5],
-                backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                borderColor: '#e74c3c',
-                pointBackgroundColor: '#e74c3c',
-                pointBorderColor: '#fff',
-                borderWidth: 2,
-                borderDash: [5, 5]
-            }]
+            labels: grafikLabels,
+            datasets: [
+                {
+                    label: 'Rata-rata Kehadiran (%)',
+                    data: grafikValues,
+                    borderWidth: 2,
+                    borderColor: "#3498db",
+                    backgroundColor: "rgba(52,152,219,0.25)",
+                    pointBackgroundColor: "#3498db",
+                    tension: 0.3,
+                },
+                {
+                    label: 'Target Minimum',
+                    data: grafikLabels.map(() => 75),
+                    borderWidth: 1.5,
+                    borderColor: "#e74c3c",
+                    borderDash: [5,5],
+                    pointRadius: 0
+                }
+            ]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false, // PENTING agar responsif di container
+            maintainAspectRatio: false,
             scales: {
-                r: {
-                    beginAtZero: true,
-                    max: 5,
-                    ticks: { display: false, stepSize: 1 },
-                    pointLabels: {
-                        font: { size: 12, weight: 'bold' }
-                    }
-                }
+                y: { beginAtZero: true, max: 100, ticks: { stepSize: 10 } }
             },
             plugins: {
-                legend: { position: 'bottom' }
+                legend: { display: true, position: 'bottom' }
             }
         }
     });
