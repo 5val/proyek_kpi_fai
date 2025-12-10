@@ -61,10 +61,15 @@ class AdminController extends Controller
          ->map(function ($item) {
                // Mengambil nama objek asli dari relasi polimorfik manual
                $modelClass = $item->target_type; // misal: App\Models\Fasilitas
-               $object = $modelClass::find($item->target_id);
+               // if($modelClass) {
+                  $object = $modelClass::find($item->target_id);
+                  // Bersihkan nama tipe untuk tampilan (ambil nama class saja)
+                  $typeDisplay = class_basename($item->target_type); 
+               // } else {
+               //    $object = ['name' => "Manajemen Kampus"];
+               //    $typeDisplay = "Kampus";
+               // }
                
-               // Bersihkan nama tipe untuk tampilan (ambil nama class saja)
-               $typeDisplay = class_basename($item->target_type); 
 
                return (object) [
                   'type' => $typeDisplay,
@@ -954,7 +959,11 @@ class AdminController extends Controller
       $curKategori = Kategori::findOrFail($request->kategori_id ?? 1);
       $periode_id = $request->periode_id ?? Periode::max('id');
 
-      $penilaian = $this->getPenilaian($curKategori->id, $periode_id);
+      if($curKategori->id == 6) {
+         $penilaian = $this->getPenilaianKampus($periode_id);
+      } else {
+         $penilaian = $this->getPenilaian($curKategori->id, $periode_id);
+      }
 
       return view('admin.laporan', [
          'all_kategori' => $all_kategori,
@@ -966,7 +975,11 @@ class AdminController extends Controller
    }
 
    public function laporan_export_excel($kategori_id, $periode_id) {
-      $penilaian = $this->getPenilaian($kategori_id, $periode_id);
+      if($kategori_id == 6) {
+         $penilaian = $this->getPenilaianKampus($periode_id);
+      } else {
+         $penilaian = $this->getPenilaian($kategori_id, $periode_id);
+      }
 
       $curKategori = Kategori::findOrFail($kategori_id);
 
@@ -975,26 +988,39 @@ class AdminController extends Controller
       $sheet = $spreadsheet->getActiveSheet();
 
       // Header
-      $sheet->setCellValue('A1', 'Nama ' . ucfirst($curKategori->target_role));
-      $sheet->setCellValue('B1', 'Skor Rata-rata');
-      $sheet->setCellValue('C1', 'Jumlah Penilai');
+      if ($kategori_id == 6) {
+         $sheet->setCellValue('A1', 'Nama Indikator');
+         $sheet->setCellValue('B1', 'Skor Rata-rata');
 
-      // Isi baris
-      $row = 2;
-      foreach ($penilaian as $p) {
-
-         if (in_array($curKategori->id, [1, 2])) {
-               $nama = $p->user->name ?? '';
-         } elseif (in_array($curKategori->id, [3, 4])) {
-               $nama = $p->name ?? '';
-         } else {
-               $nama = $p->kelas->mataKuliah->name ?? '';
+         // Isi baris
+         $row = 2;
+         foreach ($penilaian as $p) {
+            $sheet->setCellValue("A{$row}", $p->indikator->name);
+            $sheet->setCellValue("B{$row}", $p->avg_score ?? 'Belum Ada Penilaian');
+            $row++;
          }
-
-         $sheet->setCellValue("A{$row}", $nama);
-         $sheet->setCellValue("B{$row}", $p->penilaian_avg_avg_score ?? 'Belum Ada Penilaian');
-         $sheet->setCellValue("C{$row}", $p->penilaian_count);
-         $row++;
+      } else {
+         $sheet->setCellValue('A1', 'Nama ' . ucfirst($curKategori->target_role));
+         $sheet->setCellValue('B1', 'Skor Rata-rata');
+         $sheet->setCellValue('C1', 'Jumlah Penilai');
+         
+         // Isi baris
+         $row = 2;
+         foreach ($penilaian as $p) {
+   
+            if (in_array($curKategori->id, [1, 2])) {
+                  $nama = $p->user->name ?? '';
+            } elseif (in_array($curKategori->id, [3, 4])) {
+                  $nama = $p->name ?? '';
+            } else {
+                  $nama = $p->kelas->mataKuliah->name ?? '';
+            }
+   
+            $sheet->setCellValue("A{$row}", $nama);
+            $sheet->setCellValue("B{$row}", $p->penilaian_avg_avg_score ?? 'Belum Ada Penilaian');
+            $sheet->setCellValue("C{$row}", $p->penilaian_count);
+            $row++;
+         }
       }
 
       // Filename
@@ -1009,14 +1035,20 @@ class AdminController extends Controller
    }
 
    public function laporan_export_pdf($kategori_id, $periode_id) {
-      $penilaian = $this->getPenilaian($kategori_id, $periode_id);
+      if($kategori_id == 6) {
+         $penilaian = $this->getPenilaianKampus($periode_id);
+      } else {
+         $penilaian = $this->getPenilaian($kategori_id, $periode_id);
+      }
 
       $curKategori = Kategori::findOrFail($kategori_id);
+      $curPeriode = Periode::findOrFail($periode_id);
 
       // Generate HTML untuk PDF
       $html = view('admin.laporan_pdf', [
          'penilaian' => $penilaian,
-         'curKategori' => $curKategori
+         'curKategori' => $curKategori,
+         'curPeriode' => $curPeriode,
       ])->render();
 
       // Load Dompdf
@@ -1134,7 +1166,7 @@ class AdminController extends Controller
       }
 
       if ($kategori_id == 5) {
-         $penilaian = $penilaian->with('kelas.mataKuliah');
+         $penilaian = $penilaian->with('kelas.mataKuliah', 'kelas.program_studi');
       }
 
       if (!in_array($kategori_id, [3, 4])) {
@@ -1148,5 +1180,24 @@ class AdminController extends Controller
       $penilaian = $penilaian->withCount('penilaian')->get();
 
       return $penilaian;
+   }
+
+   private function getPenilaianKampus($periode_id) {
+      $penilaian = DetailPenilaian::query()
+         ->select('indikator_id', DB::raw('AVG(score) as avg_score'))
+         ->whereHas('indikator', function ($q) {
+               $q->where('kategori_id', 6);
+         })
+         ->when($periode_id, function ($q) use ($periode_id) {
+               // filter berdasarkan periode dari tabel penilaian
+               $q->whereHas('penilaian', function ($p) use ($periode_id) {
+                  $p->where('periode_id', $periode_id);
+               });
+         })
+         ->groupBy('indikator_id')
+         ->with('indikator') // ikutkan data indikatornya
+         ->get();
+
+         return $penilaian;
    }
 }

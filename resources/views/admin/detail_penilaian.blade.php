@@ -33,7 +33,7 @@
                     <li class="list-group-item d-flex justify-content-between align-items-start py-3">
                         <strong class="text-muted small text-uppercase">Subjek Dinilai</strong>
                         <span class="fw-bold text-end text-break ms-3">
-                            {{ $penilaian->dinilai_user->name ?? $penilaian->dinilai->name }}
+                            {{ $penilaian->dinilai_user->name ?? $penilaian->dinilai->name ?? "{$penilaian->dinilai_user->mata_kuliah->name} - {$penilaian->dinilai_user->program_studi->name}" }}
                         </span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-start py-3">

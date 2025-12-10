@@ -4,9 +4,6 @@
 
 @section('page-title', 'Dashboard Admin')
 @section('page-subtitle', 'Monitoring Kinerja & Area Perlu Perbaikan')
-@section('user-name', 'Administrator')
-@section('user-role', 'Admin')
-@section('user-initial', 'AD')
 
 @section('content')
 

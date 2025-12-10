@@ -587,13 +587,13 @@ public function feedback() {
       if($request->kategori == 3) {
          $target_type = 'App\Models\Fasilitas';
       } else {
-         nullable();
+         $target_type = 'App\Models\Kampus';
       }
       $dosen = Dosen::where('user_id', $user->id)->firstOrFail();
       Feedback::create([
          'pengirim_id' => $user->id, 
          'kategori_id' => $validated['kategori'],
-         'target_id' => $validated['target'],
+         'target_id' => $validated['target'] ?? 1,
          'target_type' => $target_type,
          'isi' => $validated['deskripsi'],
          'foto' => $path,

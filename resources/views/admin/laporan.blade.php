@@ -80,65 +80,108 @@
                     {{-- text-nowrap: Agar tabel rapi scroll ke samping di HP --}}
                     <table class="table table-hover align-middle table-bordered w-100 text-nowrap mb-0">
                         <thead class="table-light">
-                            <tr>
-                                <th>Nama {{ ucfirst($curKategori->target_role) }}</th>
-                                <th class="text-center" width="20%">Skor Rata-rata</th>
-                                <th class="text-center" width="20%">Jumlah Penilai</th>
-                            </tr>
+                           @if ($curKategori->id == 6)
+                              <tr>
+                                 <th>Nama Indikator</th>
+                                 <th class="text-center" width="20%">Skor Rata-rata</th>
+                              </tr>
+                           @else
+                              <tr>
+                                 <th>Nama {{ ucfirst($curKategori->target_role) }}</th>
+                                 <th class="text-center" width="20%">Skor Rata-rata</th>
+                                 <th class="text-center" width="20%">Jumlah Penilai</th>
+                              </tr>
+                           @endif
                         </thead>
                         <tbody>
-                            @forelse ($penilaian as $p)
-                                <tr>
+                           @if ($curKategori->id == 6)
+                                 @forelse ($penilaian as $p)
+                                 <tr>
                                     <td>
-                                        <div class="fw-bold text-dark">
-                                            @if ($curKategori->id == 1 || $curKategori->id == 2)
+                                       <div class="fw-bold text-dark">
+                                          {{ $p->indikator->name }}
+                                       </div>
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                          @if($p->avg_score)
+                                             @php $score = $p->avg_score; @endphp
+                                             @if($score >= 4)
+                                                <span class="badge bg-success rounded-pill px-3">{{ number_format($score, 1) }}</span>
+                                             @elseif($score >= 3)
+                                                <span class="badge bg-primary rounded-pill px-3">{{ number_format($score, 1) }}</span>
+                                             @elseif($score >= 2)
+                                                <span class="badge bg-warning text-dark rounded-pill px-3">{{ number_format($score, 1) }}</span>
+                                             @else
+                                                <span class="badge bg-danger rounded-pill px-3">{{ number_format($score, 1) }}</span>
+                                             @endif
+                                          @else
+                                             <span class="badge bg-light text-muted border">Belum Ada</span>
+                                          @endif
+                                    </td>
+                                 </tr>
+                              @empty
+                                 <tr>
+                                    <td colspan="3" class="text-center py-5 text-muted">
+                                          <i class="bi bi-clipboard-x fs-1 d-block mb-2 opacity-25"></i>
+                                          Tidak ada data penilaian untuk periode dan kategori ini.
+                                    </td>
+                                 </tr>
+                              @endforelse
+                           @else
+                              @forelse ($penilaian as $p)
+                                 <tr>
+                                    <td>
+                                          <div class="fw-bold text-dark">
+                                             @if ($curKategori->id == 1 || $curKategori->id == 2)
                                                 {{-- Icon User --}}
                                                 <i class="bi bi-person-circle me-2 text-secondary"></i> {{ $p->user->name ?? '-' }}
-                                            @elseif ($curKategori->id == 3 || $curKategori->id == 4)
+                                             @elseif ($curKategori->id == 3 || $curKategori->id == 4)
                                                 {{-- Icon Building --}}
                                                 <i class="bi bi-building me-2 text-secondary"></i> {{ $p->name ?? '-' }}
-                                            @else
+                                             @else
                                                 {{-- Icon Book --}}
-                                                <i class="bi bi-book me-2 text-secondary"></i> {{ $p->kelas->mataKuliah->name ?? '-' }}
-                                            @endif
-                                        </div>
+                                                <i class="bi bi-book me-2 text-secondary"></i> {{ "{$p->kelas->mataKuliah->name} - {$p->kelas->program_studi->name}" ?? '-' }}
+                                             @endif
+                                          </div>
                                     </td>
                                     
                                     <td class="text-center">
-                                        @if($p->penilaian_avg_avg_score)
-                                            @php $score = $p->penilaian_avg_avg_score; @endphp
-                                            @if($score >= 4)
+                                          @if($p->penilaian_avg_avg_score)
+                                             @php $score = $p->penilaian_avg_avg_score; @endphp
+                                             @if($score >= 4)
                                                 <span class="badge bg-success rounded-pill px-3">{{ number_format($score, 1) }}</span>
-                                            @elseif($score >= 3)
+                                             @elseif($score >= 3)
                                                 <span class="badge bg-primary rounded-pill px-3">{{ number_format($score, 1) }}</span>
-                                            @elseif($score >= 2)
+                                             @elseif($score >= 2)
                                                 <span class="badge bg-warning text-dark rounded-pill px-3">{{ number_format($score, 1) }}</span>
-                                            @else
+                                             @else
                                                 <span class="badge bg-danger rounded-pill px-3">{{ number_format($score, 1) }}</span>
-                                            @endif
-                                        @else
-                                            <span class="badge bg-light text-muted border">Belum Ada</span>
-                                        @endif
+                                             @endif
+                                          @else
+                                             <span class="badge bg-light text-muted border">Belum Ada</span>
+                                          @endif
                                     </td>
                                     
                                     <td class="text-center">
-                                        @if($p->penilaian_count)
-                                            <span class="badge bg-secondary bg-opacity-10 text-dark border px-3">
+                                          @if($p->penilaian_count)
+                                             <span class="badge bg-secondary bg-opacity-10 text-dark border px-3">
                                                 <i class="bi bi-people me-1"></i> {{ $p->penilaian_count }}
-                                            </span>
-                                        @else
-                                            <span class="small text-muted">-</span>
-                                        @endif
+                                             </span>
+                                          @else
+                                             <span class="small text-muted">-</span>
+                                          @endif
                                     </td>
-                                </tr>
-                            @empty
-                                <tr>
+                                 </tr>
+                              @empty
+                                 <tr>
                                     <td colspan="3" class="text-center py-5 text-muted">
-                                        <i class="bi bi-clipboard-x fs-1 d-block mb-2 opacity-25"></i>
-                                        Tidak ada data penilaian untuk periode dan kategori ini.
+                                          <i class="bi bi-clipboard-x fs-1 d-block mb-2 opacity-25"></i>
+                                          Tidak ada data penilaian untuk periode dan kategori ini.
                                     </td>
-                                </tr>
-                            @endforelse
+                                 </tr>
+                              @endforelse
+                           @endif
                         </tbody>
                     </table>
                 </div>

@@ -47,21 +47,6 @@ class Penilaian extends Model
         return $this->morphTo(__FUNCTION__, 'dinilai_type', 'dinilai_id');
     }
 
-    public function getDinilaiUserAttribute()
-    {
-        $model = $this->dinilai;
-
-        if ($model instanceof \App\Models\Dosen) {
-            return $model->user;
-        }
-
-        if ($model instanceof \App\Models\Mahasiswa) {
-            return $model->user;
-        }
-
-        return null; // for fasilitas & unit
-    }
-
     /**
      * Mendapatkan kategori KPI yang terkait dengan penilaian ini.
      */
@@ -101,6 +86,28 @@ class Penilaian extends Model
     public function praktikum()
     {
         return $this->hasMany(Praktikum::class, 'dinilai_id');
+    }
+
+    public function getDinilaiUserAttribute()
+    {
+        $model = $this->dinilai;
+
+        if ($model instanceof \App\Models\Dosen) {
+            return $model->user;
+        }
+
+        if ($model instanceof \App\Models\Mahasiswa) {
+            return $model->user;
+        }
+
+        if ($model instanceof \App\Models\Praktikum) {
+            return (object)[
+               'mata_kuliah' => $model->kelas->mataKuliah,
+               'program_studi' => $model->kelas->program_studi,
+            ];
+        }
+
+        return null; // for fasilitas & unit
     }
 }
 

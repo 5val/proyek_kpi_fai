@@ -83,8 +83,8 @@
                                        <span class="fw-bold">Manajemen Kampus</span>
                                  </td>
                                 @else
-                                 <td style="max-width: 250px;" class="text-truncate" title="{{ $p->dinilai_user->name ?? $p->dinilai->name }}">
-                                       <span class="fw-bold">{{ $p->dinilai_user->name ?? $p->dinilai->name }}</span>
+                                 <td style="max-width: 250px;" class="text-truncate">
+                                       <span class="fw-bold">{{ $p->dinilai_user->name ?? $p->dinilai->name ?? "{$p->dinilai_user->mata_kuliah->name} - {$p->dinilai_user->program_studi->name}" }}</span>
                                  </td>
                                 @endif
                                 

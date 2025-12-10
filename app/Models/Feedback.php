@@ -72,6 +72,13 @@ class Feedback extends Model
             return $model->user;
         }
 
+        if ($model instanceof \App\Models\Praktikum) {
+            return (object)[
+               'mata_kuliah' => $model->kelas->mataKuliah,
+               'program_studi' => $model->kelas->program_studi,
+            ];
+        }
+
         return null; // for fasilitas & unit
     }
 }

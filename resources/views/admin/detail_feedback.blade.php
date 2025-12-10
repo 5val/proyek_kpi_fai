@@ -81,7 +81,7 @@
                         <div class="card-body">
                             <div class="mb-3">
                                 <span class="badge bg-info text-dark mb-2">{{ $feedback->kategori->name }}</span>
-                                <h4 class="fw-bold text-dark mb-0">{{ $feedback->target_user->name ?? $feedback->target->name }}</h4>
+                                <h4 class="fw-bold text-dark mb-0">{{ $feedback->target_user->name ?? $feedback->target->name ?? "{$feedback->target_user->mata_kuliah->name} - {$feedback->target_user->program_studi->name}" }}</h4>
                             </div>
                             <hr class="text-muted opacity-25">
                             {{-- text-break penting agar link panjang/kata panjang tidak merusak layout HP --}}

@@ -88,7 +88,7 @@
                                 </td>
                                 
                                 <td><span class="badge bg-info text-dark bg-opacity-25 border border-info">{{ $feedback->kategori->name }}</span></td>
-                                <td>{{ $feedback->target_user->name ?? $feedback->target->name }}</td>
+                                <td>{{ $feedback->target_user->name ?? $feedback->target->name ?? "{$feedback->target_user->mata_kuliah->name} - {$feedback->target_user->program_studi->name}" }}</td>
                                 <td>
                                     <span class="small text-muted">{{ $feedback->created_at->format('d M Y') }}</span><br>
                                     <span class="small fw-bold">{{ $feedback->created_at->format('H:i') }}</span>
