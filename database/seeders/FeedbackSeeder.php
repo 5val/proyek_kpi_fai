@@ -2,86 +2,93 @@
 
 namespace Database\Seeders;
 
-use App\Models\Praktikum;
 use Illuminate\Database\Seeder;
-use App\Models\Feedback;
-use App\Models\User;
-use App\Models\Kategori;
-use App\Models\Fasilitas;
-use App\Models\Unit;
-use App\Models\Kelas;
+use Illuminate\Support\Facades\DB;
 
 class FeedbackSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        $kategoriMap = [
-            'mahasiswa' => [1, 3, 4, 5],
-            'dosen' => [3, 6],
+        $data = [
+            ['id'=>14, 'pengirim_id'=>33, 'kategori_id'=>3, 'target_id'=>30, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 1', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-28 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>15, 'pengirim_id'=>90, 'kategori_id'=>5, 'target_id'=>10, 'target_type'=>'App\Models\Praktikum', 'isi'=>'Keluhan contoh nomor 2', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-12-03 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>16, 'pengirim_id'=>75, 'kategori_id'=>1, 'target_id'=>1, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 3', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-27 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>17, 'pengirim_id'=>33, 'kategori_id'=>4, 'target_id'=>2, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 4', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-14 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>18, 'pengirim_id'=>103, 'kategori_id'=>4, 'target_id'=>1, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 5', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-09-14 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>19, 'pengirim_id'=>112, 'kategori_id'=>1, 'target_id'=>2, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 6', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-06-18 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>20, 'pengirim_id'=>33, 'kategori_id'=>5, 'target_id'=>5, 'target_type'=>'App\Models\Praktikum', 'isi'=>'Keluhan contoh nomor 7', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-08-19 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>21, 'pengirim_id'=>45, 'kategori_id'=>4, 'target_id'=>2, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 8', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-08-14 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>22, 'pengirim_id'=>97, 'kategori_id'=>1, 'target_id'=>7, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 9', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-06-18 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>23, 'pengirim_id'=>59, 'kategori_id'=>4, 'target_id'=>3, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 10', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-19 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>24, 'pengirim_id'=>19, 'kategori_id'=>6, 'target_id'=>1, 'target_type'=>'App\Models\Kampus', 'isi'=>'Keluhan contoh nomor 11', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-21 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>25, 'pengirim_id'=>125, 'kategori_id'=>1, 'target_id'=>16, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 12', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-29 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>26, 'pengirim_id'=>76, 'kategori_id'=>4, 'target_id'=>3, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 13', 'foto'=>null, 'is_anonymous'=>1, 'status'=>0, 'created_at'=>'2025-09-06 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>27, 'pengirim_id'=>8, 'kategori_id'=>6, 'target_id'=>1, 'target_type'=>'App\Models\Kampus', 'isi'=>'Keluhan contoh nomor 14', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-17 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>28, 'pengirim_id'=>38, 'kategori_id'=>3, 'target_id'=>27, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 15', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-08-26 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>29, 'pengirim_id'=>32, 'kategori_id'=>3, 'target_id'=>6, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 16', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-15 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>30, 'pengirim_id'=>115, 'kategori_id'=>4, 'target_id'=>3, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 17', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-04 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>31, 'pengirim_id'=>56, 'kategori_id'=>4, 'target_id'=>2, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 18', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-08-27 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>32, 'pengirim_id'=>114, 'kategori_id'=>1, 'target_id'=>2, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 19', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-14 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>33, 'pengirim_id'=>111, 'kategori_id'=>3, 'target_id'=>15, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 20', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-10-17 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>34, 'pengirim_id'=>33, 'kategori_id'=>1, 'target_id'=>3, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 21', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-09-13 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>35, 'pengirim_id'=>98, 'kategori_id'=>1, 'target_id'=>19, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 22', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-08-24 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>36, 'pengirim_id'=>13, 'kategori_id'=>3, 'target_id'=>13, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 23', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-09-14 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>37, 'pengirim_id'=>39, 'kategori_id'=>5, 'target_id'=>1, 'target_type'=>'App\Models\Praktikum', 'isi'=>'Keluhan contoh nomor 24', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-06-22 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>38, 'pengirim_id'=>78, 'kategori_id'=>3, 'target_id'=>22, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 25', 'foto'=>null, 'is_anonymous'=>1, 'status'=>0, 'created_at'=>'2025-07-19 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>39, 'pengirim_id'=>51, 'kategori_id'=>1, 'target_id'=>10, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 26', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-06-27 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>40, 'pengirim_id'=>13, 'kategori_id'=>6, 'target_id'=>1, 'target_type'=>'App\Models\Kampus', 'isi'=>'Keluhan contoh nomor 27', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-07 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>41, 'pengirim_id'=>50, 'kategori_id'=>1, 'target_id'=>7, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 28', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-10-21 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>42, 'pengirim_id'=>12, 'kategori_id'=>3, 'target_id'=>25, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 29', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-09-18 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>43, 'pengirim_id'=>26, 'kategori_id'=>4, 'target_id'=>1, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 30', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-12-11 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>44, 'pengirim_id'=>34, 'kategori_id'=>5, 'target_id'=>19, 'target_type'=>'App\Models\Praktikum', 'isi'=>'Keluhan contoh nomor 31', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-09-10 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>45, 'pengirim_id'=>14, 'kategori_id'=>3, 'target_id'=>16, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 32', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-06-21 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>46, 'pengirim_id'=>43, 'kategori_id'=>1, 'target_id'=>13, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 33', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-16 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>47, 'pengirim_id'=>57, 'kategori_id'=>1, 'target_id'=>17, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 34', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-08-27 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>48, 'pengirim_id'=>71, 'kategori_id'=>1, 'target_id'=>2, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 35', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-10-08 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>49, 'pengirim_id'=>79, 'kategori_id'=>3, 'target_id'=>7, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 36', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-09-24 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>50, 'pengirim_id'=>78, 'kategori_id'=>1, 'target_id'=>20, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 37', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-10-07 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>51, 'pengirim_id'=>24, 'kategori_id'=>3, 'target_id'=>25, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 38', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-02 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>52, 'pengirim_id'=>44, 'kategori_id'=>5, 'target_id'=>2, 'target_type'=>'App\Models\Praktikum', 'isi'=>'Keluhan contoh nomor 39', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-08-27 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>53, 'pengirim_id'=>10, 'kategori_id'=>6, 'target_id'=>1, 'target_type'=>'App\Models\Kampus', 'isi'=>'Keluhan contoh nomor 40', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-27 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>54, 'pengirim_id'=>31, 'kategori_id'=>4, 'target_id'=>2, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 41', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-23 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>55, 'pengirim_id'=>103, 'kategori_id'=>4, 'target_id'=>1, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 42', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-10-13 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>56, 'pengirim_id'=>68, 'kategori_id'=>1, 'target_id'=>2, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 43', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-25 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>57, 'pengirim_id'=>22, 'kategori_id'=>3, 'target_id'=>16, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 44', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-18 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>58, 'pengirim_id'=>86, 'kategori_id'=>3, 'target_id'=>25, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 45', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-03 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>59, 'pengirim_id'=>62, 'kategori_id'=>1, 'target_id'=>13, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 46', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-06-16 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>60, 'pengirim_id'=>117, 'kategori_id'=>3, 'target_id'=>10, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 47', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-06-30 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>61, 'pengirim_id'=>76, 'kategori_id'=>3, 'target_id'=>6, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 48', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-09-12 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>62, 'pengirim_id'=>59, 'kategori_id'=>4, 'target_id'=>2, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 49', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-26 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>63, 'pengirim_id'=>64, 'kategori_id'=>1, 'target_id'=>7, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 50', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-10-19 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>64, 'pengirim_id'=>111, 'kategori_id'=>1, 'target_id'=>7, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 51', 'foto'=>null, 'is_anonymous'=>1, 'status'=>0, 'created_at'=>'2025-08-22 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>65, 'pengirim_id'=>52, 'kategori_id'=>5, 'target_id'=>3, 'target_type'=>'App\Models\Praktikum', 'isi'=>'Keluhan contoh nomor 52', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-25 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>66, 'pengirim_id'=>13, 'kategori_id'=>3, 'target_id'=>21, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 53', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-08-09 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>67, 'pengirim_id'=>114, 'kategori_id'=>5, 'target_id'=>4, 'target_type'=>'App\Models\Praktikum', 'isi'=>'Keluhan contoh nomor 54', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-08-18 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>68, 'pengirim_id'=>102, 'kategori_id'=>3, 'target_id'=>3, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 55', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-10-26 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>69, 'pengirim_id'=>98, 'kategori_id'=>1, 'target_id'=>17, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 56', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-06-16 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>70, 'pengirim_id'=>43, 'kategori_id'=>1, 'target_id'=>6, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 57', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-06-18 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>71, 'pengirim_id'=>45, 'kategori_id'=>1, 'target_id'=>7, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 58', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-12-04 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>72, 'pengirim_id'=>69, 'kategori_id'=>4, 'target_id'=>3, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 59', 'foto'=>null, 'is_anonymous'=>1, 'status'=>0, 'created_at'=>'2025-08-25 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>73, 'pengirim_id'=>23, 'kategori_id'=>6, 'target_id'=>1, 'target_type'=>'App\Models\Kampus', 'isi'=>'Keluhan contoh nomor 60', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-09-08 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>74, 'pengirim_id'=>106, 'kategori_id'=>3, 'target_id'=>15, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 61', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-28 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>75, 'pengirim_id'=>48, 'kategori_id'=>1, 'target_id'=>10, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 62', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-06-22 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>76, 'pengirim_id'=>11, 'kategori_id'=>6, 'target_id'=>1, 'target_type'=>'App\Models\Kampus', 'isi'=>'Keluhan contoh nomor 63', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-09-27 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>77, 'pengirim_id'=>94, 'kategori_id'=>4, 'target_id'=>3, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 64', 'foto'=>null, 'is_anonymous'=>1, 'status'=>0, 'created_at'=>'2025-06-22 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>78, 'pengirim_id'=>110, 'kategori_id'=>4, 'target_id'=>3, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 65', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-09-11 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>79, 'pengirim_id'=>113, 'kategori_id'=>3, 'target_id'=>7, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 66', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-11-25 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>80, 'pengirim_id'=>99, 'kategori_id'=>4, 'target_id'=>3, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 67', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-10-25 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>81, 'pengirim_id'=>96, 'kategori_id'=>5, 'target_id'=>15, 'target_type'=>'App\Models\Praktikum', 'isi'=>'Keluhan contoh nomor 68', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-14 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>82, 'pengirim_id'=>37, 'kategori_id'=>5, 'target_id'=>20, 'target_type'=>'App\Models\Praktikum', 'isi'=>'Keluhan contoh nomor 69', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-10-26 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>83, 'pengirim_id'=>69, 'kategori_id'=>1, 'target_id'=>4, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 70', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-09-13 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>84, 'pengirim_id'=>63, 'kategori_id'=>1, 'target_id'=>4, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 71', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-08-21 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>85, 'pengirim_id'=>93, 'kategori_id'=>4, 'target_id'=>1, 'target_type'=>'App\Models\Unit', 'isi'=>'Keluhan contoh nomor 72', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-06-17 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>86, 'pengirim_id'=>82, 'kategori_id'=>3, 'target_id'=>13, 'target_type'=>'App\Models\Fasilitas', 'isi'=>'Keluhan contoh nomor 73', 'foto'=>null, 'is_anonymous'=>1, 'status'=>0, 'created_at'=>'2025-07-18 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>87, 'pengirim_id'=>83, 'kategori_id'=>1, 'target_id'=>14, 'target_type'=>'App\Models\Dosen', 'isi'=>'Keluhan contoh nomor 74', 'foto'=>null, 'is_anonymous'=>0, 'status'=>0, 'created_at'=>'2025-07-08 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>88, 'pengirim_id'=>31, 'kategori_id'=>5, 'target_id'=>5, 'target_type'=>'App\Models\Praktikum', 'isi'=>'Keluhan contoh nomor 75', 'foto'=>null, 'is_anonymous'=>1, 'status'=>0, 'created_at'=>'2025-10-24 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
         ];
 
-        $mahasiswa = User::where('role', 'mahasiswa')->get();
-        $dosen = User::where('role', 'dosen')->get();
-
-        // Target collections
-        $dosenTargets = User::where('role', 'dosen')->pluck('id')->toArray();
-        $fasilitasTargets = Fasilitas::pluck('id')->toArray();
-        $unitTargets = Unit::pluck('id')->toArray();
-        $praktikumTargets = Praktikum::pluck('id')->toArray();
-
-        foreach (range(1, 50) as $i) {
-
-            // tentukan pengirim
-            $pengirim = rand(0,1) === 1
-                ? $mahasiswa->random()
-                : $dosen->random();
-
-            // tentukan kategori sesuai role
-            $allowedKategori = $kategoriMap[$pengirim->role];
-            $kategoriId = collect($allowedKategori)->random();
-
-            // tentukan target berdasarkan kategori
-            $targetId = null;
-            $targetType = null;
-
-            switch ($kategoriId) {
-
-                case 1: // dosen dinilai oleh mahasiswa
-                    $targetId = collect($dosenTargets)->random();
-                    $targetType = 'App\Models\Dosen';
-                    break;
-
-                case 3: // fasilitas
-                    $targetId = collect($fasilitasTargets)->random();
-                    $targetType = 'App\Models\Fasilitas';
-                    break;
-
-                case 4: // unit BAA/BAK/BAU
-                    $targetId = collect($unitTargets)->random();
-                    $targetType = 'App\Models\Unit';
-                    break;
-
-                case 5: // praktikum = kelas
-                    $targetId = collect($praktikumTargets)->random();
-                    $targetType = 'App\Models\Praktikum';
-                    break;
-
-                case 6: // manajemen kampus → target NULL (sesuai permintaan)
-                    $targetId = 1;
-                    $targetType = 'App\Models\Kampus';
-                    break;
-            }
-
-            Feedback::create([
-                'pengirim_id' => $pengirim->id,
-                'kategori_id' => $kategoriId,
-                'target_id'   => $targetId,
-                'target_type' => $targetType,
-                'isi'         => fake()->sentence(),
-                'foto'        => null,
-                'is_anonymous'=> fake()->boolean(50) ? 1 : 0,
-                'status'      => 0,
-            ]);
+        foreach (array_chunk($data, 50) as $chunk) {
+            DB::table('feedback')->insert($chunk);
         }
     }
 }

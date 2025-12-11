@@ -3,22 +3,47 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Unit;
-use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class UnitSeeder extends Seeder
 {
     public function run(): void
     {
-        $dosenIds = User::where('role', 'dosen')->pluck('id')->toArray();
-        $names = ['BAA', 'BAK', 'BAU'];
+        $timestamp = now();
 
-        foreach ($names as $t) {
-            Unit::factory()->create([
-                'name' => $t,
-                'penanggung_jawab_id' => fake()->randomElement($dosenIds),
-                'avg_kpi' => fake()->randomFloat(2, 0, 4),
-            ]);
-        }
+        $units = [
+            [
+                'id' => 1,
+                'type' => 'BAA',
+                'penanggung_jawab_id' => 1,
+                'name' => 'Biro Administrasi Akademik',
+                'avg_kpi' => 3.5,
+                'is_active' => 1,
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ],
+            [
+                'id' => 2,
+                'type' => 'BAK',
+                'penanggung_jawab_id' => 2,
+                'name' => 'Biro Administrasi Kemahasiswaan',
+                'avg_kpi' => 3.5,
+                'is_active' => 1,
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ],
+            [
+                'id' => 3,
+                'type' => 'BAU',
+                'penanggung_jawab_id' => 3,
+                'name' => 'Biro Administrasi Keuangan',
+                'avg_kpi' => 3.4,
+                'is_active' => 1,
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ],
+        ];
+
+        DB::table('unit')->insert($units);
     }
 }

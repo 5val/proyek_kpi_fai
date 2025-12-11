@@ -34,13 +34,6 @@ class Dosen extends Model
     ];
 
     /**
-     * Kunci utama model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'user_id'; // Asumsi user_id unik, atau 'id' jika ada
-
-    /**
      * Tipe kunci utama.
      *
      * @var string

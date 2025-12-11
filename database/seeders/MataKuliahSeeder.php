@@ -3,49 +3,57 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\MataKuliah;
+use Illuminate\Support\Facades\DB;
 
 class MataKuliahSeeder extends Seeder
 {
     public function run(): void
     {
-        $names = [
-            "Algoritma dan Pemrograman",
-            "Struktur Data",
-            "Basis Data",
-            "Jaringan Komputer",
-            "Sistem Operasi",
-            "Pemrograman Berorientasi Objek",
-            "Rekayasa Perangkat Lunak",
-            "Kalkulus",
-            "Matematika Diskrit",
-            "Kecerdasan Buatan",
-            "Pengembangan Web",
-            "Pengembangan Aplikasi Mobile",
-            "Sistem Informasi Manajemen",
-            "Analisis dan Perancangan Sistem",
-            "Pemrograman Framework",
-            "Statistika",
-            "Keamanan Informasi",
-            "Manajemen Proyek TI",
-            "Komputasi Awan",
-            "Internet of Things",
-            "Pengolahan Citra Digital",
-            "Machine Learning",
-            "Data Mining",
-            "Bahasa Indonesia",
-            "Agama"
+        $timestamp = now();
+
+        /* =========================
+         * MATA KULIAH (IDs 1..20)
+        ========================== */
+        $mkNames = [
+            'Algoritma & Pemrograman',
+            'Struktur Data',
+            'Basis Data',
+            'Jaringan Komputer',
+            'Sistem Operasi',
+            'Rekayasa Perangkat Lunak',
+            'Interaksi Manusia-Komputer',
+            'Pemrograman Web',
+            'Pemrograman Mobile',
+            'Kecerdasan Buatan',
+            'Pembelajaran Mesin',
+            'Keamanan Informasi',
+            'Sistem Tertanam',
+            'Grafika Komputer',
+            'Pemodelan & Simulasi',
+            'Manajemen Proyek TI',
+            'Bisnis Digital',
+            'Desain Produk',
+            'Elektronika',
+            'Pengantar Bisnis'
         ];
 
-        foreach ($names as $index => $name) {
+        $data = [];
 
-            // Generate code seperti "MK001", "MK002", dll
-            $code = "MK" . str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+        foreach ($mkNames as $index => $name) {
+            $id = $index + 1;
+            // Logic Code: ID 1 -> MK101, ID 20 -> MK120
+            $codeNum = 100 + $id; 
 
-            MataKuliah::factory()->create([
-                'code' => $code,
+            $data[] = [
+                'id' => $id,
+                'code' => "MK{$codeNum}",
                 'name' => $name,
-            ]);
+                'is_active' => 1,
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ];
         }
+
+        DB::table('mata_kuliah')->insert($data);
     }
 }

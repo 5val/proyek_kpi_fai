@@ -2,134 +2,219 @@
 
 namespace Database\Seeders;
 
-use App\Models\Fasilitas;
-use App\Models\Kategori;
-use App\Models\Penilaian;
-use App\Models\Periode;
-use App\Models\Praktikum;
-use App\Models\Unit;
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PenilaianSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        $periodes = Periode::all();
-
-        // Role groups
-        $mahasiswa = User::where('role', 'mahasiswa')->get();
-        $dosen = User::where('role', 'dosen')->get();
-
-        // Target collections
-        $dosenTargets = User::where('role', 'dosen')->pluck('id')->toArray();
-        $fasilitasTargets = Fasilitas::pluck('id')->toArray();
-        $unitTargets = Unit::pluck('id')->toArray();
-        $praktikumTargets = Praktikum::pluck('id')->toArray();
-
-        // Kategori constraints
-        $kategoriMap = [
-            'mahasiswa' => [1, 3, 4, 5],
-            'dosen' => [3, 6],
+        $data = [
+            ['id'=>5, 'kategori_id'=>5, 'penilai_id'=>72, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>1, 'komentar'=>'Auto comment 1', 'avg_score'=>2.7, 'created_at'=>'2025-06-15 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>6, 'kategori_id'=>6, 'penilai_id'=>10, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>1, 'komentar'=>'Auto comment 2', 'avg_score'=>2.3, 'created_at'=>'2025-06-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>7, 'kategori_id'=>1, 'penilai_id'=>111, 'dinilai_id'=>10, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>5, 'komentar'=>'Auto comment 3', 'avg_score'=>2.3, 'created_at'=>'2025-08-30 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>8, 'kategori_id'=>3, 'penilai_id'=>19, 'dinilai_id'=>24, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 4', 'avg_score'=>0.9, 'created_at'=>'2025-09-13 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>9, 'kategori_id'=>5, 'penilai_id'=>51, 'dinilai_id'=>10, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>3, 'komentar'=>'Auto comment 5', 'avg_score'=>3.0, 'created_at'=>'2025-11-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>10, 'kategori_id'=>5, 'penilai_id'=>28, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>3, 'komentar'=>'Auto comment 6', 'avg_score'=>1.8, 'created_at'=>'2025-10-07 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>11, 'kategori_id'=>3, 'penilai_id'=>99, 'dinilai_id'=>15, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 7', 'avg_score'=>1.3, 'created_at'=>'2025-08-05 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>12, 'kategori_id'=>5, 'penilai_id'=>39, 'dinilai_id'=>7, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 8', 'avg_score'=>1.7, 'created_at'=>'2025-10-06 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>13, 'kategori_id'=>6, 'penilai_id'=>12, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 9', 'avg_score'=>0.7, 'created_at'=>'2025-09-06 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>14, 'kategori_id'=>6, 'penilai_id'=>24, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>1, 'komentar'=>'Auto comment 10', 'avg_score'=>2.0, 'created_at'=>'2025-07-07 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>15, 'kategori_id'=>3, 'penilai_id'=>68, 'dinilai_id'=>16, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 11', 'avg_score'=>0.5, 'created_at'=>'2025-10-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>16, 'kategori_id'=>4, 'penilai_id'=>100, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 12', 'avg_score'=>1.8, 'created_at'=>'2025-07-25 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>17, 'kategori_id'=>1, 'penilai_id'=>54, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>5, 'komentar'=>'Auto comment 13', 'avg_score'=>3.7, 'created_at'=>'2025-07-17 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>18, 'kategori_id'=>1, 'penilai_id'=>116, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>5, 'komentar'=>'Auto comment 14', 'avg_score'=>2.3, 'created_at'=>'2025-09-18 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>19, 'kategori_id'=>3, 'penilai_id'=>9, 'dinilai_id'=>13, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 15', 'avg_score'=>1.6, 'created_at'=>'2025-07-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>20, 'kategori_id'=>6, 'penilai_id'=>21, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 16', 'avg_score'=>3.3, 'created_at'=>'2025-09-25 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>21, 'kategori_id'=>3, 'penilai_id'=>12, 'dinilai_id'=>18, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 17', 'avg_score'=>3.2, 'created_at'=>'2025-06-18 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>22, 'kategori_id'=>4, 'penilai_id'=>86, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>1, 'komentar'=>'Auto comment 18', 'avg_score'=>3.5, 'created_at'=>'2025-07-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>23, 'kategori_id'=>5, 'penilai_id'=>60, 'dinilai_id'=>12, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 19', 'avg_score'=>1.4, 'created_at'=>'2025-07-28 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>24, 'kategori_id'=>4, 'penilai_id'=>58, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>1, 'komentar'=>'Auto comment 20', 'avg_score'=>2.8, 'created_at'=>'2025-10-25 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>25, 'kategori_id'=>1, 'penilai_id'=>121, 'dinilai_id'=>4, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>3, 'komentar'=>'Auto comment 21', 'avg_score'=>0.5, 'created_at'=>'2025-07-20 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>26, 'kategori_id'=>4, 'penilai_id'=>31, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>5, 'komentar'=>'Auto comment 22', 'avg_score'=>1.1, 'created_at'=>'2025-08-20 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>27, 'kategori_id'=>6, 'penilai_id'=>24, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 23', 'avg_score'=>0.8, 'created_at'=>'2025-06-15 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>28, 'kategori_id'=>4, 'penilai_id'=>43, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 24', 'avg_score'=>1.8, 'created_at'=>'2025-07-23 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>29, 'kategori_id'=>1, 'penilai_id'=>122, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>1, 'komentar'=>'Auto comment 25', 'avg_score'=>0.0, 'created_at'=>'2025-12-07 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>30, 'kategori_id'=>3, 'penilai_id'=>14, 'dinilai_id'=>13, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 26', 'avg_score'=>0.7, 'created_at'=>'2025-11-02 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>31, 'kategori_id'=>1, 'penilai_id'=>89, 'dinilai_id'=>10, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>1, 'komentar'=>'Auto comment 27', 'avg_score'=>0.1, 'created_at'=>'2025-11-25 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>32, 'kategori_id'=>3, 'penilai_id'=>14, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 28', 'avg_score'=>2.3, 'created_at'=>'2025-11-22 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>33, 'kategori_id'=>3, 'penilai_id'=>23, 'dinilai_id'=>30, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 29', 'avg_score'=>3.0, 'created_at'=>'2025-08-05 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>34, 'kategori_id'=>3, 'penilai_id'=>42, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 30', 'avg_score'=>3.6, 'created_at'=>'2025-10-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>35, 'kategori_id'=>1, 'penilai_id'=>65, 'dinilai_id'=>7, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>3, 'komentar'=>'Auto comment 31', 'avg_score'=>3.0, 'created_at'=>'2025-08-07 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>36, 'kategori_id'=>4, 'penilai_id'=>27, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>2, 'komentar'=>'Auto comment 32', 'avg_score'=>1.8, 'created_at'=>'2025-10-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>37, 'kategori_id'=>3, 'penilai_id'=>11, 'dinilai_id'=>26, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 33', 'avg_score'=>2.7, 'created_at'=>'2025-09-10 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>38, 'kategori_id'=>4, 'penilai_id'=>112, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>2, 'komentar'=>'Auto comment 34', 'avg_score'=>1.2, 'created_at'=>'2025-12-04 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>39, 'kategori_id'=>6, 'penilai_id'=>8, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 35', 'avg_score'=>2.7, 'created_at'=>'2025-11-22 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>40, 'kategori_id'=>6, 'penilai_id'=>18, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>3, 'komentar'=>'Auto comment 36', 'avg_score'=>2.7, 'created_at'=>'2025-10-25 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>41, 'kategori_id'=>4, 'penilai_id'=>74, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>1, 'komentar'=>'Auto comment 37', 'avg_score'=>1.3, 'created_at'=>'2025-08-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>42, 'kategori_id'=>5, 'penilai_id'=>70, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>1, 'komentar'=>'Auto comment 38', 'avg_score'=>3.1, 'created_at'=>'2025-08-04 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>43, 'kategori_id'=>3, 'penilai_id'=>22, 'dinilai_id'=>6, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 39', 'avg_score'=>0.4, 'created_at'=>'2025-10-22 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>44, 'kategori_id'=>3, 'penilai_id'=>20, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 40', 'avg_score'=>3.3, 'created_at'=>'2025-08-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>45, 'kategori_id'=>1, 'penilai_id'=>44, 'dinilai_id'=>11, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>3, 'komentar'=>'Auto comment 41', 'avg_score'=>1.9, 'created_at'=>'2025-10-13 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>46, 'kategori_id'=>5, 'penilai_id'=>45, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>3, 'komentar'=>'Auto comment 42', 'avg_score'=>1.8, 'created_at'=>'2025-09-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>47, 'kategori_id'=>3, 'penilai_id'=>97, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 43', 'avg_score'=>0.4, 'created_at'=>'2025-12-11 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>48, 'kategori_id'=>4, 'penilai_id'=>43, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>2, 'komentar'=>'Auto comment 44', 'avg_score'=>3.6, 'created_at'=>'2025-10-20 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>49, 'kategori_id'=>5, 'penilai_id'=>47, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 45', 'avg_score'=>0.1, 'created_at'=>'2025-11-10 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>50, 'kategori_id'=>3, 'penilai_id'=>30, 'dinilai_id'=>16, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 46', 'avg_score'=>2.8, 'created_at'=>'2025-10-12 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>51, 'kategori_id'=>5, 'penilai_id'=>117, 'dinilai_id'=>4, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>3, 'komentar'=>'Auto comment 47', 'avg_score'=>1.1, 'created_at'=>'2025-11-29 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>52, 'kategori_id'=>3, 'penilai_id'=>63, 'dinilai_id'=>8, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 48', 'avg_score'=>2.2, 'created_at'=>'2025-07-23 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>53, 'kategori_id'=>3, 'penilai_id'=>116, 'dinilai_id'=>7, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 49', 'avg_score'=>4.0, 'created_at'=>'2025-07-31 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>54, 'kategori_id'=>3, 'penilai_id'=>22, 'dinilai_id'=>28, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 50', 'avg_score'=>3.7, 'created_at'=>'2025-09-08 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>55, 'kategori_id'=>6, 'penilai_id'=>9, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 51', 'avg_score'=>3.5, 'created_at'=>'2025-10-23 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>56, 'kategori_id'=>3, 'penilai_id'=>71, 'dinilai_id'=>25, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 52', 'avg_score'=>0.8, 'created_at'=>'2025-07-18 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>57, 'kategori_id'=>5, 'penilai_id'=>59, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>3, 'komentar'=>'Auto comment 53', 'avg_score'=>0.9, 'created_at'=>'2025-10-28 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>58, 'kategori_id'=>3, 'penilai_id'=>17, 'dinilai_id'=>13, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 54', 'avg_score'=>3.7, 'created_at'=>'2025-12-07 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>59, 'kategori_id'=>5, 'penilai_id'=>101, 'dinilai_id'=>6, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>3, 'komentar'=>'Auto comment 55', 'avg_score'=>1.1, 'created_at'=>'2025-08-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>60, 'kategori_id'=>3, 'penilai_id'=>41, 'dinilai_id'=>24, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 56', 'avg_score'=>1.6, 'created_at'=>'2025-07-23 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>61, 'kategori_id'=>3, 'penilai_id'=>87, 'dinilai_id'=>7, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 57', 'avg_score'=>3.3, 'created_at'=>'2025-10-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>62, 'kategori_id'=>5, 'penilai_id'=>27, 'dinilai_id'=>7, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>1, 'komentar'=>'Auto comment 58', 'avg_score'=>0.5, 'created_at'=>'2025-09-07 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>63, 'kategori_id'=>3, 'penilai_id'=>19, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 59', 'avg_score'=>3.9, 'created_at'=>'2025-09-17 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>64, 'kategori_id'=>3, 'penilai_id'=>77, 'dinilai_id'=>17, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 60', 'avg_score'=>1.6, 'created_at'=>'2025-09-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>65, 'kategori_id'=>3, 'penilai_id'=>39, 'dinilai_id'=>18, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 61', 'avg_score'=>1.8, 'created_at'=>'2025-11-15 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>66, 'kategori_id'=>4, 'penilai_id'=>101, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 62', 'avg_score'=>0.8, 'created_at'=>'2025-09-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>67, 'kategori_id'=>4, 'penilai_id'=>44, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 63', 'avg_score'=>0.4, 'created_at'=>'2025-06-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>68, 'kategori_id'=>6, 'penilai_id'=>13, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>3, 'komentar'=>'Auto comment 64', 'avg_score'=>3.7, 'created_at'=>'2025-07-28 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>69, 'kategori_id'=>4, 'penilai_id'=>48, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>1, 'komentar'=>'Auto comment 65', 'avg_score'=>0.6, 'created_at'=>'2025-07-13 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>70, 'kategori_id'=>3, 'penilai_id'=>100, 'dinilai_id'=>4, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 66', 'avg_score'=>0.6, 'created_at'=>'2025-06-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>71, 'kategori_id'=>3, 'penilai_id'=>35, 'dinilai_id'=>10, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 67', 'avg_score'=>0.5, 'created_at'=>'2025-12-06 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>72, 'kategori_id'=>6, 'penilai_id'=>19, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>5, 'komentar'=>'Auto comment 68', 'avg_score'=>0.9, 'created_at'=>'2025-09-23 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>73, 'kategori_id'=>3, 'penilai_id'=>62, 'dinilai_id'=>21, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 69', 'avg_score'=>4.0, 'created_at'=>'2025-07-19 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>74, 'kategori_id'=>6, 'penilai_id'=>13, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 70', 'avg_score'=>3.7, 'created_at'=>'2025-12-08 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>75, 'kategori_id'=>6, 'penilai_id'=>19, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>1, 'komentar'=>'Auto comment 71', 'avg_score'=>1.8, 'created_at'=>'2025-11-10 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>76, 'kategori_id'=>5, 'penilai_id'=>78, 'dinilai_id'=>8, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>1, 'komentar'=>'Auto comment 72', 'avg_score'=>0.5, 'created_at'=>'2025-07-15 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>77, 'kategori_id'=>6, 'penilai_id'=>12, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 73', 'avg_score'=>1.9, 'created_at'=>'2025-06-23 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>78, 'kategori_id'=>1, 'penilai_id'=>67, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>2, 'komentar'=>'Auto comment 74', 'avg_score'=>0.1, 'created_at'=>'2025-11-23 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>79, 'kategori_id'=>5, 'penilai_id'=>70, 'dinilai_id'=>9, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 75', 'avg_score'=>0.8, 'created_at'=>'2025-10-20 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>80, 'kategori_id'=>1, 'penilai_id'=>110, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>2, 'komentar'=>'Auto comment 76', 'avg_score'=>3.8, 'created_at'=>'2025-11-25 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>81, 'kategori_id'=>4, 'penilai_id'=>55, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>5, 'komentar'=>'Auto comment 77', 'avg_score'=>1.6, 'created_at'=>'2025-09-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>82, 'kategori_id'=>6, 'penilai_id'=>13, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>1, 'komentar'=>'Auto comment 78', 'avg_score'=>1.4, 'created_at'=>'2025-11-11 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>83, 'kategori_id'=>3, 'penilai_id'=>18, 'dinilai_id'=>23, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 79', 'avg_score'=>0.6, 'created_at'=>'2025-10-19 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>84, 'kategori_id'=>4, 'penilai_id'=>125, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 80', 'avg_score'=>1.8, 'created_at'=>'2025-09-06 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>85, 'kategori_id'=>3, 'penilai_id'=>97, 'dinilai_id'=>20, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 81', 'avg_score'=>1.9, 'created_at'=>'2025-08-28 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>86, 'kategori_id'=>4, 'penilai_id'=>27, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>1, 'komentar'=>'Auto comment 82', 'avg_score'=>2.2, 'created_at'=>'2025-08-08 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>87, 'kategori_id'=>1, 'penilai_id'=>42, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>3, 'komentar'=>'Auto comment 83', 'avg_score'=>3.7, 'created_at'=>'2025-10-13 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>88, 'kategori_id'=>1, 'penilai_id'=>107, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>3, 'komentar'=>'Auto comment 84', 'avg_score'=>2.0, 'created_at'=>'2025-08-03 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>89, 'kategori_id'=>6, 'penilai_id'=>24, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>5, 'komentar'=>'Auto comment 85', 'avg_score'=>3.2, 'created_at'=>'2025-11-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>90, 'kategori_id'=>6, 'penilai_id'=>21, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 86', 'avg_score'=>1.2, 'created_at'=>'2025-07-06 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>91, 'kategori_id'=>3, 'penilai_id'=>24, 'dinilai_id'=>11, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 87', 'avg_score'=>0.1, 'created_at'=>'2025-09-08 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>92, 'kategori_id'=>5, 'penilai_id'=>48, 'dinilai_id'=>10, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 88', 'avg_score'=>1.5, 'created_at'=>'2025-10-26 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>93, 'kategori_id'=>5, 'penilai_id'=>119, 'dinilai_id'=>11, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>1, 'komentar'=>'Auto comment 89', 'avg_score'=>1.7, 'created_at'=>'2025-11-10 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>94, 'kategori_id'=>4, 'penilai_id'=>105, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>1, 'komentar'=>'Auto comment 90', 'avg_score'=>1.6, 'created_at'=>'2025-06-17 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>95, 'kategori_id'=>3, 'penilai_id'=>69, 'dinilai_id'=>23, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 91', 'avg_score'=>2.8, 'created_at'=>'2025-07-02 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>96, 'kategori_id'=>3, 'penilai_id'=>8, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 92', 'avg_score'=>0.5, 'created_at'=>'2025-06-15 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>97, 'kategori_id'=>4, 'penilai_id'=>75, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 93', 'avg_score'=>2.0, 'created_at'=>'2025-09-25 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>98, 'kategori_id'=>4, 'penilai_id'=>105, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 94', 'avg_score'=>3.8, 'created_at'=>'2025-11-11 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>99, 'kategori_id'=>4, 'penilai_id'=>82, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>5, 'komentar'=>'Auto comment 95', 'avg_score'=>1.7, 'created_at'=>'2025-08-11 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>100, 'kategori_id'=>4, 'penilai_id'=>49, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 96', 'avg_score'=>2.0, 'created_at'=>'2025-09-25 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>101, 'kategori_id'=>4, 'penilai_id'=>33, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>5, 'komentar'=>'Auto comment 97', 'avg_score'=>1.8, 'created_at'=>'2025-09-30 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>102, 'kategori_id'=>3, 'penilai_id'=>101, 'dinilai_id'=>11, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 98', 'avg_score'=>0.8, 'created_at'=>'2025-09-14 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>103, 'kategori_id'=>6, 'penilai_id'=>9, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>5, 'komentar'=>'Auto comment 99', 'avg_score'=>3.0, 'created_at'=>'2025-09-05 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>104, 'kategori_id'=>6, 'penilai_id'=>19, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>3, 'komentar'=>'Auto comment 100', 'avg_score'=>3.9, 'created_at'=>'2025-10-08 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>105, 'kategori_id'=>6, 'penilai_id'=>21, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>3, 'komentar'=>'Auto comment 101', 'avg_score'=>2.2, 'created_at'=>'2025-09-03 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>106, 'kategori_id'=>1, 'penilai_id'=>55, 'dinilai_id'=>8, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>2, 'komentar'=>'Auto comment 102', 'avg_score'=>0.4, 'created_at'=>'2025-10-01 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>107, 'kategori_id'=>5, 'penilai_id'=>118, 'dinilai_id'=>12, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>5, 'komentar'=>'Auto comment 103', 'avg_score'=>0.9, 'created_at'=>'2025-09-17 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>108, 'kategori_id'=>3, 'penilai_id'=>105, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 104', 'avg_score'=>0.3, 'created_at'=>'2025-10-21 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>109, 'kategori_id'=>1, 'penilai_id'=>45, 'dinilai_id'=>19, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>2, 'komentar'=>'Auto comment 105', 'avg_score'=>0.5, 'created_at'=>'2025-08-05 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>110, 'kategori_id'=>1, 'penilai_id'=>105, 'dinilai_id'=>10, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>1, 'komentar'=>'Auto comment 106', 'avg_score'=>1.4, 'created_at'=>'2025-08-15 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>111, 'kategori_id'=>6, 'penilai_id'=>24, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 107', 'avg_score'=>2.9, 'created_at'=>'2025-11-14 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>112, 'kategori_id'=>3, 'penilai_id'=>104, 'dinilai_id'=>30, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 108', 'avg_score'=>3.9, 'created_at'=>'2025-08-28 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>113, 'kategori_id'=>5, 'penilai_id'=>93, 'dinilai_id'=>13, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 109', 'avg_score'=>0.9, 'created_at'=>'2025-10-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>114, 'kategori_id'=>5, 'penilai_id'=>100, 'dinilai_id'=>14, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 110', 'avg_score'=>1.6, 'created_at'=>'2025-07-23 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>115, 'kategori_id'=>3, 'penilai_id'=>7, 'dinilai_id'=>28, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 111', 'avg_score'=>2.6, 'created_at'=>'2025-10-28 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>116, 'kategori_id'=>6, 'penilai_id'=>18, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>1, 'komentar'=>'Auto comment 112', 'avg_score'=>3.6, 'created_at'=>'2025-08-31 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>117, 'kategori_id'=>6, 'penilai_id'=>20, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 113', 'avg_score'=>2.1, 'created_at'=>'2025-11-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>118, 'kategori_id'=>6, 'penilai_id'=>6, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>5, 'komentar'=>'Auto comment 114', 'avg_score'=>1.1, 'created_at'=>'2025-06-25 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>119, 'kategori_id'=>3, 'penilai_id'=>22, 'dinilai_id'=>8, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 115', 'avg_score'=>2.8, 'created_at'=>'2025-09-12 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>120, 'kategori_id'=>3, 'penilai_id'=>16, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 116', 'avg_score'=>3.2, 'created_at'=>'2025-09-28 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>121, 'kategori_id'=>3, 'penilai_id'=>76, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 117', 'avg_score'=>2.7, 'created_at'=>'2025-11-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>122, 'kategori_id'=>4, 'penilai_id'=>124, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>2, 'komentar'=>'Auto comment 118', 'avg_score'=>1.9, 'created_at'=>'2025-08-15 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>123, 'kategori_id'=>3, 'penilai_id'=>21, 'dinilai_id'=>23, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 119', 'avg_score'=>1.5, 'created_at'=>'2025-08-29 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>124, 'kategori_id'=>6, 'penilai_id'=>21, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>3, 'komentar'=>'Auto comment 120', 'avg_score'=>1.9, 'created_at'=>'2025-10-11 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>125, 'kategori_id'=>4, 'penilai_id'=>71, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 121', 'avg_score'=>0.9, 'created_at'=>'2025-10-19 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>126, 'kategori_id'=>3, 'penilai_id'=>91, 'dinilai_id'=>27, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 122', 'avg_score'=>1.4, 'created_at'=>'2025-08-03 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>127, 'kategori_id'=>4, 'penilai_id'=>62, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 123', 'avg_score'=>2.0, 'created_at'=>'2025-07-26 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>128, 'kategori_id'=>5, 'penilai_id'=>50, 'dinilai_id'=>15, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 124', 'avg_score'=>2.9, 'created_at'=>'2025-06-18 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>129, 'kategori_id'=>4, 'penilai_id'=>57, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>1, 'komentar'=>'Auto comment 125', 'avg_score'=>0.3, 'created_at'=>'2025-06-26 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>130, 'kategori_id'=>5, 'penilai_id'=>31, 'dinilai_id'=>16, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 126', 'avg_score'=>1.4, 'created_at'=>'2025-11-18 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>131, 'kategori_id'=>6, 'penilai_id'=>23, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>3, 'komentar'=>'Auto comment 127', 'avg_score'=>2.9, 'created_at'=>'2025-12-02 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>132, 'kategori_id'=>4, 'penilai_id'=>36, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 128', 'avg_score'=>0.6, 'created_at'=>'2025-10-14 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>133, 'kategori_id'=>3, 'penilai_id'=>102, 'dinilai_id'=>14, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 129', 'avg_score'=>1.3, 'created_at'=>'2025-10-10 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>134, 'kategori_id'=>4, 'penilai_id'=>66, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>1, 'komentar'=>'Auto comment 130', 'avg_score'=>3.7, 'created_at'=>'2025-06-15 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>135, 'kategori_id'=>1, 'penilai_id'=>54, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>2, 'komentar'=>'Auto comment 131', 'avg_score'=>2.4, 'created_at'=>'2025-11-05 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>136, 'kategori_id'=>4, 'penilai_id'=>45, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>2, 'komentar'=>'Auto comment 132', 'avg_score'=>0.8, 'created_at'=>'2025-07-02 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>137, 'kategori_id'=>3, 'penilai_id'=>35, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 133', 'avg_score'=>1.5, 'created_at'=>'2025-08-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>138, 'kategori_id'=>6, 'penilai_id'=>12, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>5, 'komentar'=>'Auto comment 134', 'avg_score'=>0.1, 'created_at'=>'2025-09-24 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>139, 'kategori_id'=>6, 'penilai_id'=>17, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>3, 'komentar'=>'Auto comment 135', 'avg_score'=>3.4, 'created_at'=>'2025-11-01 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>140, 'kategori_id'=>3, 'penilai_id'=>125, 'dinilai_id'=>28, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 136', 'avg_score'=>3.5, 'created_at'=>'2025-11-24 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>141, 'kategori_id'=>5, 'penilai_id'=>98, 'dinilai_id'=>17, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>5, 'komentar'=>'Auto comment 137', 'avg_score'=>2.9, 'created_at'=>'2025-08-24 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>142, 'kategori_id'=>5, 'penilai_id'=>31, 'dinilai_id'=>18, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 138', 'avg_score'=>2.0, 'created_at'=>'2025-09-28 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>143, 'kategori_id'=>1, 'penilai_id'=>98, 'dinilai_id'=>5, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>5, 'komentar'=>'Auto comment 139', 'avg_score'=>1.6, 'created_at'=>'2025-10-31 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>144, 'kategori_id'=>3, 'penilai_id'=>17, 'dinilai_id'=>20, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 140', 'avg_score'=>2.5, 'created_at'=>'2025-07-20 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>145, 'kategori_id'=>6, 'penilai_id'=>19, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>3, 'komentar'=>'Auto comment 141', 'avg_score'=>0.6, 'created_at'=>'2025-09-19 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>146, 'kategori_id'=>5, 'penilai_id'=>118, 'dinilai_id'=>19, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>5, 'komentar'=>'Auto comment 142', 'avg_score'=>1.2, 'created_at'=>'2025-09-06 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>147, 'kategori_id'=>1, 'penilai_id'=>87, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>1, 'komentar'=>'Auto comment 143', 'avg_score'=>0.7, 'created_at'=>'2025-08-13 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>148, 'kategori_id'=>1, 'penilai_id'=>112, 'dinilai_id'=>10, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>2, 'komentar'=>'Auto comment 144', 'avg_score'=>0.8, 'created_at'=>'2025-10-20 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>149, 'kategori_id'=>3, 'penilai_id'=>80, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 145', 'avg_score'=>2.9, 'created_at'=>'2025-10-11 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>150, 'kategori_id'=>3, 'penilai_id'=>19, 'dinilai_id'=>4, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 146', 'avg_score'=>1.9, 'created_at'=>'2025-07-24 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>151, 'kategori_id'=>1, 'penilai_id'=>93, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>2, 'komentar'=>'Auto comment 147', 'avg_score'=>4.0, 'created_at'=>'2025-10-04 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>152, 'kategori_id'=>1, 'penilai_id'=>63, 'dinilai_id'=>4, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>2, 'komentar'=>'Auto comment 148', 'avg_score'=>1.7, 'created_at'=>'2025-10-17 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>153, 'kategori_id'=>3, 'penilai_id'=>50, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 149', 'avg_score'=>1.8, 'created_at'=>'2025-09-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>154, 'kategori_id'=>3, 'penilai_id'=>56, 'dinilai_id'=>9, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 150', 'avg_score'=>3.1, 'created_at'=>'2025-10-07 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>155, 'kategori_id'=>5, 'penilai_id'=>67, 'dinilai_id'=>20, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>1, 'komentar'=>'Auto comment 151', 'avg_score'=>2.2, 'created_at'=>'2025-10-03 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>156, 'kategori_id'=>3, 'penilai_id'=>77, 'dinilai_id'=>4, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 152', 'avg_score'=>4.0, 'created_at'=>'2025-07-11 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>157, 'kategori_id'=>4, 'penilai_id'=>97, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>2, 'komentar'=>'Auto comment 153', 'avg_score'=>2.6, 'created_at'=>'2025-07-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>158, 'kategori_id'=>6, 'penilai_id'=>14, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>1, 'komentar'=>'Auto comment 154', 'avg_score'=>3.2, 'created_at'=>'2025-10-26 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>159, 'kategori_id'=>6, 'penilai_id'=>23, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>1, 'komentar'=>'Auto comment 155', 'avg_score'=>0.9, 'created_at'=>'2025-08-27 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>160, 'kategori_id'=>1, 'penilai_id'=>112, 'dinilai_id'=>10, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>5, 'komentar'=>'Auto comment 156', 'avg_score'=>2.7, 'created_at'=>'2025-10-09 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>161, 'kategori_id'=>4, 'penilai_id'=>26, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>1, 'komentar'=>'Auto comment 157', 'avg_score'=>2.5, 'created_at'=>'2025-08-19 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>162, 'kategori_id'=>4, 'penilai_id'=>83, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>2, 'komentar'=>'Auto comment 158', 'avg_score'=>1.1, 'created_at'=>'2025-08-29 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>163, 'kategori_id'=>3, 'penilai_id'=>9, 'dinilai_id'=>19, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 159', 'avg_score'=>3.2, 'created_at'=>'2025-10-20 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>164, 'kategori_id'=>6, 'penilai_id'=>23, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 160', 'avg_score'=>2.4, 'created_at'=>'2025-10-12 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>165, 'kategori_id'=>5, 'penilai_id'=>122, 'dinilai_id'=>24, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 161', 'avg_score'=>2.0, 'created_at'=>'2025-12-01 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>166, 'kategori_id'=>5, 'penilai_id'=>86, 'dinilai_id'=>21, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>3, 'komentar'=>'Auto comment 162', 'avg_score'=>1.5, 'created_at'=>'2025-06-25 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>167, 'kategori_id'=>4, 'penilai_id'=>100, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>2, 'komentar'=>'Auto comment 163', 'avg_score'=>1.2, 'created_at'=>'2025-07-18 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>168, 'kategori_id'=>5, 'penilai_id'=>44, 'dinilai_id'=>22, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>3, 'komentar'=>'Auto comment 164', 'avg_score'=>1.8, 'created_at'=>'2025-11-17 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>169, 'kategori_id'=>3, 'penilai_id'=>101, 'dinilai_id'=>14, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 165', 'avg_score'=>3.4, 'created_at'=>'2025-08-17 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>170, 'kategori_id'=>1, 'penilai_id'=>122, 'dinilai_id'=>10, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>2, 'komentar'=>'Auto comment 166', 'avg_score'=>0.3, 'created_at'=>'2025-09-20 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>171, 'kategori_id'=>3, 'penilai_id'=>99, 'dinilai_id'=>30, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 167', 'avg_score'=>1.8, 'created_at'=>'2025-11-19 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>172, 'kategori_id'=>6, 'penilai_id'=>11, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>5, 'komentar'=>'Auto comment 168', 'avg_score'=>0.5, 'created_at'=>'2025-10-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>173, 'kategori_id'=>6, 'penilai_id'=>6, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>3, 'komentar'=>'Auto comment 169', 'avg_score'=>3.7, 'created_at'=>'2025-11-25 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>174, 'kategori_id'=>3, 'penilai_id'=>120, 'dinilai_id'=>15, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 170', 'avg_score'=>1.8, 'created_at'=>'2025-09-10 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>175, 'kategori_id'=>1, 'penilai_id'=>81, 'dinilai_id'=>15, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>5, 'komentar'=>'Auto comment 171', 'avg_score'=>2.8, 'created_at'=>'2025-10-16 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>176, 'kategori_id'=>6, 'penilai_id'=>13, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>1, 'komentar'=>'Auto comment 172', 'avg_score'=>0.3, 'created_at'=>'2025-11-11 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>177, 'kategori_id'=>4, 'penilai_id'=>75, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 173', 'avg_score'=>3.0, 'created_at'=>'2025-07-27 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>178, 'kategori_id'=>3, 'penilai_id'=>71, 'dinilai_id'=>15, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 174', 'avg_score'=>0.2, 'created_at'=>'2025-07-31 10:30:38', 'updated_at'=>'2025-12-11 10:30:38'],
+            ['id'=>179, 'kategori_id'=>3, 'penilai_id'=>6, 'dinilai_id'=>30, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 175', 'avg_score'=>1.7, 'created_at'=>'2025-11-25 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>180, 'kategori_id'=>5, 'penilai_id'=>123, 'dinilai_id'=>18, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>3, 'komentar'=>'Auto comment 176', 'avg_score'=>2.9, 'created_at'=>'2025-08-17 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>181, 'kategori_id'=>3, 'penilai_id'=>21, 'dinilai_id'=>21, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 177', 'avg_score'=>3.1, 'created_at'=>'2025-12-10 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>182, 'kategori_id'=>3, 'penilai_id'=>20, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 178', 'avg_score'=>3.1, 'created_at'=>'2025-10-26 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>183, 'kategori_id'=>3, 'penilai_id'=>10, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 179', 'avg_score'=>3.7, 'created_at'=>'2025-07-24 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>184, 'kategori_id'=>4, 'penilai_id'=>86, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 180', 'avg_score'=>3.2, 'created_at'=>'2025-07-21 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>185, 'kategori_id'=>4, 'penilai_id'=>88, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 181', 'avg_score'=>3.4, 'created_at'=>'2025-09-23 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>186, 'kategori_id'=>3, 'penilai_id'=>8, 'dinilai_id'=>10, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 182', 'avg_score'=>1.4, 'created_at'=>'2025-09-20 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>187, 'kategori_id'=>3, 'penilai_id'=>115, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>2, 'komentar'=>'Auto comment 183', 'avg_score'=>2.6, 'created_at'=>'2025-10-13 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>188, 'kategori_id'=>1, 'penilai_id'=>34, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>3, 'komentar'=>'Auto comment 184', 'avg_score'=>2.6, 'created_at'=>'2025-07-30 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>189, 'kategori_id'=>3, 'penilai_id'=>82, 'dinilai_id'=>11, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 185', 'avg_score'=>0.7, 'created_at'=>'2025-08-09 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>190, 'kategori_id'=>6, 'penilai_id'=>24, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>1, 'komentar'=>'Auto comment 186', 'avg_score'=>1.0, 'created_at'=>'2025-08-21 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>191, 'kategori_id'=>5, 'penilai_id'=>121, 'dinilai_id'=>22, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>3, 'komentar'=>'Auto comment 187', 'avg_score'=>3.5, 'created_at'=>'2025-11-07 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>192, 'kategori_id'=>6, 'penilai_id'=>16, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>2, 'komentar'=>'Auto comment 188', 'avg_score'=>3.3, 'created_at'=>'2025-11-17 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>193, 'kategori_id'=>4, 'penilai_id'=>48, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>1, 'komentar'=>'Auto comment 189', 'avg_score'=>1.5, 'created_at'=>'2025-08-10 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>194, 'kategori_id'=>3, 'penilai_id'=>8, 'dinilai_id'=>13, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>1, 'komentar'=>'Auto comment 190', 'avg_score'=>2.8, 'created_at'=>'2025-09-05 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>195, 'kategori_id'=>3, 'penilai_id'=>16, 'dinilai_id'=>7, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 191', 'avg_score'=>2.5, 'created_at'=>'2025-08-21 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>196, 'kategori_id'=>3, 'penilai_id'=>104, 'dinilai_id'=>26, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 192', 'avg_score'=>1.4, 'created_at'=>'2025-07-01 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>197, 'kategori_id'=>5, 'penilai_id'=>121, 'dinilai_id'=>23, 'dinilai_type'=>'App\Models\Praktikum', 'periode_id'=>2, 'komentar'=>'Auto comment 193', 'avg_score'=>1.5, 'created_at'=>'2025-11-09 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>198, 'kategori_id'=>3, 'penilai_id'=>23, 'dinilai_id'=>25, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>5, 'komentar'=>'Auto comment 194', 'avg_score'=>2.7, 'created_at'=>'2025-09-30 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>199, 'kategori_id'=>4, 'penilai_id'=>34, 'dinilai_id'=>3, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>3, 'komentar'=>'Auto comment 195', 'avg_score'=>3.5, 'created_at'=>'2025-10-10 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>200, 'kategori_id'=>6, 'penilai_id'=>13, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Kampus', 'periode_id'=>1, 'komentar'=>'Auto comment 196', 'avg_score'=>0.1, 'created_at'=>'2025-09-29 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>201, 'kategori_id'=>3, 'penilai_id'=>20, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 197', 'avg_score'=>1.5, 'created_at'=>'2025-11-21 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>202, 'kategori_id'=>1, 'penilai_id'=>39, 'dinilai_id'=>1, 'dinilai_type'=>'App\Models\Dosen', 'periode_id'=>1, 'komentar'=>'Auto comment 198', 'avg_score'=>3.2, 'created_at'=>'2025-11-26 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>203, 'kategori_id'=>4, 'penilai_id'=>99, 'dinilai_id'=>2, 'dinilai_type'=>'App\Models\Unit', 'periode_id'=>1, 'komentar'=>'Auto comment 199', 'avg_score'=>3.8, 'created_at'=>'2025-10-23 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
+            ['id'=>204, 'kategori_id'=>3, 'penilai_id'=>18, 'dinilai_id'=>16, 'dinilai_type'=>'App\Models\Fasilitas', 'periode_id'=>3, 'komentar'=>'Auto comment 200', 'avg_score'=>3.5, 'created_at'=>'2025-09-27 10:30:39', 'updated_at'=>'2025-12-11 10:30:39'],
         ];
 
-        foreach (range(1, 150) as $i) {
-
-            /** ---------------------------------------------------------
-             * GENERATE TANGGAL CREATED DAN DELETED (VARIASI 6 BULAN)
-             * --------------------------------------------------------- */
-            $createdAt = fake()->dateTimeBetween('-6 months', 'now');
-
-            // 15% kemungkinan soft delete
-            $deletedAt = fake()->boolean(15)
-                ? fake()->dateTimeBetween($createdAt, 'now')
-                : null;
-
-            /** ---------------------------------------------------------
-             * TENTUKAN PENILAI
-             * --------------------------------------------------------- */
-            $penilai = rand(0,1) == 1
-                ? $mahasiswa->random()
-                : $dosen->random();
-
-            /** ---------------------------------------------------------
-             * TENTUKAN KATEGORI
-             * --------------------------------------------------------- */
-            $allowedKategori = $kategoriMap[$penilai->role];
-            $kategoriId = collect($allowedKategori)->random();
-
-            $kategori = Kategori::with('indikator')->find($kategoriId);
-
-            /** ---------------------------------------------------------
-             * TENTUKAN TARGET
-             * --------------------------------------------------------- */
-            switch ($kategoriId) {
-                case 1: // nilai dosen
-                    $targetId = collect($dosenTargets)->random();
-                    $targetType = 'App\Models\Dosen';
-                    break;
-
-                case 3: // fasilitas
-                    $targetId = collect($fasilitasTargets)->random();
-                    $targetType = 'App\Models\Fasilitas';
-                    break;
-
-                case 4: // unit
-                    $targetId = collect($unitTargets)->random();
-                    $targetType = 'App\Models\Unit';
-                    break;
-
-                case 5: // praktikum
-                    $targetId = collect($praktikumTargets)->random();
-                    $targetType = 'App\Models\Praktikum';
-                    break;
-
-                case 6: // manajemen kampus
-                    $targetId = 1;
-                    $targetType = 'App\Models\Kampus';
-                    break;
-            }
-
-            /** ---------------------------------------------------------
-             * INSERT PENILAIAN
-             * --------------------------------------------------------- */
-            $penilaian = Penilaian::create([
-                'kategori_id' => $kategori->id,
-                'penilai_id' => $penilai->id,
-                'dinilai_id' => $targetId,
-                'dinilai_type' => $targetType,
-                'periode_id' => $periodes->random()->id,
-                'komentar' => fake()->sentence(),
-                'avg_score' => fake()->randomFloat(2, 0, 4),
-
-                'created_at' => $createdAt,
-                'updated_at' => $createdAt,
-            ]);
-
-            /** ---------------------------------------------------------
-             * INSERT DETAIL PENILAIAN
-             * --------------------------------------------------------- */
-            foreach ($kategori->indikator as $indikator) {
-
-                // created_at detail mengikuti penilaian tapi beda beberapa hari
-                $detailCreated = fake()->dateTimeBetween(
-                    $createdAt->format('Y-m-d H:i:s'),
-                    'now'
-                );
-
-                $detailDeleted = fake()->boolean(10)
-                    ? fake()->dateTimeBetween($detailCreated, 'now')
-                    : null;
-
-                $penilaian->detailPenilaian()->create([
-                    'penilaian_id' => $penilaian->id,
-                    'indikator_id' => $indikator->id,
-                    'score' => fake()->numberBetween(1, 5),
-
-                    'created_at' => $detailCreated,
-                    'updated_at' => $detailCreated,
-                ]);
-            }
+        // Insert menggunakan chunk agar lebih efisien dan aman untuk data banyak
+        foreach (array_chunk($data, 50) as $chunk) {
+            DB::table('penilaian')->insert($chunk);
         }
     }
 }
