@@ -73,60 +73,6 @@
             </div>
         </div>
     </div>
-
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-primary text-white py-3 fw-bold">
-                    <i class="bi bi-person-lines-fill me-2"></i> Daftar Mahasiswa di Kelas Anda
-                </div>
-                <div class="card-body p-0">
-                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="ps-4">Nama Mahasiswa</th>
-                                    <th>NRP</th>
-                                    <th>Semester</th> {{-- UBAH HEADER DISINI --}}
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($studentsList as $mhs)
-                                <tr>
-                                    <td class="ps-4 fw-bold">{{ $mhs->name }}</td>
-                                    <td>{{ $mhs->nrp }}</td>
-                                    
-                                    {{-- UBAH DATA DISINI --}}
-                                    <td>
-                                        <span class="badge bg-light text-dark border">
-                                            {{ ucfirst($mhs->semester) }} {{ $mhs->tahun }}
-                                        </span>
-                                    </td>
-
-                                    <td>
-                                        <button class="btn btn-outline-primary btn-sm">
-                                            <i class="bi bi-eye"></i> Detail
-                                        </button>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center py-4 text-muted">
-                                        Tidak ada data mahasiswa ditemukan.
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="card-footer bg-white text-center py-3">
-                    <a href="#" class="text-decoration-none fw-bold small">Lihat Semua Mahasiswa <i class="bi bi-arrow-right"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @push('scripts')

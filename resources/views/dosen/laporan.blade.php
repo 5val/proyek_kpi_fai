@@ -66,9 +66,11 @@
                             <button class="btn btn-success text-white shadow-sm px-4">
                                 <i class="bi bi-file-earmark-excel me-2"></i> Export Excel
                             </button>
-                            <button class="btn btn-danger text-white shadow-sm px-4">
-                                <i class="bi bi-file-earmark-pdf me-2"></i> Export PDF
-                            </button>
+<button class="btn btn-danger text-white shadow-sm px-4"
+    onclick="window.location='{{ route('dosen.laporan.pdf', [$kategori_id, $periode_id]) }}'">
+    <i class="bi bi-file-earmark-pdf me-2"></i> Export PDF
+</button>
+
                         </div>
                     </div>
                 </div>
@@ -115,13 +117,11 @@
                         </div>
 
                         <div class="col-md-4 text-md-end mt-3 mt-md-0 border-start-md ps-md-4">
-                            {{-- Uncomment logic ini jika data sudah siap --}}
-                            {{-- 
                             <h6 class="text-uppercase text-muted small fw-bold ls-1">Skor Akhir KPI</h6>
                             <h2 class="display-5 fw-bold mb-0 {{ $skorAkhir >= 3.5 ? 'text-success' : 'text-primary' }}">
                                 {{ number_format($skorAkhir, 2) }}
                             </h2>
-                            --}}
+
                         </div>
                     </div>
                 </div>
@@ -151,11 +151,29 @@
                                         {{ isset($nilai[$i->id]) ? number_format($nilai[$i->id]->skor, 2) : '-' }}
                                     </td>
                                     
-                                    <td class="text-center">
-                                        <span class="badge bg-light text-secondary border rounded-pill px-3">
-                                            -
-                                        </span>
-                                    </td>
+<td class="text-center">
+    @php
+        $skor = $nilai[$i->id]->skor ?? null;
+        if (is_null($skor)) {
+            $status = '-';
+            $badge = 'bg-light text-secondary';
+        } elseif ($skor >= 4) {
+            $status = 'Baik';
+            $badge = 'bg-success text-white';
+        } elseif ($skor >= 2.5) {
+            $status = 'Sedang';
+            $badge = 'bg-warning text-dark';
+        } else {
+            $status = 'Tidak Baik';
+            $badge = 'bg-danger text-white';
+        }
+    @endphp
+
+    <span class="badge {{ $badge }} border rounded-pill px-3 py-2">
+        {{ $status }}
+    </span>
+</td>
+
                                 </tr>
                                 @empty
                                 <tr>

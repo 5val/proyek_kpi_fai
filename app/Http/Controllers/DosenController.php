@@ -28,6 +28,7 @@ use League\Config\Exception\ValidationException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 // use App\Http\Controllers\DB;
 use Illuminate\Support\Facades\DB;
+use Dompdf\Dompdf;
 
 
 class DosenController extends Controller
@@ -456,15 +457,56 @@ class DosenController extends Controller
 // }
 
    
-    public function laporanKinerja()
-    {
-        $user = Auth::user();
-        $dosen = Dosen::where('user_id', $user->id)->first();
-        $indikator = Indikator::where('kategori_id', 1)->get();
-        $all_periode = Periode::orderBy('id', 'desc')->get();
-        $periode_id = $request->periode_id ?? Periode::max('id');
-        return view('dosen.laporan', compact('user', 'dosen', 'indikator', 'all_periode', 'periode_id' ));
-    }
+    // public function laporanKinerja()
+    // {
+    //     $user = Auth::user();
+    //     $dosen = Dosen::where('user_id', $user->id)->first();
+    //     $indikator = Indikator::where('kategori_id', 1)->get();
+    //     $all_periode = Periode::orderBy('id', 'desc')->get();
+    //     $periode_id = $request->periode_id ?? Periode::max('id');
+    //     return view('dosen.laporan', compact('user', 'dosen', 'indikator', 'all_periode', 'periode_id' ));
+    // }
+
+
+public function laporanKinerja(Request $request)
+{
+    $user = Auth::user();
+    $dosen = Dosen::where('user_id', $user->id)->first();
+    $kategori_id = 1;
+    // Ambil semua periode
+    $all_periode = Periode::orderBy('id', 'DESC')->get();
+
+    // Jika belum memilih, ambil periode terbaru
+    $periode_id = $request->periode_id ?? $all_periode->first()->id;
+
+    // Ambil semua indikator
+    $indikator = Indikator::where('kategori_id', 1)
+    ->orderBy('id', 'asc')
+    ->get();
+
+
+    // Ambil semua nilai milik dosen pada periode tersebut
+    $nilai = Penilaian::where('id', $dosen->id)
+        ->where('periode_id', $periode_id)
+        ->get()
+        ->keyBy('indikator_id'); 
+        // hasil: [ id_indikator => {data penilaian} ]
+
+    // Hitung skor akhir
+    $skorAkhir = $nilai->avg('skor') ?? 0;
+
+    return view('dosen.laporan', [
+        'user' => $user,
+        'dosen' => $dosen,
+        'all_periode' => $all_periode,
+        'periode_id' => $periode_id,
+        'kategori_id' => $kategori_id,
+        'indikator' => $indikator,
+        'nilai' => $nilai,
+        'skorAkhir' => $skorAkhir
+    ]);
+}
+
 
     public function laporan(Request $request)
     {
@@ -528,25 +570,70 @@ class DosenController extends Controller
     ]);
 }
 
-    public function laporan_export_pdf($kategori_id, $periode_id) {
-      $penilaian = $this->getPenilaian($kategori_id, $periode_id);
+//     public function laporan_export_pdf($kategori_id, $periode_id) {
+//       $penilaian = $this->getPenilaian($kategori_id, $periode_id);
 
-      $curKategori = Kategori::findOrFail($kategori_id);
+//       $curKategori = Kategori::findOrFail($kategori_id);
 
-      // Generate HTML untuk PDF
-      $html = view('admin.laporan_pdf', [
-         'penilaian' => $penilaian,
-         'curKategori' => $curKategori
-      ])->render();
+//       // Generate HTML untuk PDF
+//       $html = view('admin.laporan_pdf', [
+//          'penilaian' => $penilaian,
+//          'curKategori' => $curKategori
+//       ])->render();
 
-      // Load Dompdf
-      $dompdf = new Dompdf();
-      $dompdf->loadHtml($html);
-      $dompdf->setPaper('A4', 'portrait');
-      $dompdf->render();
+//       // Load Dompdf
+//       $dompdf = new Dompdf();
+//       $dompdf->loadHtml($html);
+//       $dompdf->setPaper('A4', 'portrait');
+//       $dompdf->render();
 
-      return $dompdf->stream("laporan_kpi_{$curKategori->name}.pdf");
-   }
+//       return $dompdf->stream("laporan_kpi_{$curKategori->name}.pdf");
+//    }
+
+
+public function laporan_export_pdf($kategori_id, $periode_id)
+{
+    $user = Auth::user();
+    $dosen = Dosen::where('user_id', $user->id)->first();
+
+    // Ambil kategori
+    $curKategori = Kategori::findOrFail($kategori_id);
+
+    // Ambil indikator berdasarkan kategori
+    $indikator = Indikator::where('kategori_id', $kategori_id)
+        ->orderBy('id', 'asc')
+        ->get();
+
+    // Ambil penilaian sesuai dosen, kategori, periode
+    $nilai = Penilaian::where('dosen_id', $dosen->id)
+        ->where('periode_id', $periode_id)
+        ->whereIn('indikator_id', $indikator->pluck('id'))
+        ->get()
+        ->keyBy('indikator_id');
+
+    $skorAkhir = $nilai->avg('skor') ?? 0;
+
+    // Render HTML untuk PDF
+    $html = view('admin.laporan_pdf', [
+        'user' => $user,
+        'dosen' => $dosen,
+        'indikator' => $indikator,
+        'nilai' => $nilai,
+        'skorAkhir' => $skorAkhir,
+        'curKategori' => $curKategori
+    ])->render();
+
+    // Generate PDF
+    $dompdf = new Dompdf();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
+
+    return $dompdf->stream("laporan_kinerja_{$curKategori->name}.pdf");
+}
+
+
+
 
     // public function feedback() {
     //   $kategori = Kategori::whereIn('id', [3, 6])->get();
@@ -572,12 +659,17 @@ public function feedback() {
 
     public function insertFeedback(Request $request) 
    {
-      $validated = $request->validate([
-         'kategori' => 'required|exists:kategori,id',
-         'target' => 'required',
-         'deskripsi' => 'required|string|max:255',
-         'file' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-      ]);
+      $ruleTarget = 'required'; 
+    if ((int)$request->kategori === 6) {
+        $ruleTarget = 'nullable';
+    }
+
+    $validated = $request->validate([
+        'kategori' => 'required|exists:kategori,id',
+        'target' => $ruleTarget,
+        'deskripsi' => 'required|string|max:255',
+        'file' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+    ]);
       $isAnonim = $request->has('anonim') ? 1 : 0;
       $path = null;
       if ($request->hasFile('file')) {
