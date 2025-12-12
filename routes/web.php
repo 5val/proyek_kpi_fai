@@ -98,9 +98,18 @@ Route::prefix('dosen')
         Route::get('/penilaian_unit', [DosenController::class, 'penilaianUnit'])->name('penilaian_unit');
 
         Route::get('/laporan', [DosenController::class, 'laporanKinerja'])->name('laporan');
-        Route::get('/laporan/{periode_id}/export-excel', [DosenController::class, 'laporan_export_excel'])->name('laporan.excel');
-        Route::get('/laporan/export/{kategori}/{periode}', [DosenController::class, 'laporan_export_pdf'])->name('export.pdf');
-  
+        // Route::get('/laporan/{periode_id}/export-excel', [DosenController::class, 'laporan_export_excel'])->name('laporan.excel');
+        // Route::get('/laporan/export/{kategori}/{periode}', [DosenController::class, 'laporan_export_pdf'])->name('export.pdf');
+        // Route::get('/laporan/export/pdf/{kategori}/{periode}',    [DosenController::class, 'exportLaporanPDF'])->name('dosen.laporan.export.pdf');
+        // Route::get('/laporan/export/excel/{kategori}/{periode}',[DosenController::class, 'exportLaporanExcel'])->name('dosen.laporan.export.excel');
+  Route::get('/laporan/export/pdf/{kategori}/{periode}', 
+    [DosenController::class, 'exportLaporanPDF'])
+    ->name('laporan.export.pdf');
+
+Route::get('/laporan/export/excel/{kategori}/{periode}', 
+    [DosenController::class, 'exportLaporanExcel'])
+    ->name('laporan.export.excel');
+
 
         Route::get('/feedback', [DosenController::class, 'feedback'])->name('feedback');
         Route::get('/feedback/get_targets', [DosenController::class, 'get_targets'])->name('feedback.get_targets');
