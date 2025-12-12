@@ -97,46 +97,54 @@ public function dashboard()
 
 
     // 5. GRAFIK KEHADIRAN
-    $all_periode = Periode::orderBy('id')->get();
+    // 5. GRAFIK KEHADIRAN - SAMA seperti halaman laporan
+$all_periode = Periode::orderBy('id')->get();
 
-    $grafik_labels = [];
-    $grafik_values = [];
+$grafik_labels = [];
+$grafik_values = [];
 
-    foreach ($all_periode as $p) {
+foreach ($all_periode as $p) {
 
-        $kelasPerPeriode = Enrollment::with('kelas')
+    // Ambil semua kelas mahasiswa pada periode tersebut
+    $kelasPerPeriode = Enrollment::with('kelas')
+        ->where('mahasiswa_nrp', $mahasiswa->nrp)
+        ->whereHas('kelas', function($q) use ($p) {
+            $q->where('periode_id', $p->id);
+        })
+        ->get()
+        ->pluck('kelas');
+
+    if ($kelasPerPeriode->count() == 0) continue;
+
+    $total = 0;
+    $count = 0;
+
+    foreach ($kelasPerPeriode as $k) {
+
+        // *=* JUMLAH PERTEMUAN UNIK *=*
+        $totalPertemuan = Kehadiran::where('kelas_id', $k->id)
+            ->distinct()
+            ->count('pertemuan_ke');
+
+        // *=* JUMLAH HADIR PER PERTEMUAN *=*
+        $hadir = Kehadiran::where('kelas_id', $k->id)
             ->where('mahasiswa_nrp', $mahasiswa->nrp)
-            ->whereHas('kelas', function($q) use ($p) {
-                $q->where('periode_id', $p->id);
-            })
-            ->get()
-            ->pluck('kelas');
+            ->where('is_present', 1)
+            ->distinct()
+            ->count('pertemuan_ke');
 
-        if ($kelasPerPeriode->count() == 0) continue;
+        $persen = $totalPertemuan > 0
+            ? round(($hadir / $totalPertemuan) * 100, 1)
+            : 0;
 
-        $total = 0;
-        $count = 0;
-
-        foreach ($kelasPerPeriode as $k) {
-
-            $totalPertemuan = Kehadiran::where('kelas_id', $k->id)->count();
-
-            $hadir = Kehadiran::where('kelas_id', $k->id)
-                ->where('mahasiswa_nrp', $mahasiswa->nrp)
-                ->where('is_present', 1)
-                ->count();
-
-            $persen = ($totalPertemuan > 0) 
-                ? round(($hadir / $totalPertemuan) * 100, 1)
-                : 0;
-
-            $total += $persen;
-            $count++;
-        }
-
-        $grafik_labels[] = $p->nama_periode;
-        $grafik_values[] = $count > 0 ? round($total / $count, 1) : 0;
+        $total += $persen;
+        $count++;
     }
+
+    $grafik_labels[] = $p->nama_periode;
+    $grafik_values[] = $count > 0 ? round($total / $count, 1) : 0;
+}
+
 
 
     // 6. LIST BELUM DINILAI
@@ -363,12 +371,15 @@ public function laporan(Request $request)
     $hasil = [];
 
     foreach ($kelasDiambil as $k) {
-        $totalPertemuan = Kehadiran::where('kelas_id', $k->id)->count();
+        $totalPertemuan = Kehadiran::where('kelas_id', $k->id)
+            ->distinct('pertemuan_ke')
+            ->count('pertemuan_ke');
 
         $hadir = Kehadiran::where('kelas_id', $k->id)
             ->where('mahasiswa_nrp', $mahasiswa->nrp)
             ->where('is_present', 1)
-            ->count();
+            ->distinct('pertemuan_ke')
+            ->count('pertemuan_ke');
 
         $persenHadir = $totalPertemuan > 0
             ? round(($hadir / $totalPertemuan) * 100, 2)
@@ -408,12 +419,15 @@ public function laporan(Request $request)
         $count = 0;
 
         foreach ($kelas as $k) {
-            $totalPertemuan = Kehadiran::where('kelas_id', $k->id)->count();
+            $totalPertemuan = Kehadiran::where('kelas_id', $k->id)
+                ->distinct('pertemuan_ke')
+                ->count('pertemuan_ke');
 
             $hadir = Kehadiran::where('kelas_id', $k->id)
                 ->where('mahasiswa_nrp', $mahasiswa->nrp)
                 ->where('is_present', 1)
-                ->count();
+                ->distinct('pertemuan_ke')
+                ->count('pertemuan_ke');
 
             $persen = $totalPertemuan > 0 ? ($hadir / $totalPertemuan) * 100 : 0;
 

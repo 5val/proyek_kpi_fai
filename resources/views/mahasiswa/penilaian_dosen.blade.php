@@ -35,7 +35,7 @@
                                 <div class="list-group-item p-3">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
-                                            <h6 class="fw-bold">{{ $d->name }}</h6>
+                                            <h6 class="fw-bold">{{ $d->user->name }}</h6>
                                             <small class="text-muted">Pengampu Mata Kuliah</small>
                                         </div>
                                         <a href="{{ route('penilaian.form', ['tipe' => 'dosen', 'id' => $d->id]) }}" class="btn btn-primary btn-sm rounded-pill">

@@ -60,6 +60,11 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                <div></div>
+                                <button class="btn btn-danger text-white shadow-sm px-4"
+                                    onclick="window.location='{{ route('mahasiswa.laporan.pdf', [$periode_id]) }}'">
+                                    <i class="bi bi-file-earmark-pdf me-2"></i> Export PDF
+                                </button>
                             </div>
                         </div>
 
@@ -81,6 +86,7 @@
             <div class="card-header bg-white py-3 fw-bold">
                 <i class="bi bi-file-earmark-text me-2"></i> Hasil Laporan Kinerja
             </div>
+
 
             <div class="card-body p-4">
                 <div class="p-4 rounded bg-light border border-start border-primary">
