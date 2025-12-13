@@ -6,7 +6,7 @@
 @section('page-subtitle', 'Kelola informasi akun dan password Anda')
 @section('user-name', ucfirst($mahasiswa->user->name))
 @section('user-role', 'Mahasiswa - '. ucfirst($mahasiswa->program_studi->name))
-@section('user-initial', 'AP')
+@section('user-initial', '')
 
 @section('content')
 @if (session('success'))

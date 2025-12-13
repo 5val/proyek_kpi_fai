@@ -4,9 +4,9 @@
 
 @section('page-title', 'Penilaian Unit Layanan')
 @section('page-subtitle', 'Berikan penilaian terhadap unit layanan di kampus')
-@section('user-name', 'Andi Pratama')
-@section('user-role', 'Mahasiswa - Teknik Informatika')
-@section('user-initial', 'AP')
+@section('user-name', '')
+@section('user-role', '')
+@section('user-initial', '')
 
 @section('content')
 <div class="row justify-content-center">

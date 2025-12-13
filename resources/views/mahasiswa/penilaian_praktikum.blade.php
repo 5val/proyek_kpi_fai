@@ -4,9 +4,9 @@
 
 @section('page-title', 'Penilaian Praktikum')
 @section('page-subtitle', 'Beri penilaian untuk praktikum yang Anda ikuti')
-@section('user-name', 'Andi Pratama')
-@section('user-role', 'Mahasiswa - Teknik Informatika')
-@section('user-initial', 'AP')
+@section('user-name', '')
+@section('user-role', '')
+@section('user-initial', '')
 
 @section('content')
 <div class="row justify-content-center">
