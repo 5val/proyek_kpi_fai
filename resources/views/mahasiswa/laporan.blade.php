@@ -52,7 +52,7 @@
                                 <span class="input-group-text bg-light">
                                     <i class="bi bi-calendar-event"></i>
                                 </span>
-                                <select id="periode" class="form-select" name="periode_id">
+                                <select id="periode" class="form-select" name="periode_id" onchange="this.form.submit()">
                                     @foreach ($all_periode as $p)
                                         <option value="{{ $p->id }}" 
                                                 {{ $periode_id == $p->id ? 'selected' : '' }}>
@@ -61,10 +61,14 @@
                                     @endforeach
                                 </select>
                                 <div></div>
-                                <button class="btn btn-danger text-white shadow-sm px-4"
-                                    onclick="window.location='{{ route('mahasiswa.laporan.pdf', [$periode_id]) }}'">
+                                <a
+                                    href="{{ route('mahasiswa.laporan.pdf', $periode_id) }}"
+                                    class="btn btn-danger text-white shadow-sm px-4"
+                                    target="_blank"
+                                >
                                     <i class="bi bi-file-earmark-pdf me-2"></i> Export PDF
-                                </button>
+                                </a>
+
                             </div>
                         </div>
 
@@ -208,45 +212,64 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    const grafikLabels = @json($grafik_labels);
-    const grafikValues = @json($grafik_values);
+const grafikLabels = @json($grafik_labels);
+const grafikValues = @json($grafik_values);
 
-    const ctx = document.getElementById('reportChart').getContext('2d');
+const ctx = document.getElementById('reportChart').getContext('2d');
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: grafikLabels,
-            datasets: [
-                {
-                    label: 'Rata-rata Kehadiran (%)',
-                    data: grafikValues,
-                    borderWidth: 2,
-                    borderColor: "#3498db",
-                    backgroundColor: "rgba(52,152,219,0.25)",
-                    pointBackgroundColor: "#3498db",
-                    tension: 0.3,
-                },
-                {
-                    label: 'Target Minimum',
-                    data: grafikLabels.map(() => 75),
-                    borderWidth: 1.5,
-                    borderColor: "#e74c3c",
-                    borderDash: [5,5],
-                    pointRadius: 0
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true, max: 100, ticks: { stepSize: 10 } }
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: grafikLabels,
+        datasets: [
+            {
+                label: 'Rata-rata Kehadiran (%)',
+                data: grafikValues,
+                showLine: true,
+                fill: false,
+                borderWidth: 2,
+                borderColor: "#3498db",
+                backgroundColor: "rgba(52,152,219,0.25)",
+                pointBackgroundColor: "#3498db",
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                tension: 0.3,
             },
-            plugins: {
-                legend: { display: true, position: 'bottom' }
+            {
+                label: 'Target Minimum (75%)',
+                data: grafikLabels.map(() => 75),
+                showLine: true,
+                fill: false,
+                borderWidth: 1.5,
+                borderColor: "#e74c3c",
+                borderDash: [5,5],
+                pointRadius: 0,
+                spanGaps: true
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: { stepSize: 10 }
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'bottom'
             }
         }
-    });
+    }
+});
 </script>
+
 @endpush
+
+
+
+

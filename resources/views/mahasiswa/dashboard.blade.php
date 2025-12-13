@@ -132,7 +132,7 @@
                     <div class="mb-4">
                         <div class="d-flex justify-content-between">
                             <span class="fw-bold">Penilaian Dosen</span>
-                            <span class="badge bg-success">{{ $dosenSudah}} / {{ $dosenBelum }}</span>
+                            <span class="badge bg-success">{{ $dosenSudah}} / {{ $totalDosen }}</span>
                         </div>
                         <div class="progress mt-2" style="height: 8px;">
                             <div class="progress-bar bg-success" style="width: 0%"></div>

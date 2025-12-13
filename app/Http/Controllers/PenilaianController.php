@@ -63,7 +63,7 @@ class PenilaianController extends Controller
         ]);
         if ($tipe === 'dosen') {
             $kategoriIds = [1];
-            $target = Dosen::where('user_id', $id)->firstOrFail();
+            $target = Dosen::findOrFail($id);
             $targetId = $target->id;
             $dinilaiType = 'App\Models\Dosen';
         } elseif ($tipe === 'mahasiswa') {

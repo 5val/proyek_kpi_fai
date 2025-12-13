@@ -1,44 +1,55 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Laporan Kehadiran</title>
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #000; padding: 6px; text-align: center; }
+        th { background: #eee; }
+        h2, h4 { margin: 0; }
+    </style>
+</head>
+<body>
 
-@section('title', 'Penilaian Dosen')
+<h2>Laporan Kehadiran Mahasiswa</h2>
+<p>
+    Nama: <strong>{{ $mahasiswa->user->name }}</strong><br>
+    NRP: {{ $mahasiswa->nrp }}<br>
+    Prodi: {{ $mahasiswa->program_studi->name ?? '-' }}
+</p>
 
-@section('page-title', 'Penilaian Dosen')
-@section('page-subtitle', 'Berikan penilaian terhadap kinerja dosen semester ini')
-@section('user-name', 'Andi Pratama')
-@section('user-role', 'Mahasiswa - Teknik Informatika')
-@section('user-initial', 'AP')
+<table>
+    <thead>
+        <tr>
+            <th>Mata Kuliah</th>
+            <th>Dosen</th>
+            <th>SKS</th>
+            <th>Kehadiran (%)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($hasil as $h)
+        <tr>
+            <td>{{ $h['matkul'] }}</td>
+            <td>{{ $h['dosen'] }}</td>
+            <td>{{ $h['sks'] }}</td>
+            <td>{{ $h['hadir'] }}%</td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
 
-@section('content')
-    <h2>Laporan Kehadiran Mahasiswa</h2>
-    <p>Nama: {{ $mahasiswa->user->name }}</p>
+@if($feedback->count())
+<h4 style="margin-top:20px;">Feedback Dosen</h4>
+@foreach ($feedback as $f)
+<p>
+    <strong>{{ $f->pengirim->name }}:</strong><br>
+    {{ $f->komentar }}
+</p>
+@endforeach
+@endif
 
-    <table border="1" cellspacing="0" cellpadding="5" width="100%">
-        <thead>
-            <tr>
-                <th>Mata Kuliah</th>
-                <th>Dosen</th>
-                <th>SKS</th>
-                <th>Kehadiran (%)</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($hasil as $h)
-            <tr>
-                <td>{{ $h['matkul'] }}</td>
-                <td>{{ $h['dosen'] }}</td>
-                <td>{{ $h['sks'] }}</td>
-                <td>{{ $h['hadir'] }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    <h3>Feedback</h3>
-    @foreach ($feedback as $f)
-    <p>
-        <strong>{{ $f->pengirim->name }}:</strong>
-        {{ $f->komentar }}
-    </p>
-    @endforeach
-
-@endsection
+</body>
+</html>
