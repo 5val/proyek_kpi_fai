@@ -147,28 +147,24 @@
             <tr>
                 {{-- NAMA INDIKATOR --}}
                 <td class="ps-4 py-3 fw-medium text-dark">
-                    {{ $i->name }}
+                    {{ $i['nama_indikator'] }}
                 </td>
 
                 {{-- SKOR --}}
                 <td class="text-center fw-bold text-secondary">
-                    @php
-                        $skor = $nilai[$i->id]->skor ?? null;
-                    @endphp
-
-                    {{ $skor ? number_format($skor, 2) : '-' }}
+                    {{ number_format($i['avg_score'], 2) ?? '-' }}
                 </td>
 
                 {{-- STATUS --}}
                 <td class="text-center">
                     @php
-                        if (is_null($skor)) {
+                        if (is_null($i['avg_score'])) {
                             $status = '-';
                             $badge = 'bg-light text-secondary';
-                        } elseif ($skor >= 4) {
+                        } elseif ($i['avg_score'] >= 4) {
                             $status = 'Baik';
                             $badge = 'bg-success text-white';
-                        } elseif ($skor >= 2.5) {
+                        } elseif ($i['avg_score'] >= 2.5) {
                             $status = 'Sedang';
                             $badge = 'bg-warning text-dark';
                         } else {
@@ -218,9 +214,9 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Data dari PHP ke JS
-            const labels = {!! json_encode($indikator->pluck('name')->toArray()) !!};
+            const labels = {!! json_encode($indikator->pluck('nama_indikator')->toArray()) !!};
             // Pastikan logic pengambilan data nilainya aman dari null
-            const dataValues = {!! json_encode($indikator->map(fn($i) => $nilai[$i->id]->skor ?? 0)->toArray()) !!};
+            const dataValues = {!! json_encode($indikator->pluck('avg_score')->map(fn($v) => round($v, 2))->toArray()) !!};
 
             const ctx = document.getElementById('reportChart').getContext('2d');
             

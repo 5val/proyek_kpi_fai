@@ -12,7 +12,7 @@
 
 {{-- Tombol Kembali Utama --}}
 <div class="mb-3">
-    <a href="{{ route('admin.penilaian') }}" class="btn btn-secondary btn-sm px-3">
+    <a href="{{ url()->previous() }}" class="btn btn-secondary btn-sm px-3">
         <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar
     </a>
 </div>

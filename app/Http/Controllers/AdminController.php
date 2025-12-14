@@ -198,7 +198,7 @@ class AdminController extends Controller
             'tableTitle' => 'List Fasilitas',
             'headers' => ['Nama Fasilitas'],
             'keys' => ['name'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Fasilitas::whereDoesntHave('penilaian', fn($q) => $q->where('periode_id', $periode->id))->get()
+            'items' => Fasilitas::whereDoesntHave('penilaian')->get()
          ];
       } elseif($type == 'belum_dinilai_unit') {
          $data = [
@@ -207,7 +207,7 @@ class AdminController extends Controller
             'tableTitle' => 'List Unit',
             'headers' => ['Nama Unit'],
             'keys' => ['name'], // Sesuaikan dengan nama kolom/atribut model
-            'items' => Unit::whereDoesntHave('penilaian', fn($q) => $q->where('periode_id', $periode->id))->get()
+            'items' => Unit::whereDoesntHave('penilaian')->get()
          ];
       } elseif($type == 'belum_dinilai_praktikum') {
          $data = [
@@ -923,17 +923,20 @@ class AdminController extends Controller
          $penilaian = $penilaian->where('kategori_id', $request->kategori_id);
       }
       if($request->periode_id) {
-         $penilaian = $penilaian
-         ->where(function ($q) use ($request) {
-               $q->whereNotIn('dinilai_type', [
-                  'App\Models\Fasilitas',
-                  'App\Models\Unit'
-               ])->where('periode_id', $request->periode_id);
-         })
-         ->orWhereIn('dinilai_type', [
-               'App\Models\Fasilitas',
-               'App\Models\Unit'
-         ]);
+         if($request->kategori_id && ($request->kategori_id == 1 || $request->kategori_id == 5)) {
+            $penilaian = $penilaian->where('periode_id', $request->periode_id);
+         }
+         // $penilaian = $penilaian
+         // ->where(function ($q) use ($request) {
+         //       $q->whereNotIn('dinilai_type', [
+         //          'App\Models\Fasilitas',
+         //          'App\Models\Unit'
+         //       ])->where('periode_id', $request->periode_id);
+         // })
+         // ->orWhereIn('dinilai_type', [
+         //       'App\Models\Fasilitas',
+         //       'App\Models\Unit'
+         // ]);
       }
       if($request->prodi_id) {
          $penilaian->whereHas('penilai', function($query) use ($request) {
@@ -1170,16 +1173,20 @@ class AdminController extends Controller
       }
 
       if (!in_array($kategori_id, [3, 4])) {
-         $penilaian->withAvg(['penilaian' => function ($q) use ($periode_id) {
-            $q->where('periode_id', $periode_id);
-         }], 'avg_score');
+         $penilaian
+            ->withAvg(['penilaian' => function ($q) use ($periode_id) {
+                $q->where('periode_id', $periode_id);
+            }], 'avg_score')
+            ->withCount(['penilaian' => function ($q) use ($periode_id) {
+                $q->where('periode_id', $periode_id);
+            }]);
       } else {
-         $penilaian->withAvg('penilaian', 'avg_score');
+         $penilaian
+            ->withAvg('penilaian', 'avg_score')
+            ->withCount('penilaian');
       }
 
-      $penilaian = $penilaian->withCount('penilaian')->get();
-
-      return $penilaian;
+      return $penilaian->get();
    }
 
    private function getPenilaianKampus($periode_id) {

@@ -534,18 +534,44 @@ public function laporanKinerja(Request $request)
     $curPeriode = Periode::findOrFail($periode_id);
 
     // Semua indikator dalam kategori terpilih
-    $indikator = Indikator::where('kategori_id', $kategori_id)
-        ->orderBy('id', 'ASC')
-        ->get();
+   //  $indikator = Indikator::where('kategori_id', $kategori_id)
+   //      ->orderBy('id', 'ASC')
+   //      ->get();
 
     // Nilai penilaian dosen dalam periode
-    $nilai = Penilaian::where('dinilai_id', $dosen->id)
-        ->where('periode_id', $periode_id)
-        ->get()
-        ->keyBy('indikator_id'); // jd: [indikator_id => object]
+   //  $nilai = Penilaian::where('dinilai_id', $dosen->id)
+   //      ->where('periode_id', $periode_id)
+   //      ->get()
+   //      ->keyBy('indikator_id'); // jd: [indikator_id => object]
 
     // Hitung skor akhir
-    $skorAkhir = $nilai->avg('skor') ?? 0;
+   //  $skorAkhir = $nilai->avg('skor') ?? 0;
+
+   $penilaian = Penilaian::with('detailPenilaian.indikator')
+        ->where('dinilai_id', $dosen->id)
+        ->where('periode_id', $periode_id)
+        ->get();
+
+    /**
+     * Hitung AVG skor per indikator
+     */
+    $avgPerIndikator = $penilaian
+        ->flatMap->detailPenilaian
+        ->filter(fn ($dp) => $dp->indikator->kategori_id == $kategori_id)
+        ->groupBy('indikator_id')
+        ->map(function ($items) {
+            return [
+                'indikator_id'   => $items->first()->indikator->id,
+                'nama_indikator' => $items->first()->indikator->name,
+                'avg_score'      => $items->avg('score'),
+            ];
+        })
+        ->values();
+
+      //   dd($avgPerIndikator);
+
+    // Skor akhir (rata-rata dari semua indikator)
+    $skorAkhir = $avgPerIndikator->avg('avg_score') ?? 0;
 
     return view('dosen.laporan', [
         'user' => $user,
@@ -558,8 +584,9 @@ public function laporanKinerja(Request $request)
         'periode_id' => $periode_id,
         'curPeriode' => $curPeriode,
 
-        'indikator' => $indikator,
-        'nilai' => $nilai,
+      //   'indikator' => $indikator,
+      //   'nilai' => $nilai,
+         'indikator' => $avgPerIndikator,
         'skorAkhir' => $skorAkhir,
     ]);
 }

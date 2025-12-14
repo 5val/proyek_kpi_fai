@@ -81,7 +81,7 @@
                             <small class="text-muted text-uppercase" style="font-size: 0.75rem;">{{ $feedback->type }}</small>
                         </div>
                         <a href="{{ route('admin.dashboard.detail.feedback', [$feedback->kategori_id, $feedback->target_id]) }}" class="btn btn-sm btn-outline-danger rounded-pill flex-shrink-0" style="font-size: 0.8rem;">
-                            {{ $feedback->count }} <span class="d-none d-sm-inline">Feedback</span> <i class="bi bi-chevron-right"></i>
+                            {{ $feedback->count }} <span class="d-none d-sm-inline">Keluhan</span> <i class="bi bi-chevron-right"></i>
                         </a>
                     </li>
                     @empty
@@ -110,7 +110,7 @@
                         </div>
                         <div class="d-flex align-items-center gap-2 flex-shrink-0">
                             <span class="badge bg-danger">{{ number_format($dosen->avg_kpi, 1) }}</span>
-                            <a href="{{ route('admin.dashboard.detail.list', ['dosen', $dosen->user->id]) }}" class="btn btn-sm btn-light border"><i class="bi bi-eye"></i></a>
+                            <a href="{{ route('admin.dashboard.detail.list', ['dosen', $dosen->id]) }}" class="btn btn-sm btn-light border"><i class="bi bi-eye"></i></a>
                         </div>
                     </li>
                     @empty
