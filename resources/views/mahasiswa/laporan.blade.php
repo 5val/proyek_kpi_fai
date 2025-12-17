@@ -168,37 +168,7 @@
         </div>
     </div>
 
-    {{-- ================== FEEDBACK DOSEN ================== --}}
-    <div class="col-12 col-lg-5">
-        <div class="card card-custom h-100 shadow-sm border-0">
-            <div class="card-header bg-white py-3 fw-bold">
-                <i class="bi bi-chat-quote-fill me-2"></i> Keluhan Dosen
-            </div>
-
-            <div class="card-body p-0">
-                <div class="list-group list-group-flush" style="max-height: 600px; overflow-y: auto;">
-
-                    @forelse ($feedback as $fb)
-                        <div class="list-group-item p-4">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h6 class="mb-0 fw-bold text-dark">{{ $fb->penilai->name }}</h6>
-                                <small class="text-muted bg-light px-2 py-1 rounded">
-                                    {{ $fb->created_at->diffForHumans() }}
-                                </small>
-                            </div>
-                            <p class="mb-0 text-secondary fst-italic lh-sm">"{{ $fb->isi }}"</p>
-                        </div>
-                    @empty
-                        <div class="list-group-item p-4 text-center text-muted">
-                            Tidak ada keluhan dari dosen.
-                        </div>
-                    @endforelse
-
-                </div>
-            </div>
-        </div>
-    </div>
-
+    
 </div>
 
 @endif

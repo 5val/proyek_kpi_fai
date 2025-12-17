@@ -86,17 +86,6 @@
         <div class="col-12 col-md-4">
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body text-center p-4">
-                    <div class="icon text-primary fs-1 mb-2"><i class="bi bi-journal-check"></i></div>
-                    <h3 class="fw-bold mb-0">3.85</h3>
-                    <p class="text-muted small text-uppercase fw-bold mb-1">IPK Semester</p>
-                    <small class="text-info fw-bold">Gasal 2024</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-body text-center p-4">
                     <div class="icon text-warning fs-1 mb-2"><i class="bi bi-star-fill"></i></div>
                     <h3 class="fw-bold mb-0">{{ $dosenBelum }}</h3>
                     <p class="text-muted small text-uppercase fw-bold mb-1">Pending</p>
@@ -121,6 +110,27 @@
             </div>
         </div>
 
+        @php
+    $persenDosen = $totalDosen > 0
+        ? round(($dosenSudah / $totalDosen) * 100)
+        : 0;
+
+    $totalFasilitas = $fasilitasSudah + $fasilitasBelum;
+    $persenFasilitas = $totalFasilitas > 0
+        ? round(($fasilitasSudah / $totalFasilitas) * 100)
+        : 0;
+
+    $totalPraktikum = $praktikumSudah + $praktikumBelum;
+    $persenPraktikum = $totalPraktikum > 0
+        ? round(($praktikumSudah / $totalPraktikum) * 100)
+        : 0;
+
+    $totalUnit = $unitSudah + $unitBelum;
+    $persenUnit = $totalUnit > 0
+        ? round(($unitSudah / $totalUnit) * 100)
+        : 0;
+@endphp
+
         {{-- STATUS PENILAIAN --}}
         <div class="col-12 col-lg-4">
             <div class="card shadow-sm border-0">
@@ -135,35 +145,35 @@
                             <span class="badge bg-success">{{ $dosenSudah}} / {{ $totalDosen }}</span>
                         </div>
                         <div class="progress mt-2" style="height: 8px;">
-                            <div class="progress-bar bg-success" style="width: 0%"></div>
+                            <div class="progress-bar bg-success"  style="width: {{ $persenDosen }}%"></div>
                         </div>
                     </div>
                     {{-- Fasilitas --}}
                     <div class="mb-4">
                         <div class="d-flex justify-content-between">
                             <span class="fw-bold">Penilaian Fasilitas</span>
-                            <span class="badge bg-warning text-dark">{{ $fasilitasSudah }} / {{ $fasilitasBelum }}</span>
+                            <span class="badge bg-warning text-dark">{{ $fasilitasSudah }} / {{ $totalFasilitas }}</span>
                         </div>
                         <div class="progress mt-2" style="height: 8px;">
-                            <div class="progress-bar bg-warning" style="width: 0%"></div>
+                            <div class="progress-bar bg-warning"  style="width: {{ $persenFasilitas }}%"></div>
                         </div>
                     </div>
                     <div class="mb-4">
                         <div class="d-flex justify-content-between">
                             <span class="fw-bold">Penilaian Praktikum</span>
-                            <span class="badge bg-info text-dark">{{ $praktikumSudah }} / {{ $praktikumBelum }}</span>
+                            <span class="badge bg-info text-dark">{{ $praktikumSudah }} / {{ $totalPraktikum }}</span>
                         </div>
                         <div class="progress mt-2" style="height: 8px;">
-                            <div class="progress-bar bg-info" style="width: 0%"></div>
+                            <div class="progress-bar bg-info"  style="width: {{ $persenPraktikum }}%"></div>
                         </div>
                     </div>
                     <div class="mb-4">
                         <div class="d-flex justify-content-between">
                             <span class="fw-bold">Penilaian Unit</span>
-                            <span class="badge bg-danger text-light">{{ $unitSudah }} / {{ $unitBelum }}</span>
+                            <span class="badge bg-danger text-light">{{ $unitSudah }} / {{ $totalUnit }}</span>
                         </div>
                         <div class="progress mt-2" style="height: 8px;">
-                            <div class="progress-bar bg-dark" style="width: 0%"></div>
+                            <div class="progress-bar bg-dark"  style="width: {{ $persenUnit }}%"></div>
                         </div>
                     </div>
 
@@ -284,7 +294,7 @@ new Chart(ctx, {
             },
             {
                 label: 'Target Minimum',
-                data: Array(@json($grafik_values).length).fill(80),
+                data: Array(@json($grafik_values).length).fill(75),
                 borderWidth: 2,
                 borderColor: '#e74c3c',
                 borderDash: [5,5],

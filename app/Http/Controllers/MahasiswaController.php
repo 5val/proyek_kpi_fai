@@ -32,7 +32,6 @@ class MahasiswaController extends Controller
 {
 public function dashboard()
 {
-    
     $userId = Auth::id();
     $periodeAktif = Periode::max('id');
 
@@ -44,7 +43,7 @@ public function dashboard()
         ->firstOrFail();
 
     // =========================
-    // KELAS YANG DIAMBIL (SAMA DENGAN LAPORAN)
+    // KELAS YANG DIAMBIL (PERIODE AKTIF)
     // =========================
     $kelasSaya = Kelas::with(['mataKuliah', 'dosen.user'])
         ->where('periode_id', $periodeAktif)
@@ -64,47 +63,65 @@ public function dashboard()
         ->unique('id')
         ->values();
 
-    $dosenIds = $dosenUsers->pluck('id'); // 
-        
-$dosenSudah = Penilaian::where('kategori_id', 1)
-    ->where('penilai_id', $userId)
-    ->where('dinilai_type', 'App\Models\Dosen')
-    ->whereIn('dinilai_id', $dosenIds)
-    ->count();
-    
-        
-$totalDosen = $dosenIds->count();
-$dosenBelum = max(0, $totalDosen - $dosenSudah);
+    $dosenIds = $dosenUsers->pluck('id');
+
+    $dosenSudah = Penilaian::where('kategori_id', 1)
+        ->where('penilai_id', $userId)
+        ->where('dinilai_type', \App\Models\Dosen::class)
+        ->whereIn('dinilai_id', $dosenIds)
+        ->count();
+
+    $totalDosen = $dosenIds->count();
+    $dosenBelum = max(0, $totalDosen - $dosenSudah);
 
     // =========================
     // PRAKTIKUM
     // =========================
-    $praktikumIds = $kelasSaya
+    $praktikumKelas = $kelasSaya
         ->where('has_praktikum', 1)
-        ->pluck('id');
+        ->values();
 
-    $praktikumSudah = Penilaian::where('kategori_id', 4)
+    $praktikumIds = $praktikumKelas->pluck('id');
+
+    $praktikumSudah = Penilaian::where('kategori_id', 5)
         ->where('penilai_id', $userId)
+        ->where('dinilai_type', \App\Models\Praktikum::class)
         ->whereIn('dinilai_id', $praktikumIds)
         ->count();
 
-    $praktikumBelum = max(0, $praktikumIds->count() - $praktikumSudah);
+    $totalPraktikum = $praktikumIds->count();
+    $praktikumBelum = max(0, $totalPraktikum - $praktikumSudah);
 
     // =========================
-    // UNIT & FASILITAS
+    // UNIT
     // =========================
-    $unitSudah = Penilaian::where('kategori_id', 5)
+    $unitIds = Unit::pluck('id');
+
+    $unitSudah = Penilaian::where('kategori_id', 4)
         ->where('penilai_id', $userId)
+        ->where('dinilai_type', \App\Models\Unit::class)
+        ->whereIn('dinilai_id', $unitIds)
         ->count();
-    $unitBelum = max(0, Unit::count() - $unitSudah);
 
-    $fasilitasSudah = Penilaian::where('kategori_id', 6)
-        ->where('penilai_id', $userId)
-        ->count();
-    $fasilitasBelum = max(0, Fasilitas::count() - $fasilitasSudah);
+    $totalUnit = $unitIds->count();
+    $unitBelum = max(0, $totalUnit - $unitSudah);
 
     // =========================
-    // GRAFIK KEHADIRAN (IDENTIK LAPORAN)
+    // FASILITAS
+    // =========================
+    $fasilitasIds = Fasilitas::pluck('id');
+
+    $fasilitasSudah = Penilaian::where('kategori_id', 3)
+        ->where('penilai_id', $userId)
+        ->where('dinilai_type', \App\Models\Fasilitas::class)
+        ->whereIn('dinilai_id', $fasilitasIds)
+        ->count();
+
+    $totalFasilitas = $fasilitasIds->count();
+    $fasilitasBelum = max(0, $totalFasilitas - $fasilitasSudah);
+
+    // =========================
+    // GRAFIK KEHADIRAN
     // =========================
     $all_periode = Periode::orderBy('id')->get();
     $grafik_labels = [];
@@ -118,13 +135,12 @@ $dosenBelum = max(0, $totalDosen - $dosenSudah);
             })
             ->get();
 
-        if ($kelasPerPeriode->count() === 0) continue;
+        if ($kelasPerPeriode->isEmpty()) continue;
 
         $total = 0;
         $count = 0;
 
         foreach ($kelasPerPeriode as $k) {
-
             $totalPertemuan = Kehadiran::where('kelas_id', $k->id)
                 ->distinct('pertemuan_ke')
                 ->count('pertemuan_ke');
@@ -148,33 +164,35 @@ $dosenBelum = max(0, $totalDosen - $dosenSudah);
     }
 
     // =========================
-    // LIST BELUM DINILAI
+    // LIST BELUM DINILAI (CTA)
     // =========================
     $dosenBelumList = $dosenUsers->filter(function ($d) use ($userId) {
         return !Penilaian::where('kategori_id', 1)
             ->where('penilai_id', $userId)
+            ->where('dinilai_type', \App\Models\Dosen::class)
             ->where('dinilai_id', $d->id)
             ->exists();
     })->take(1);
 
-    $praktikumBelumList = $kelasSaya
-        ->where('has_praktikum', 1)
-        ->filter(function ($k) use ($userId) {
-            return !Penilaian::where('kategori_id', 4)
-                ->where('penilai_id', $userId)
-                ->where('dinilai_id', $k->id)
-                ->exists();
-        })->take(1);
+    $praktikumBelumList = $praktikumKelas->filter(function ($k) use ($userId) {
+        return !Penilaian::where('kategori_id', 4)
+            ->where('penilai_id', $userId)
+            ->where('dinilai_type', \App\Models\Praktikum::class)
+            ->where('dinilai_id', $k->id)
+            ->exists();
+    })->take(1);
 
     $unitBelumList = Unit::whereNotIn('id',
         Penilaian::where('kategori_id', 5)
             ->where('penilai_id', $userId)
+            ->where('dinilai_type', \App\Models\Unit::class)
             ->pluck('dinilai_id')
     )->limit(1)->get();
 
     $fasilitasBelumList = Fasilitas::whereNotIn('id',
         Penilaian::where('kategori_id', 6)
             ->where('penilai_id', $userId)
+            ->where('dinilai_type', \App\Models\Fasilitas::class)
             ->pluck('dinilai_id')
     )->limit(1)->get();
 
@@ -185,33 +203,45 @@ $dosenBelum = max(0, $totalDosen - $dosenSudah);
         'mahasiswa',
         'isBaru',
         'kelasSaya',
-        'dosenSudah', 'dosenBelum',
-        'praktikumSudah', 'praktikumBelum',
-        'unitSudah', 'unitBelum',
-        'fasilitasSudah', 'fasilitasBelum',
-        'dosenBelumList', 'praktikumBelumList',
-        'unitBelumList', 'fasilitasBelumList',
-        'grafik_labels', 'grafik_values', 'totalDosen'
+
+        'dosenSudah', 'dosenBelum', 'totalDosen',
+        'praktikumSudah', 'praktikumBelum', 'totalPraktikum',
+        'unitSudah', 'unitBelum', 'totalUnit',
+        'fasilitasSudah', 'fasilitasBelum', 'totalFasilitas',
+
+        'dosenBelumList',
+        'praktikumBelumList',
+        'unitBelumList',
+        'fasilitasBelumList',
+
+        'grafik_labels',
+        'grafik_values'
     ));
 }
+
 
    public function profile(){
       $mahasiswa = Mahasiswa::with('program_studi')->where('user_id', Auth::id())->firstOrFail();
       return view('mahasiswa.profile', compact('mahasiswa'));
    }
-   public function changePassword(Request $request, $id)
+    public function changePassword(Request $request)
     {
-        $validated = $request->validate([
-            'password' => 'required|string|min:6|confirmed',
+        $user = Auth::user();
+    
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
         ]);
-        $mahasiswa = Mahasiswa::findOrFail($id);
-         $user = $mahasiswa->user;
-         $user->update([
-            'password' => Hash::make($validated['password']),
-         ]);
-        return redirect()
-            ->route('mahasiswa.profile')
-            ->with('success', 'Password berhasil diubah!');
+    
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->with('error', 'Password lama yang Anda masukkan salah.');
+        }
+    
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+    
+        return back()->with('success', 'Password berhasil diubah.');
     }
 
    public function uploadProfpic(Request $request, $id)
@@ -296,20 +326,42 @@ public function penilaian_dosen()
       $units = Unit::with('penanggungJawab')->paginate(10);
       return view('mahasiswa.penilaian_unit', ['units' => $units]);
    }
-   public function penilaian_praktikum() {
-      $mahasiswa = auth()->user()->mahasiswa;
-      $praktikumList = Enrollment::with('kelas.mataKuliah')
-         ->where('mahasiswa_nrp', $mahasiswa->nrp)
-         ->whereHas('kelas', function ($query) {
-               $query->where('has_praktikum', 1);
-         })
-         ->get()
-         ->map(function ($enrollment) {
-               return $enrollment->kelas; 
-         });
+public function penilaian_praktikum()
+{
+    
+    $userId = auth()->id();
+    $mahasiswa = auth()->user()->mahasiswa;
+    $periodeAktif = Periode::max('id');
 
-      return view('mahasiswa.penilaian_praktikum', compact('praktikumList'));
-   }
+    // ===========================
+    // KELAS PRAKTIKUM PERIODE AKTIF
+    // ===========================
+    $praktikumList = Enrollment::with(['kelas.mataKuliah', 'kelas.dosen.user'])
+        ->where('mahasiswa_nrp', $mahasiswa->nrp)
+        ->whereHas('kelas', function ($q) use ($periodeAktif) {
+            $q->where('periode_id', $periodeAktif)
+              ->where('has_praktikum', 1);
+        })
+        ->get()
+        ->pluck('kelas')
+        ->unique('id')
+        ->values();
+
+    // ===========================
+    // PRAKTIKUM YANG SUDAH DINILAI
+    // ===========================
+    $praktikumSudahIds = Penilaian::where('kategori_id', 5)
+        ->where('penilai_id', $userId)
+        ->where('dinilai_type', \App\Models\Praktikum::class)
+        ->pluck('dinilai_id')
+        ->toArray();
+    
+       
+    return view('mahasiswa.penilaian_praktikum', compact(
+        'praktikumList',
+        'praktikumSudahIds'
+    ));
+}
 
 public function laporan(Request $request)
 {
@@ -573,87 +625,121 @@ foreach ($all_periode_grafik as $p) {
 }
 
 
-   public function feedback() {
-      $kategori = Kategori::all();
-      return view('mahasiswa.feedback', ['kategori' => $kategori]);
-   }
+   public function feedback()
+{
+    $userId = auth()->id();
 
-   public function get_targets(Request $request) {
-      $kategoriId = $request->kategori_id;
-        
-      // Cari detail kategori untuk mengetahui target_role nya
-      $kategori = Kategori::find($kategoriId);
-      
-      if (!$kategori) {
-         return response()->json([]);
-      }
+    // 1. Ambil kategori
+    $kategori = Kategori::all();
 
-      $data = [];
+    // 2. Ambil riwayat feedback mahasiswa
+    $riwayat = Feedback::with(['kategori', 'target'])
+        ->where('pengirim_id', $userId)
+        ->latest()
+        ->limit(10)
+        ->get();
 
-      // Switch case berdasarkan kolom 'target_role' di database kategori_kpi
-      // Asumsi value target_role: 'dosen', 'fasilitas', 'unit', 'akademik'
-      switch ($kategori->target_role) {
-         case 'dosen':
-               // Ambil data dosen + nama user
-               $data = Dosen::with('user')->get()->map(function($dosen) {
-                  return [
-                     'id' => $dosen->user_id, // ID Dosen (bukan User ID) untuk disimpan di target_id
-                     'name' => $dosen->user->name ?? 'Nama Tidak Ditemukan'
-                  ];
-               });
-               break;
+    return view('mahasiswa.feedback', compact(
+        'kategori',
+        'riwayat'
+    ));
+}
 
-         case 'fasilitas':
-               $data = Fasilitas::all();
-               break;
 
-         case 'unit':
-               $data = Unit::all();
-               break;
+   public function get_targets(Request $request)
+{
+    $kategori = Kategori::find($request->kategori_id);
 
-         default:
-               // Jika kategori umum/lainnya, mungkin tidak butuh target spesifik
-               $data = []; 
-               break;
-      }
+    if (!$kategori) {
+        return response()->json([]);
+    }
 
-      return response()->json($data);
-   }
+    $mahasiswa = auth()->user()->mahasiswa;
+    $periodeAktif = Periode::max('id');
 
-   public function insertFeedback(Request $request) 
-   {
-      $validated = $request->validate([
-         'kategori' => 'required|exists:kategori,id',
-         'target' => 'required',
-         'deskripsi' => 'required|string|max:255',
-         'file' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-      ]);
-      $isAnonim = $request->has('anonim') ? 1 : 0;
-      $path = null;
-      if ($request->hasFile('file')) {
-         $path = $request->file('file')->store('foto', 'public');
-      }
-      $user = auth()->user();
-      if($request->kategori == 1) {
-         $target_type = 'App\Models\Dosen';
-      } elseif($request->kategori == 3) {
-         $target_type = 'App\Models\Fasilitas';
-      } else {
-         $target_type = 'App\Models\Unit';
-      }
-      $mahasiswa = Mahasiswa::where('user_id', $user->id)->firstOrFail();
-      Feedback::create([
-         'pengirim_id' => $user->id, 
-         'kategori_id' => $validated['kategori'],
-         'target_id' => $validated['target'],
-         'target_type' => $target_type,
-         'isi' => $validated['deskripsi'],
-         'foto' => $path,
-         'is_anonymous' => $isAnonim,
-      ]);
-      return redirect()
-         ->route('mahasiswa.feedback')
-         ->with('success', 'Feedback berhasil dikirim!');
-   }
+    switch ($kategori->target_role) {
+
+        case 'dosen':
+            // HANYA dosen di kelas aktif mahasiswa
+            $data = Enrollment::with('kelas.dosen.user')
+                ->where('mahasiswa_nrp', $mahasiswa->nrp)
+                ->whereHas('kelas', function ($q) use ($periodeAktif) {
+                    $q->where('periode_id', $periodeAktif);
+                })
+                ->get()
+                ->pluck('kelas.dosen')
+                ->filter()
+                ->unique('id')
+                ->map(fn ($d) => [
+                    'id' => $d->id, // ✅ DOSEN.ID
+                    'name' => $d->user->name ?? '-',
+                ])
+                ->values();
+            break;
+
+        case 'fasilitas':
+            $data = Fasilitas::all(['id', 'nama']);
+            break;
+
+        case 'unit':
+            $data = Unit::all(['id', 'nama']);
+            break;
+
+        default:
+            $data = [];
+    }
+
+    return response()->json($data);
+}
+   public function insertFeedback(Request $request)
+{
+    $kategori = Kategori::findOrFail($request->kategori);
+
+    $rules = [
+        'kategori' => 'required|exists:kategori,id',
+        'deskripsi' => 'required|string|max:255',
+        'file' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+    ];
+
+    if ($kategori->target_role !== 'umum') {
+        $rules['target'] = 'required|integer';
+    }
+
+    $validated = $request->validate($rules);
+
+    $path = null;
+    if ($request->hasFile('file')) {
+        $path = $request->file('file')->store('foto', 'public');
+    }
+
+    // Tentukan target_type dari target_role
+    $map = [
+        'dosen' => \App\Models\Dosen::class,
+        'fasilitas' => \App\Models\Fasilitas::class,
+        'unit' => \App\Models\Unit::class,
+        'kampus' => \App\Models\Kampus::class,
+    ];
+
+    $targetType = $map[$kategori->target_role] ?? null;
+
+    // VALIDASI TARGET ADA
+    if ($targetType && ! $targetType::where('id', $validated['target'])->exists()) {
+        abort(404);
+    }
+
+    Feedback::create([
+        'pengirim_id' => auth()->id(),
+        'kategori_id' => $kategori->id,
+        'target_id' => $validated['target'] ?? null,
+        'target_type' => $targetType,
+        'isi' => $validated['deskripsi'],
+        'foto' => $path,
+        'is_anonymous' => $request->has('anonim'),
+    ]);
+
+    return redirect()
+        ->route('mahasiswa.feedback')
+        ->with('success', 'Feedback berhasil dikirim!');
+}
 
 }

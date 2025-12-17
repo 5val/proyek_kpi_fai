@@ -86,15 +86,19 @@
                     </div>
                     <!-- Change Password Tab -->
                     <div class="tab-pane fade p-3" id="password" role="tabpanel">
-                        <form method="POST" action="{{ route('mahasiswa.changePassword', Auth::id()) }}">
+                         <form action="{{ route('mahasiswa.changePassword') }}" method="POST">
                             @csrf
                             <div class="mb-3">
+                            <label class="form-label">Password Lama</label>
+                            <input type="password" name="current_password" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
                                 <label for="newPassword" class="form-label">Password Baru</label>
-                                <input type="password" name="password" class="form-control" id="newPassword" required>
+                                <input type="password" name="new_password" class="form-control" id="newPassword" required>
                             </div>
                             <div class="mb-3">
                                 <label for="confirmPassword" class="form-label">Konfirmasi Password Baru</label>
-                                <input type="password" name="password_confirmation" class="form-control" id="confirmPassword" required>
+                                <input type="password" name="new_password_confirmation" class="form-control" id="confirmPassword" required>
                             </div>
                             <button type="submit" class="btn btn-primary btn-custom">
                                 <i class="bi bi-key"></i> Ubah Password

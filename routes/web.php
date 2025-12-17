@@ -47,7 +47,7 @@ Route::prefix('mahasiswa')
         Route::get('/', [MahasiswaController::class, 'dashboard'])->name('dashboard');
         Route::get('/profile', [MahasiswaController::class, 'profile'])->name('profile');
         Route::post('/profile/{id}/upload', [MahasiswaController::class, 'uploadProfpic'])->name('uploadProfpic');
-        Route::post('/profile/{id}/password', [MahasiswaController::class, 'changePassword'])->name('changePassword');
+        Route::post('/profile/password', [MahasiswaController::class, 'changePassword'])->name('changePassword');
         Route::get('/kpi', [MahasiswaController::class, 'kpi'])->name('kpi');
         Route::get('/penilaian_dosen', [MahasiswaController::class, 'penilaian_dosen'])->name('penilaian_dosen');
         Route::get('/penilaian_fasilitas', [MahasiswaController::class, 'penilaian_fasilitas'])->name('penilaian_fasilitas');

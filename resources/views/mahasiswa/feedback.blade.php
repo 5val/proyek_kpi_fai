@@ -96,42 +96,53 @@
     
     <div class="col-12 col-lg-4">
         <div class="card card-custom shadow-sm border-0 h-100">
-            <div class="card-header bg-white py-3 fw-bold">
-                <i class="bi bi-clock-history me-2"></i> Riwayat Feedback Saya
-            </div>
-            <div class="card-body p-0">
-                <div class="list-group list-group-flush overflow-auto" style="max-height: 500px;">
-                    
-                    {{-- Item 1 --}}
-                    <div class="list-group-item p-3 border-bottom-0 border-top-0">
-                        <div class="d-flex w-100 justify-content-between align-items-start mb-1">
-                            <h6 class="mb-0 fw-bold text-truncate" style="max-width: 70%;">AC di R.301 tidak dingin</h6>
-                            <small class="text-muted text-nowrap">3 hari lalu</small>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <small class="text-muted"><i class="bi bi-building me-1"></i> Fasilitas</small>
-                            <span class="badge bg-success rounded-pill px-2">Sudah Ditanggapi</span>
-                        </div>
+    <div class="card-header bg-white py-3 fw-bold">
+        <i class="bi bi-clock-history me-2"></i> Riwayat Feedback Saya
+    </div>
+    <div class="card-body p-0">
+        <div class="list-group list-group-flush overflow-auto" style="max-height: 500px;">
+            
+            @forelse($riwayat as $item)
+                <div class="list-group-item p-3 {{ $loop->last ? '' : 'border-bottom-0' }}">
+                    <div class="d-flex w-100 justify-content-between align-items-start mb-1">
+                        {{-- Isi Feedback (Dipotong jika terlalu panjang) --}}
+                        <h6 class="mb-0 fw-bold text-truncate" style="max-width: 65%;">
+                            {{ Str::limit($item->isi, 40) }}
+                        </h6>
+                        
+                        {{-- Waktu (Created At) --}}
+                        <small class="text-muted text-nowrap" style="font-size: 0.75rem;">
+                            {{ $item->created_at->diffForHumans() }}
+                        </small>
                     </div>
-                    
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <small class="text-muted">
+                            <i class="bi bi-tag me-1"></i> {{ $item->kategori->name ?? 'Umum' }}
+                        </small>
+                        
+                        {{-- Badge Status (Menggunakan Accessor Model) --}}
+                        <span class="badge bg-{{ $item->status_color }} rounded-pill px-2" style="font-size: 0.7rem;">
+                            {{ $item->status_label }}
+                        </span>
+                    </div>
+                </div>
+
+                @unless($loop->last)
                     <hr class="my-0 mx-3 opacity-25">
+                @endunless
 
-                    {{-- Item 2 --}}
-                    <div class="list-group-item p-3 border-bottom-0">
-                        <div class="d-flex w-100 justify-content-between align-items-start mb-1">
-                            <h6 class="mb-0 fw-bold text-truncate" style="max-width: 70%;">Antrian layanan BAA lama</h6>
-                            <small class="text-muted text-nowrap">1 minggu lalu</small>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <small class="text-muted"><i class="bi bi-bank2 me-1"></i> Unit Layanan</small>
-                            <span class="badge bg-warning text-dark rounded-pill px-2">Belum Ditanggapi</span>
-                        </div>
-                    </div>
+            @empty
+                {{-- Empty State --}}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox fs-1 d-block mb-2 opacity-50"></i>
+                    <small>Belum ada riwayat feedback.</small>
+                </div>
+            @endforelse
 
-                    {{-- Empty State (Jika tidak ada riwayat) --}}
-                    </div>
-            </div>
         </div>
+    </div>
+</div>
     </div>
 </div>
 @endsection
