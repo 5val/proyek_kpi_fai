@@ -120,11 +120,17 @@
     <!-- Profile Card -->
     <div class="card-custom">
         <div class="card-body text-center">
-            <img src="{{ $dosen->user->photo_profile ? Storage::url($dosen->user->photo_profile) : asset('images/default-user.png') }}"
-                 class="rounded-circle mb-3" width="150" alt="Profile Picture" height="150">
+            {{-- <img src="{{ $dosen->user->photo_profile ? Storage::url($dosen->user->photo_profile) : asset('images/default-user.png') }}"
+                 class="rounded-circle mb-3" width="150" alt="Profile Picture" height="150"> --}}
+                 <img src="{{ $dosen->user->photo_profile ? asset('storage/' . $dosen->user->photo_profile) : asset('images/default-user.png') }}"
+     class="rounded-circle mb-3" 
+     width="150" 
+     height="150" 
+     alt="Profile Picture" 
+     style="object-fit: cover;">
             <h4 class="mb-1">{{ $user->name }}</h4>
             <p class="text-muted mb-1">NIDN: {{ $dosen->nidn }}</p>
-            <form action="{{ route('dosen.uploadProfpic', Auth::id()) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('dosen.uploadProfpic', $dosen->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                     <label for="file" class="form-label fw-medium">Pilih Foto (JPG/PNG - Max 5MB)</label>

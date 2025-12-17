@@ -63,11 +63,6 @@
 
                         <div class="col-md-7 text-md-end">
                     <div class="d-flex flex-wrap gap-2">
-<a href="{{ route('dosen.laporan.export.excel',  ['kategori' => $curKategori->id, 'periode' => $periode_id]) }}" 
-    class="btn btn-success btn-sm d-flex align-items-center">
-    <i class="bi bi-file-earmark-excel-fill me-2"></i> Export Excel
-</a>
-
 <a href="{{ route('dosen.laporan.export.pdf',  ['kategori' => $curKategori->id, 'periode' => $periode_id]) }}" 
     class="btn btn-danger btn-sm d-flex align-items-center">
     <i class="bi bi-file-earmark-pdf-fill me-2"></i> Export PDF

@@ -87,9 +87,9 @@
         @foreach($indikator as $i)
             <tr>
                 <td style="text-align: center;">{{ $no++ }}</td>
-                <td>{{ $i->name }}</td>
+                <td>{{ $i['nama_indikator'] }}</td>
                 <td style="text-align: center;">
-                    {{ number_format($nilai[$i->id]->skor ?? 0, 2) }}
+                    {{ number_format($i['avg_score'] ?? 0, 2) }}
                 </td>
             </tr>
         @endforeach

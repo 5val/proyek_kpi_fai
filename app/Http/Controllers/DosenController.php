@@ -215,25 +215,63 @@ class DosenController extends Controller
     }
 
     // KELAS 
+    // public function uploadProfpicDosen(Request $request, $id)
+    // {
+    //   $request->validate([
+    //      'file' => 'required|file|mimes:jpg,jpeg,png|max:5120',
+    //   ]);
+    //   $dosen = Dosen::where('id', $id)->firstOrFail();
+    //   $user = $dosen->user;
+    //   if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
+    //      Storage::disk('public')->delete($user->photo_profile);
+    //   }
+    //   $file = $request->file('file');
+    //   $path = $file->store('profiles', 'public');
+    //   $user->update([
+    //      'photo_profile' => $path,
+    //   ]);
+    //   return redirect()
+    //      ->route('dosen.profile')
+    //      ->with('success', 'Foto profil berhasil diperbarui!');
+    // }
+
+
     public function uploadProfpicDosen(Request $request, $id)
-    {
-      $request->validate([
-         'file' => 'required|file|mimes:jpg,jpeg,png|max:5120',
-      ]);
-      $dosen = Dosen::where('id', $id)->firstOrFail();
-      $user = $dosen->user;
-      if ($user->photo_profile && Storage::disk('public')->exists($user->photo_profile)) {
-         Storage::disk('public')->delete($user->photo_profile);
-      }
-      $file = $request->file('file');
-      $path = $file->store('profiles', 'public');
-      $user->update([
-         'photo_profile' => $path,
-      ]);
-      return redirect()
-         ->route('dosen.profile')
-         ->with('success', 'Foto profil berhasil diperbarui!');
+{
+    $request->validate([
+        'file' => 'required|file|mimes:jpg,jpeg,png|max:5120',
+    ]);
+
+    // 1. Pastikan Dosen ditemukan
+    $dosen = Dosen::findOrFail($id);
+    
+    // Opsional: Cek apakah user yang login berhak mengedit dosen ini
+    // if (auth()->user()->id !== $dosen->user_id) { abort(403); }
+
+    $user = $dosen->user;
+
+    // 2. Simpan path lama untuk jaga-jaga
+    $oldPhoto = $user->photo_profile;
+
+    // 3. Upload file baru
+    // Gunakan 'public' disk secara eksplisit agar path-nya jelas
+    $path = $request->file('file')->store('profiles', 'public');
+
+    // 4. Update Database
+    $updated = $user->update([
+        'photo_profile' => $path,
+    ]);
+
+    // 5. Hapus file lama HANYA JIKA database berhasil diupdate
+    if ($updated && $oldPhoto && Storage::disk('public')->exists($oldPhoto)) {
+        Storage::disk('public')->delete($oldPhoto);
     }
+
+    return redirect()
+        ->route('dosen.profile')
+        ->with('success', 'Foto profil berhasil diperbarui!');
+}
+
 
     // public function kelas()
     // {
@@ -533,20 +571,6 @@ public function laporanKinerja(Request $request)
     $periode_id = $request->periode_id ?? $allPeriode->first()->id;
     $curPeriode = Periode::findOrFail($periode_id);
 
-    // Semua indikator dalam kategori terpilih
-   //  $indikator = Indikator::where('kategori_id', $kategori_id)
-   //      ->orderBy('id', 'ASC')
-   //      ->get();
-
-    // Nilai penilaian dosen dalam periode
-   //  $nilai = Penilaian::where('dinilai_id', $dosen->id)
-   //      ->where('periode_id', $periode_id)
-   //      ->get()
-   //      ->keyBy('indikator_id'); // jd: [indikator_id => object]
-
-    // Hitung skor akhir
-   //  $skorAkhir = $nilai->avg('skor') ?? 0;
-
    $penilaian = Penilaian::with('detailPenilaian.indikator')
         ->where('dinilai_id', $dosen->id)
         ->where('periode_id', $periode_id)
@@ -586,58 +610,113 @@ public function laporanKinerja(Request $request)
 
       //   'indikator' => $indikator,
       //   'nilai' => $nilai,
-         'indikator' => $avgPerIndikator,
+        'indikator' => $avgPerIndikator,
         'skorAkhir' => $skorAkhir,
     ]);
 }
 
 
+// public function exportLaporanPDF($kategori_id, $periode_id)
+// {
+//     $user = Auth::user();
+//     $dosen = Dosen::where('user_id', $user->id)->firstOrFail();
+
+//     // Ambil kategori & periode
+//     $curKategori = Kategori::findOrFail($kategori_id);
+//     $periode = Periode::findOrFail($periode_id);
+
+//     // Semua indikator
+//     $indikator = Indikator::where('kategori_id', $kategori_id)->get();
+
+//     // Ambil penilaian dosen
+//     $penilaian = Penilaian::where('id', $dosen->id)
+//         ->where('periode_id', $periode_id)
+//         ->get()
+//         ->groupBy('indikator_id')
+//         ->map(function ($rows) {
+//             return (object)[
+//                 'skor' => $rows->avg('skor')
+//             ];
+//         });
+
+//     // Hitung skor akhir
+//     $skorAkhir = $penilaian->avg('skor') ?? 0;
+
+//     // Generate HTML ke PDF
+//     $html = view('dosen.laporan_pdf', [
+//         'user' => $user,
+//         'dosen' => $dosen,
+//         'curKategori' => $curKategori,
+//         'periode' => $periode,
+//         'indikator' => $indikator,
+//         'nilai' => $penilaian,
+//         'skorAkhir' => $skorAkhir,
+//     ])->render();
+
+//     // Load Dompdf
+//     $dompdf = new Dompdf();
+//     $dompdf->loadHtml($html);
+//     $dompdf->setPaper('A4', 'portrait');
+//     $dompdf->render();
+
+//     return $dompdf->stream("Laporan-Kinerja-Dosen-{$periode->nama_periode}.pdf");
+// }
+
 public function exportLaporanPDF($kategori_id, $periode_id)
 {
+    // 1. Ambil Data User & Dosen
     $user = Auth::user();
     $dosen = Dosen::where('user_id', $user->id)->firstOrFail();
 
-    // Ambil kategori & periode
+    // 2. Ambil Data Referensi (Kategori & Periode)
     $curKategori = Kategori::findOrFail($kategori_id);
     $periode = Periode::findOrFail($periode_id);
 
-    // Semua indikator
-    $indikator = Indikator::where('kategori_id', $kategori_id)->get();
-
-    // Ambil penilaian dosen
-    $penilaian = Penilaian::where('id', $dosen->id)
+    // 3. Query Data Penilaian (LOGIKA DISAMAKAN DENGAN laporanKinerja)
+    // Mengambil penilaian berdasarkan 'dinilai_id' (dosen), bukan 'id'
+    $penilaian = Penilaian::with('detailPenilaian.indikator')
+        ->where('dinilai_id', $dosen->id) 
         ->where('periode_id', $periode_id)
-        ->get()
+        ->get();
+
+    // 4. Proses Kalkulasi Rata-rata (LOGIKA DISAMAKAN 100%)
+    // Menggunakan flatMap, filter kategori, groupBy, dan map
+    $avgPerIndikator = $penilaian
+        ->flatMap->detailPenilaian
+        ->filter(fn ($dp) => $dp->indikator->kategori_id == $kategori_id)
         ->groupBy('indikator_id')
-        ->map(function ($rows) {
-            return (object)[
-                'skor' => $rows->avg('skor')
+        ->map(function ($items) {
+            return [
+                'indikator_id'   => $items->first()->indikator->id,
+                'nama_indikator' => $items->first()->indikator->name,
+                'avg_score'      => $items->avg('score'),
             ];
-        });
+        })
+        ->values();
 
-    // Hitung skor akhir
-    $skorAkhir = $penilaian->avg('skor') ?? 0;
+    // 5. Hitung Skor Akhir
+    $skorAkhir = $avgPerIndikator->avg('avg_score') ?? 0;
 
-    // Generate HTML ke PDF
+    // 6. Generate PDF
+    // Kita kirim variabel '$avgPerIndikator' sebagai 'indikator' agar cocok dengan view PDF sebelumnya
     $html = view('dosen.laporan_pdf', [
-        'user' => $user,
-        'dosen' => $dosen,
+        'user'        => $user,
+        'dosen'       => $dosen,
         'curKategori' => $curKategori,
-        'periode' => $periode,
-        'indikator' => $indikator,
-        'nilai' => $penilaian,
-        'skorAkhir' => $skorAkhir,
+        'periode'     => $periode,
+        'indikator'   => $avgPerIndikator, // Data hasil olahan, bukan raw model
+        'skorAkhir'   => $skorAkhir,
     ])->render();
 
-    // Load Dompdf
+    // 7. Render Dompdf
     $dompdf = new Dompdf();
     $dompdf->loadHtml($html);
     $dompdf->setPaper('A4', 'portrait');
     $dompdf->render();
 
-    return $dompdf->stream("Laporan-Kinerja-Dosen-{$periode->nama_periode}.pdf");
+    // Nama file dinamis
+    return $dompdf->stream("Laporan-Kinerja-{$periode->nama_periode}-{$user->name}.pdf");
 }
-
 
 
     public function laporan(Request $request)
@@ -960,126 +1039,218 @@ public function feedback() {
 //         ));
 //     }
 
+// public function index()
+//     {
+//         $userId = Auth::id();
+        
+//         // 1. Ambil Data Dosen yang sedang login
+//         $dosen = Dosen::where('user_id', $userId)->firstOrFail();
+
+//         // 2. Tentukan Periode
+//         // Periode Aktif (Terbaru)
+//         $currentPeriode = Periode::orderBy('id', 'desc')->first();
+//         $currentPeriodeId = $currentPeriode ? $currentPeriode->id : 0;
+
+//         // Periode Sebelumnya (Untuk perbandingan)
+//         $prevPeriode = Periode::where('id', '<', $currentPeriodeId)
+//                         ->orderBy('id', 'desc')
+//                         ->first();
+//         $prevPeriodeId = $prevPeriode ? $prevPeriode->id : 0;
+
+
+//         // 3. Statistik: Skor Kinerja Mengajar (Real-time dari tabel Penilaian)
+//         // Kategori ID 1 = Kinerja Dosen (Sesuai database Anda)
+//         $currentScore = Penilaian::where('dinilai_id', $dosen->id)
+//                         ->where('dinilai_type', 'App\Models\Dosen')
+//                         ->where('kategori_id', 1) 
+//                         ->where('periode_id', $currentPeriodeId)
+//                         ->avg('avg_score');
+        
+//         // Jika null (belum ada nilai), set ke 0
+//         $currentScore = $currentScore ? round($currentScore, 2) : 0;
+
+//         // Ambil Skor Periode Lalu
+//         $prevScore = Penilaian::where('dinilai_id', $dosen->id)
+//                         ->where('dinilai_type', 'App\Models\Dosen')
+//                         ->where('kategori_id', 1) 
+//                         ->where('periode_id', $prevPeriodeId)
+//                         ->avg('avg_score');
+        
+//         $prevScore = $prevScore ? round($prevScore, 2) : 0;
+        
+//         // Hitung Selisih
+//         $scoreDiff = $currentScore - $prevScore;
+
+
+//         // 4. Statistik: Jumlah Mahasiswa (Total mahasiswa unik di kelas aktif semester ini)
+//         $studentCount = DB::table('enrollment')
+//             ->join('kelas', 'enrollment.kelas_id', '=', 'kelas.id')
+//             ->where('kelas.dosen_nidn', $dosen->nidn)
+//             ->where('kelas.periode_id', $currentPeriodeId) // Hanya periode aktif
+//             ->distinct('enrollment.mahasiswa_nrp')
+//             ->count('enrollment.mahasiswa_nrp');
+
+
+//         // 5. Chart 1: Tren Skor Kinerja (Line Chart)
+//         // Ambil rata-rata skor per periode, khusus kategori dosen
+//         $trendData = DB::table('penilaian')
+//             ->join('periode', 'penilaian.periode_id', '=', 'periode.id')
+//             ->where('penilaian.dinilai_id', $dosen->id)
+//             ->where('penilaian.dinilai_type', 'App\Models\Dosen')
+//             ->where('penilaian.kategori_id', 1) // PENTING: Filter hanya kinerja dosen
+//             ->select('periode.nama_periode', DB::raw('AVG(penilaian.avg_score) as avg_score'))
+//             ->groupBy('periode.id', 'periode.nama_periode')
+//             ->orderBy('periode.id', 'asc')
+//             ->limit(5) // Ambil 5 periode terakhir
+//             ->get();
+
+//         $chartLabels = $trendData->pluck('nama_periode');
+//         // Format angka desimal chart
+//         $chartValues = $trendData->pluck('avg_score')->map(fn($val) => round($val, 2));
+
+
+//         // 6. Chart 2: Rating per Indikator (Doughnut Chart)
+//         // Fokus pada indikator penilaian di periode ini agar relevan
+//         $ratingData = DB::table('detail_penilaian')
+//             ->join('penilaian', 'detail_penilaian.penilaian_id', '=', 'penilaian.id')
+//             ->join('indikator', 'detail_penilaian.indikator_id', '=', 'indikator.id')
+//             ->where('penilaian.dinilai_id', $dosen->id)
+//             ->where('penilaian.dinilai_type', 'App\Models\Dosen')
+//             ->where('penilaian.kategori_id', 1)
+//             ->where('penilaian.periode_id', $currentPeriodeId) // Data periode ini saja
+//             ->select('indikator.name', DB::raw('AVG(detail_penilaian.score) as avg_score'))
+//             ->groupBy('indikator.id', 'indikator.name')
+//             ->orderBy('avg_score', 'desc')
+//             ->limit(5)
+//             ->get();
+
+//         $ratingLabels = $ratingData->pluck('name');
+//         $ratingValues = $ratingData->pluck('avg_score')->map(function($val) {
+//             return number_format($val, 1);
+//         });
+
+
+//         // 7. Table: Mahasiswa
+//         // Mengambil daftar mahasiswa dari kelas aktif dosen tersebut
+//         $studentsList = DB::table('enrollment')
+//             ->join('kelas', 'enrollment.kelas_id', '=', 'kelas.id')
+//             ->join('periode', 'kelas.periode_id', '=', 'periode.id') // <--- TAMBAHKAN JOIN INI
+//             ->join('mahasiswa', 'enrollment.mahasiswa_nrp', '=', 'mahasiswa.nrp')
+//             ->join('users', 'mahasiswa.user_id', '=', 'users.id')
+//             ->where('kelas.dosen_nidn', $dosen->nidn)
+//             ->where('kelas.periode_id', $currentPeriodeId) 
+//             ->select(
+//                 'users.name', 
+//                 'mahasiswa.nrp', 
+//                 'periode.semester', // Ambil kolom semester (gasal/genap)
+//                 'periode.tahun'     // Ambil kolom tahun (2025)
+//             )
+//             ->distinct()
+//             ->limit(5)
+//             ->get();
+
+//         return view('dosen.dashboard', compact(
+//             'currentScore', 
+//             'scoreDiff', 
+//             'studentCount', 
+//             'chartLabels', 
+//             'chartValues', 
+//             'ratingLabels', 
+//             'ratingValues',
+//             'studentsList'
+//         ));
+//     }
+
+
+
 public function index()
-    {
-        $userId = Auth::id();
-        
-        // 1. Ambil Data Dosen yang sedang login
-        $dosen = Dosen::where('user_id', $userId)->firstOrFail();
+{
+    $userId = Auth::id();
+    $dosen = Dosen::where('user_id', $userId)->firstOrFail();
 
-        // 2. Tentukan Periode
-        // Periode Aktif (Terbaru)
-        $currentPeriode = Periode::orderBy('id', 'desc')->first();
-        $currentPeriodeId = $currentPeriode ? $currentPeriode->id : 0;
+    // ID Kategori Utama (Kinerja Dosen) - Sesuaikan jika ID di database bukan 1
+    $targetKategoriId = 1; 
 
-        // Periode Sebelumnya (Untuk perbandingan)
-        $prevPeriode = Periode::where('id', '<', $currentPeriodeId)
-                        ->orderBy('id', 'desc')
-                        ->first();
-        $prevPeriodeId = $prevPeriode ? $prevPeriode->id : 0;
+    // --- 1. Tentukan Periode ---
+    $currentPeriode = Periode::orderBy('id', 'desc')->first();
+    $currentPeriodeId = $currentPeriode ? $currentPeriode->id : 0;
 
+    $prevPeriode = Periode::where('id', '<', $currentPeriodeId)
+                    ->orderBy('id', 'desc')
+                    ->first();
+    $prevPeriodeId = $prevPeriode ? $prevPeriode->id : 0;
 
-        // 3. Statistik: Skor Kinerja Mengajar (Real-time dari tabel Penilaian)
-        // Kategori ID 1 = Kinerja Dosen (Sesuai database Anda)
-        $currentScore = Penilaian::where('dinilai_id', $dosen->id)
-                        ->where('dinilai_type', 'App\Models\Dosen')
-                        ->where('kategori_id', 1) 
-                        ->where('periode_id', $currentPeriodeId)
-                        ->avg('avg_score');
-        
-        // Jika null (belum ada nilai), set ke 0
-        $currentScore = $currentScore ? round($currentScore, 2) : 0;
+    // --- 2. Hitung SKOR PERIODE INI (Logic Sama Persis dengan Laporan) ---
+    $penilaianCurrent = Penilaian::with('detailPenilaian.indikator')
+        ->where('dinilai_id', $dosen->id)
+        ->where('periode_id', $currentPeriodeId)
+        ->get();
 
-        // Ambil Skor Periode Lalu
-        $prevScore = Penilaian::where('dinilai_id', $dosen->id)
-                        ->where('dinilai_type', 'App\Models\Dosen')
-                        ->where('kategori_id', 1) 
-                        ->where('periode_id', $prevPeriodeId)
-                        ->avg('avg_score');
-        
-        $prevScore = $prevScore ? round($prevScore, 2) : 0;
-        
-        // Hitung Selisih
-        $scoreDiff = $currentScore - $prevScore;
+    $indikatorCurrent = $penilaianCurrent
+        ->flatMap->detailPenilaian
+        ->filter(fn ($dp) => $dp->indikator->kategori_id == $targetKategoriId)
+        ->groupBy('indikator_id')
+        ->map(function ($items) {
+            return [
+                'nama_indikator' => $items->first()->indikator->name,
+                'avg_score'      => $items->avg('score'),
+            ];
+        })
+        ->values();
 
+    $currentScore = $indikatorCurrent->avg('avg_score') ?? 0;
 
-        // 4. Statistik: Jumlah Mahasiswa (Total mahasiswa unik di kelas aktif semester ini)
-        $studentCount = DB::table('enrollment')
-            ->join('kelas', 'enrollment.kelas_id', '=', 'kelas.id')
-            ->where('kelas.dosen_nidn', $dosen->nidn)
-            ->where('kelas.periode_id', $currentPeriodeId) // Hanya periode aktif
-            ->distinct('enrollment.mahasiswa_nrp')
-            ->count('enrollment.mahasiswa_nrp');
+    // --- 3. Hitung SKOR PERIODE LALU (Logic Sama Persis dengan Laporan) ---
+    $penilaianPrev = Penilaian::with('detailPenilaian.indikator')
+        ->where('dinilai_id', $dosen->id)
+        ->where('periode_id', $prevPeriodeId)
+        ->get();
 
+    $indikatorPrev = $penilaianPrev
+        ->flatMap->detailPenilaian
+        ->filter(fn ($dp) => $dp->indikator->kategori_id == $targetKategoriId)
+        ->groupBy('indikator_id')
+        ->map(function ($items) {
+            return [
+                'avg_score' => $items->avg('score'),
+            ];
+        })
+        ->values();
 
-        // 5. Chart 1: Tren Skor Kinerja (Line Chart)
-        // Ambil rata-rata skor per periode, khusus kategori dosen
-        $trendData = DB::table('penilaian')
-            ->join('periode', 'penilaian.periode_id', '=', 'periode.id')
-            ->where('penilaian.dinilai_id', $dosen->id)
-            ->where('penilaian.dinilai_type', 'App\Models\Dosen')
-            ->where('penilaian.kategori_id', 1) // PENTING: Filter hanya kinerja dosen
-            ->select('periode.nama_periode', DB::raw('AVG(penilaian.avg_score) as avg_score'))
-            ->groupBy('periode.id', 'periode.nama_periode')
-            ->orderBy('periode.id', 'asc')
-            ->limit(5) // Ambil 5 periode terakhir
-            ->get();
+    $prevScore = $indikatorPrev->avg('avg_score') ?? 0;
 
-        $chartLabels = $trendData->pluck('nama_periode');
-        // Format angka desimal chart
-        $chartValues = $trendData->pluck('avg_score')->map(fn($val) => round($val, 2));
+    // Hitung Selisih
+    $scoreDiff = $currentScore - $prevScore;
 
+    // --- 4. Chart 1: Tren Skor (Line Chart - 5 Periode Terakhir) ---
+    // Menggunakan Query Builder agar ringan, tapi logic filter disamakan
+    $trendData = DB::table('penilaian')
+        ->join('periode', 'penilaian.periode_id', '=', 'periode.id')
+        ->where('penilaian.dinilai_id', $dosen->id)
+        ->where('penilaian.kategori_id', $targetKategoriId) // Filter Kategori
+        ->select('periode.nama_periode', DB::raw('AVG(penilaian.avg_score) as avg_score'))
+        ->groupBy('periode.id', 'periode.nama_periode')
+        ->orderBy('periode.id', 'asc')
+        ->limit(5)
+        ->get();
 
-        // 6. Chart 2: Rating per Indikator (Doughnut Chart)
-        // Fokus pada indikator penilaian di periode ini agar relevan
-        $ratingData = DB::table('detail_penilaian')
-            ->join('penilaian', 'detail_penilaian.penilaian_id', '=', 'penilaian.id')
-            ->join('indikator', 'detail_penilaian.indikator_id', '=', 'indikator.id')
-            ->where('penilaian.dinilai_id', $dosen->id)
-            ->where('penilaian.dinilai_type', 'App\Models\Dosen')
-            ->where('penilaian.kategori_id', 1)
-            ->where('penilaian.periode_id', $currentPeriodeId) // Data periode ini saja
-            ->select('indikator.name', DB::raw('AVG(detail_penilaian.score) as avg_score'))
-            ->groupBy('indikator.id', 'indikator.name')
-            ->orderBy('avg_score', 'desc')
-            ->limit(5)
-            ->get();
+    $chartLabels = $trendData->pluck('nama_periode');
+    $chartValues = $trendData->pluck('avg_score')->map(fn($val) => round($val, 2));
 
-        $ratingLabels = $ratingData->pluck('name');
-        $ratingValues = $ratingData->pluck('avg_score')->map(function($val) {
-            return number_format($val, 1);
-        });
+    // --- 5. Chart 2: Top Indikator (Doughnut Chart) ---
+    // Kita ambil data dari hasil olahan $indikatorCurrent di atas agar konsisten
+    $topIndikator = $indikatorCurrent->sortByDesc('avg_score')->take(5);
+    
+    $ratingLabels = $topIndikator->pluck('nama_indikator')->values();
+    $ratingValues = $topIndikator->pluck('avg_score')->map(fn($val) => round($val, 2))->values();
 
-
-        // 7. Table: Mahasiswa
-        // Mengambil daftar mahasiswa dari kelas aktif dosen tersebut
-        $studentsList = DB::table('enrollment')
-            ->join('kelas', 'enrollment.kelas_id', '=', 'kelas.id')
-            ->join('periode', 'kelas.periode_id', '=', 'periode.id') // <--- TAMBAHKAN JOIN INI
-            ->join('mahasiswa', 'enrollment.mahasiswa_nrp', '=', 'mahasiswa.nrp')
-            ->join('users', 'mahasiswa.user_id', '=', 'users.id')
-            ->where('kelas.dosen_nidn', $dosen->nidn)
-            ->where('kelas.periode_id', $currentPeriodeId) 
-            ->select(
-                'users.name', 
-                'mahasiswa.nrp', 
-                'periode.semester', // Ambil kolom semester (gasal/genap)
-                'periode.tahun'     // Ambil kolom tahun (2025)
-            )
-            ->distinct()
-            ->limit(5)
-            ->get();
-
-        return view('dosen.dashboard', compact(
-            'currentScore', 
-            'scoreDiff', 
-            'studentCount', 
-            'chartLabels', 
-            'chartValues', 
-            'ratingLabels', 
-            'ratingValues',
-            'studentsList'
-        ));
-    }
-
+    return view('dosen.dashboard', compact(
+        'currentScore', 
+        'scoreDiff', 
+        'chartLabels', 
+        'chartValues', 
+        'ratingLabels', 
+        'ratingValues'
+    ));
+}
 }
